@@ -1,5 +1,6 @@
 ToC:
 	- Motivation
+		What's the problem and how do I want to solve it.
 	- Contents
 		- Hand drawn symbol recognition (research overview)
 			look at symbol recognition in general and mathematical symbol recognition in particular
@@ -8,23 +9,37 @@ ToC:
 			- architecture frontend <- http -> backend
 				justify choice ~> easy updates etc.
 			- frontend
+				screens, description of interaction
 				- web based interface
 				- crowd-sourced classifier training
-				- interactive approach
+				- interactive approach instead on automatic classification
 			- backend
 				- classifier server
 			- conclusion ~> classifier evaluation
+				incremental training -> adaptive classifier
+		- preprocessing strokes
+			- normalization
 		- classifier evaluation
 			- neural nets?
 			- hmm?
 			- svm?
 			- knn
+			- combinations
+				Does it even make sense?
 		- distance measures
 			- euclidean distance
 			- dynamic time warping
+				- unconstrained
+				- constrained
+					- normalization for cdtw
+				- application to stroke recognition
+				- optimization through lower bounding 
+					and why it doesn't work in 2D
 		- feature selection
 		- benchmarks (gehört zur evaluation?)
 	- Summary and Outlook
+		imagine a wysywym formula editor?
+		desktop application invoked by a hotkey?tw
 	- Appendix
 		- program manual
 		- program listings
