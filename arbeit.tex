@@ -1,0 +1,115 @@
+\documentclass[12pt]{book}
+\usepackage{german}
+\usepackage{indentfirst}
+\usepackage{epsf}
+\usepackage{verbatim}
+\selectlanguage{german}
+\pagestyle{headings}
+
+\setlength{\paperwidth}{21cm}
+\setlength{\paperheight}{29.5cm}
+\setlength{\parindent}{6mm}
+\setlength{\hoffset}{-1in}
+\setlength{\voffset}{-1in}
+\setlength{\oddsidemargin}{2.7cm}
+\setlength{\evensidemargin}{2.2cm}
+\setlength{\textwidth}{15.5cm}
+\setlength{\textheight}{22.8cm}
+\setlength{\topmargin}{2.5cm}
+\setlength{\headheight}{0.5cm}
+\setlength{\headsep}{1cm}
+\setlength{\footskip}{1.4cm}
+
+
+\begin{document}
+
+\frontmatter
+
+\title{Titel der Arbeit}
+
+\author{Namen des Autors}
+
+\date{\vspace{10mm} Diplomarbeit\\ \vspace{3mm} \today \\
+\vspace{20mm} Thema gestellt von\\ \vspace{3mm} Prof. Dr.
+W.-M. Lippe\\ \vspace{3mm} WWU - Institut f"ur Informatik}
+
+\maketitle
+
+
+\rule{0mm}{1mm}
+\newpage
+\rule{0mm}{1mm}
+\newpage
+
+F"urs Prüfungsamt ein paar Seiten frei.
+
+\tableofcontents
+
+
+\chapter{Einleitung}
+
+Hier die Einleitung, Motivation schreiben.
+
+
+\mainmatter
+
+Einzelne Kapitel werden eingeladen:
+
+\input{einkapitel}
+
+\newpage
+
+\backmatter
+
+\appendix
+
+\chapter{Fazit und Ausblick}
+
+Wie der Name schon sagt...
+
+
+\chapter{Anleitung zum Programm}
+
+Eine Anleitung darf nicht fehlen.
+
+\chapter{Programmlisting}
+
+\begin{tiny}
+
+Kleine Schrift spart Platz.\\
+
+Mit verbatiminput bleibt das Layout eines Listings erhalten.\\
+
+\verbatiminput{progamm}
+
+\end{tiny}
+
+
+\begin{thebibliography}{90}
+
+\bibitem{Autor}
+Autor\\
+Titel\\
+Verlag\\
+
+\end{thebibliography}
+
+
+\chapter{Erkl"arung}
+
+\setlength{\parindent}{0mm}
+Hiermit versichere ich, da"s ich die vorliegende Arbeit
+selbst"andig verfa"st und keine anderen als die angegebenen
+Hilfsmittel verwendet habe.\\
+
+\vspace{20mm}
+
+M"unster, \today\\
+
+\vspace{15mm}
+
+Name\\
+
+
+\end{document}
+
