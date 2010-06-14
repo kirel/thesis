@@ -25,13 +25,14 @@
 
 \frontmatter
 
-\title{Titel der Arbeit}
+\title{Detexify: Hand-drawn \LaTeX-symbol recognition}
 
-\author{Namen des Autors}
+\author{Daniel Kirsch}
 
-\date{\vspace{10mm} Diplomarbeit\\ \vspace{3mm} \today \\
-\vspace{20mm} Thema gestellt von\\ \vspace{3mm} Prof. Dr.
-W.-M. Lippe\\ \vspace{3mm} WWU - Institut f"ur Informatik}
+\date{\vspace{10mm} Diploma thesis\\ \vspace{3mm} \today \\
+\vspace{20mm}
+% Thema gestellt von\\ \vspace{3mm} Prof. Dr. W.-M. Lippe\\
+\vspace{3mm} University of Münster - Department of Computer Science}
 
 \maketitle
 
@@ -45,17 +46,10 @@ F"urs Pr"ufungsamt ein paar Seiten frei.
 
 \tableofcontents
 
-
-\chapter{Einleitung}
-
-Hier die Einleitung, Motivation schreiben.
-
+\input{content/motivation}
 
 \mainmatter
-
-Einzelne Kapitel werden eingeladen:
-
-\input{introduction}
+\input{content/chapter}
 
 \newpage
 
@@ -63,10 +57,7 @@ Einzelne Kapitel werden eingeladen:
 
 \appendix
 
-\chapter{Fazit und Ausblick}
-
-Wie der Name schon sagt...
-
+\input{content/outlook}
 
 \chapter{Anleitung zum Programm}
 
@@ -76,14 +67,11 @@ Eine Anleitung darf nicht fehlen.
 
 \begin{tiny}
 
-Kleine Schrift spart Platz.\\
+% Mit verbatiminput bleibt das Layout eines Listings erhalten.\\
 
-Mit verbatiminput bleibt das Layout eines Listings erhalten.\\
-
-\verbatiminput{progamm}
+\verbatiminput{progam.hs}
 
 \end{tiny}
-
 
 \begin{thebibliography}{90}
 
@@ -94,22 +82,7 @@ Verlag\\
 
 \end{thebibliography}
 
-
-\chapter{Erkl"arung}
-
-\setlength{\parindent}{0mm}
-Hiermit versichere ich, da"s ich die vorliegende Arbeit
-selbständig verfa"st und keine anderen als die angegebenen
-Hilfsmittel verwendet habe.\\
-
-\vspace{20mm}
-
-M"unster, \today\\
-
-\vspace{15mm}
-
-Name\\
-
+\input{statement}
 
 \end{document}
 
