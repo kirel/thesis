@@ -1,0 +1,34 @@
+ToC:
+	- Motivation
+	- Contents
+		- Hand drawn symbol recognition (research overview)
+			look at symbol recognition in general and mathematical symbol recognition in particular
+			might be integrated into classifier evaluation
+		- detexify
+			- architecture frontend <- http -> backend
+				justify choice ~> easy updates etc.
+			- frontend
+				- web based interface
+				- crowd-sourced classifier training
+				- interactive approach
+			- backend
+				- classifier server
+			- conclusion ~> classifier evaluation
+		- classifier evaluation
+			- neural nets?
+			- hmm?
+			- svm?
+			- knn
+		- distance measures
+			- euclidean distance
+			- dynamic time warping
+		- feature selection
+		- benchmarks (gehört zur evaluation?)
+	- Summary and Outlook
+	- Appendix
+		- program manual
+		- program listings
+		- web technologies explained
+		- detexify usage statistics
+	- Acknowledgement
+	- Statement of Authorship
