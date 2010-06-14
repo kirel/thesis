@@ -1,4 +1,4 @@
-desc "clean out gitignored filesg"
+desc "clean out gitignored files"
 task :clean do
   File.open '.gitignore' do |f|
     f.each do |pattern|
