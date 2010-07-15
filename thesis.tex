@@ -1,12 +1,32 @@
-\documentclass[12pt]{book}
-\usepackage[ngerman]{babel}
-\usepackage[utf8]{inputenc}
-\usepackage{indentfirst}
-\usepackage{verbatim}
+%!TEX TS-program = xelatex
+%!TEX encoding = UTF-8 Unicode
+\documentclass[12pt, a4paper]{book}
 \usepackage{amssymb} % Mathe
 \usepackage{amsmath} % Mathe
-\pagestyle{headings}
+\usepackage{verbatim}
 
+% Math Fonts
+\usepackage[mathcal]{euler}
+\usepackage[cm-default]{fontspec}
+% FONTS
+\usepackage{xunicode}
+\usepackage{xltxtra}
+\defaultfontfeatures{Mapping=tex-text} % converts LaTeX specials (``quotes'' --- dashes etc.) to unicode
+\setromanfont [Ligatures={Common}, Numbers={OldStyle}]{Adobe Caslon Pro}
+\setmonofont[Scale=0.8]{Monaco} 
+\setsansfont[Scale=0.9]{Optima Regular} 
+% ---- CUSTOM AMPERSAND
+\newcommand{\amper}{{\fontspec[Scale=.95]{Adobe Caslon Pro}\selectfont\itshape\&}}
+
+% HEADINGS
+\pagestyle{headings}
+% \usepackage{sectsty} 
+% \usepackage[normalem]{ulem} 
+% \sectionfont{\sffamily\mdseries\large} 
+% \subsectionfont{\rmfamily\mdseries\scshape\normalsize} 
+% \subsubsectionfont{\rmfamily\bfseries\upshape\normalsize} 
+
+% DOCUMENT LAYOUT
 \setlength{\paperwidth}{21cm}
 \setlength{\paperheight}{29.5cm}
 \setlength{\parindent}{6mm}
@@ -20,6 +40,19 @@
 \setlength{\headheight}{0.5cm}
 \setlength{\headsep}{1cm}
 \setlength{\footskip}{1.4cm}
+
+% PDF SETUP
+% ---- FILL IN HERE THE DOC TITLE AND AUTHOR
+\usepackage[xetex, bookmarks, colorlinks, breaklinks, pdftitle={LaTeX-Erkennung},pdfauthor={Daniel Kirsch}]{hyperref}  
+\hypersetup{linkcolor=blue,citecolor=blue,filecolor=black,urlcolor=blue} 
+
+% Stuff
+\usepackage[ngerman]{babel}
+\usepackage{indentfirst}
+\usepackage[printonlyused]{acronym}
+
+% \pagestyle{headings}
+% 
 
 \begin{document}
 
@@ -60,6 +93,7 @@
 
 \input{content/outlook}
 \input{acknowledgement}
+\input{content/acronyms}
 
 % TODO...
 \chapter{Programlisting}
