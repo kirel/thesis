@@ -1,17 +1,21 @@
 %!TEX root = /Users/daniel/Documents/thesis/thesis.tex
 \chapter{Motivation}
 
-\section*{\LaTeX}
+\section{\LaTeX}
 
 Wenn es um das Verfassen wissenschaftlicher Texte geht, ist für viele \LaTeX\ die erste Wahl. Anders als bei einem \acs{WYSIWYG}-Editor kümmert man sich nicht um das Layout, um Abstände und Schriftgrößen sondern um die Semantik des Geschriebenen. Stattdessen zeichnet man die Kapitel, Abschnitte, Formeln usw. semantisch aus, eher wie in \acs{HTML}. Der Vorteil liegt klar auf der Hand. Inhalt und Präsentation sind klar getrennt, was zur Folge hat, dass man nicht vom Wesentlichen abgelenkt wird, wenn man an Texten und Formeln arbeitet, und dass das Aussehen des Dokuments zentral in der Präambel definiert wird.
 
 \LaTeX\ hat jedoch auch seine Nachteile. Gerade Anfänger haben es aufgrund der flachen Lernkurve schwer. Da man \LaTeX\ in der Regel im Quelltext bearbeitet, als jeden Befehl von Hand schreibt. Muss man sich unheimlich viel merken. Das beginnt bei einfachen Befehlen wie \texttt{\textbackslash chapter}, deren Name sich geradezu aufdrängt, aber wenn es darum geht Mathematische Formeln wie $$\Gamma \left( x \right) = \int\limits_0^\infty  {s^{x - 1} e^{ - s} ds}$$ in das Dokument zu bringen, wird es schon schwieriger.
 
-Dass man ein $\Gamma$ mit dem Befehl \texttt{\textbackslash Gamma} bekommt ist noch zu erahnen. Um $\infty$ zu bekommen hätte man auch \texttt{\textbackslash infinity} statt \texttt{\textbackslash infty} versuchen können und hätte bloß eine Fehler geerntet, aber bei Befehlen wie \texttt{\textbackslash leftrightsquigarrow} ($\leftrightsquigarrow$) hört jede Intuition auf. Es ist also offensichtlich, dass es einigen Raum für unterstützende Maßnahmen bei der Erstellung von \LaTeX-Dokumenten gibt. Das gilt insbesondere für mathematische Formeln.
+Dass man ein $\Gamma$ mit dem Befehl \texttt{\textbackslash Gamma} bekommt ist noch zu erahnen. Um $\infty$ zu bekommen hätte man auch \texttt{\textbackslash infinity} statt \texttt{\textbackslash infty} versuchen können und hätte bloß eine Fehler geerntet, aber bei Befehlen wie \texttt{\textbackslash leftrightsquigarrow} ($\leftrightsquigarrow$) hört jede Intuition auf. Es ist also offensichtlich, dass es einigen Raum für unterstützende Maßnahmen bei der Erstellung von \LaTeX-Dokumenten gibt. Das gilt insbesondere für mathematische Formeln in denen viele unterschiedliche Symbole vorkommen können.
 
-\section*{Die optimale Eingabemethode}
+\section{Die optimale Eingabemethode}
 
-Überlegt man sich
+Überlegt man sich die natürlichste Art Text oder Mathematik zu notieren, so kommt man unweigerlich auf Stift und Papier. Während bei Texten die Eingabe über eine Computertastatur durchaus schneller sein kann, als das Schreiben mit einem Stift (TODO Belege!) ist spätestens bei Formeln klar, dass hier der Stift klar im Vorteil ist. Es können beliebige Formen, Zeichen und Symbole in beliebige räumliche Beziehung gebracht werden. Nichts liegt also näher, als diese Eingabeform in die digitale Welt übertragen zu wollen.
+
+Als Eingabegerät bietet sich also ein Grafiktablett an. Ein entsprechender \LaTeX-Editor würde eine Fläche zur Verfügung stellen, auf die einfach geschrieben und skizziert wird. Die Kurven und Linien würden dann vom Editor in Text, Tabellen, Formeln und Diagramme überführt -- alles genau wie vom Benutzer erwartet. Leider sind wir noch nicht so weit.
+
+Alleine der Bereich der mathematischen Formelerkennung ist noch nicht auf einem Level, auf dem man die verfügbaren Lösungen als benutzbar bezeichnen könnte. TODO Beispiele
 
 
 \href{http://lyx.org}{Lyx}
