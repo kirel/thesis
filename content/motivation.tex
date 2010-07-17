@@ -15,9 +15,25 @@ Dass man ein $\Gamma$ mit dem Befehl \texttt{\textbackslash Gamma} bekommt ist n
 
 Als Eingabegerät bietet sich also ein Grafiktablett an. Ein entsprechender \LaTeX-Editor würde eine Fläche zur Verfügung stellen, auf die einfach geschrieben und skizziert wird. Die Kurven und Linien würden dann vom Editor in Text, Tabellen, Formeln und Diagramme überführt -- alles genau wie vom Benutzer erwartet. Leider sind wir noch nicht so weit.
 
-Alleine der Bereich der mathematischen Formelerkennung ist noch nicht auf einem Level, auf dem man die verfügbaren Lösungen als benutzbar bezeichnen könnte. TODO Beispiele
+Alleine der Bereich der mathematischen Formelerkennung ist noch nicht auf einem Level, auf dem man die verfügbaren Lösungen als benutzbar bezeichnen könnte. Ein Beispiel ist die kostenlose Software \href{http://www.inftyproject.org}{InftyEditor}. Einfache Formeln werden noch recht sicher erkannt, aber sobald die Komplexität der Formel steigt und vor allem sobald man Symbole braucht, die die Software gar nicht kennt, wird die Benutzung zum Frusterlebnis. Es wundert daher nicht, dass an diesem Problem viel aktuelle Forschung betrieben wird.
+
+\TODO{Beispiele oder Zitate/Referenzen}
+
+Das Problem teilt sich dabei in drei Teile auf. Das erste ist die Segmentierung der mathematischen Formel, bei der einzelne Symbole isoliert werden müssen. Als zweites müssen die einzelnen Symbole richtig erkannt werden. Schließlich müssen die Symbole über ihre räumliche Position in eine logische Beziehung zueinander gebracht werden. Diese in diesen Schritten gewonnenen Erkenntnisse können natürlich die Entscheidung in den jeweils anderen beeinflussen, indem man die Semantik einer Interpretation in der Erkennung mit einfließen lässt. \TODO Zitate? Das Problem ist also sehr komplex.
+
+\TODO{Hier könnte ein wenig Forschungsübersicht gegeben werden}
+
+\section{Suche nach Alternativen}
+
+Die optimale Eingabemethode ist also (noch) nicht praktikabel. Um ganze Formeln zu erkennen haben wir noch nicht die optimalen Algorithmen gefunden. Eine Alternative ist, dem Computer nur einen Teil der Erkennung zu übertragen. Ein Beispiel hierfür ist \href{http://jequation.sourceforge.net/}{JEquation}. In diesem Programm wird dem Benutzer vorgegeben, wo der zu malen hat, damit die Struktur der Formel richtig erkannt wird. \TODO Bild? Es bleibt also die Aufgabe die einzelnen Symbole zu erkennen.
+
 
 
 \href{http://lyx.org}{Lyx}
+
+
+\section{Ein pragmatischer Ansatz}
+
+
 
 \url{http://url.de}
