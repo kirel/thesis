@@ -1,6 +1,7 @@
 %!TEX TS-program = xelatex
 %!TEX encoding = UTF-8 Unicode
 \documentclass[12pt]{book}
+\synctex=1
 \usepackage{amssymb} % Mathe
 \usepackage{amsmath} % Mathe
 \usepackage{verbatim}
@@ -17,6 +18,9 @@
 \setsansfont[Scale=0.9]{Optima Regular} 
 % ---- CUSTOM AMPERSAND
 \newcommand{\amper}{{\fontspec[Scale=.95]{Adobe Caslon Pro}\selectfont\itshape\&}}
+
+\newcommand{\TODO}{\textsc{\textbf{\textcolor{red}{Todo\ }}}}
+\newcommand{\FIXME}{\textsc{\textbf{\textcolor{red}{Fixme\ }}}}
 
 % HEADINGS
 \pagestyle{headings}
