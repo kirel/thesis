@@ -81,45 +81,24 @@
 
 % Fürs Prüfungsamt ein paar Seiten frei.
 
-\tableofcontents
+\listoffigures    % Abbildungsverzeichnis
+\listoftables     % Tabellenverzeichnis
+\tableofcontents  % Inhaltsverzeichnis
 
 \input{content/preface}
-
 \mainmatter
 \input{content/motivation}
 \input{content/chapter}
-
-\newpage
-
-\backmatter
+\input{content/outlook}
 
 \appendix
-
-\input{content/outlook}
-\input{acknowledgement}
 \input{content/acronyms}
+\input{content/listings}
 
-% TODO...
-\chapter{Programlisting}
-
-\begin{tiny}
-
-% Mit verbatiminput bleibt das Layout eines Listings erhalten.\\
-
-\verbatiminput{progam.hs}
-
-\end{tiny}
-
-\begin{thebibliography}{90}
-
-\bibitem{Autor}
-Autor\\
-Titel\\
-Verlag\\
-
-\end{thebibliography}
-
+\backmatter
 \input{statement}
+\input{acknowledgement}
+\input{bibliography}
 
 \end{document}
 
