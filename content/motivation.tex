@@ -24,15 +24,19 @@ Das Problem teilt sich dabei in drei Teile auf. Das erste ist die Segmentierung 
 \TODO{Hier könnte ein wenig Forschungsübersicht gegeben werden}
 
 \section{Suche nach Alternativen}
+\label{sec:alternativen}
 
 Die optimale Eingabemethode ist also (noch) nicht praktikabel. Um ganze Formeln zuverlässig zu erkennen haben wir noch nicht die optimalen Algorithmen gefunden. Eine Alternative ist, dem Computer nur einen Teil der Erkennung zu übertragen. Ein Beispiel hierfür ist \href{http://jequation.sourceforge.net/}{JEquation}. In diesem Programm wird dem Benutzer vorgegeben, wo der zu malen hat, damit die Struktur der Formel richtig erkannt wird. Es bleibt also die Aufgabe die einzelnen Symbole zu erkennen. \TODO Bild? Und welche Kritik habe ich an diesem Ansatz?
 
 Es gibt natürlich auch Ansätze, die ohne jede Form von Mustererkennung auskommen. Hier ist \href{http://lyx.org}{Lyx} ein Beispiel. Lyx ist ein \ac{WYSIWYM}-Editor, er funktioniert also ähnlich wie ein \ac{WYSIWYG}-Editor wie MS-Word. Dabei arbeitet man nicht direkt mit \LaTeX-Befehlen sondern hat einen graphischen Editor in dem man jedoch die Textabschnitte semantisch auszeichnet, statt den Schriftstil manuell vorzugeben. Für Mathematische Formeln enthält Lyx einen Formeleditor, der ähnlich dem funktioniert, was aus Office-Paketen wie MS-Word bekannt ist. Um Symbole einzufügen hat man einerseits die Möglichkeit direkt \LaTeX-Befehle (mit Auto-Vervollständigung) direkt einzugeben, oder das gesuchte Symbol aus mehreren Symboltabellen auszuwählen und per Klick einzufügen. Die erste der beiden Möglichkeiten setzt natürlich wieder voraus, dass der Author den Namen des Befehls kennt. Die zweite Methode hat den Nachteil, dass die Symboltabellen schnell unübersichtlich werden, wenn sie zu umfangreich sind. Es lässt sich also nur ein kleiner Teil der verfügbaren Symbole unterbringen, ohne den Nutzen zu kompromittieren.
 
-\section{Ein pragmatischer Ansatz}
+\section{Ein pragmatischer Ansatz} % (fold)
+\label{sec:pragmatisch}
 
-Viele \LaTeX-Benutzer fühlen sich aber durchaus wohl damit ihre Dokumente direkt im Quelltext zu bearbeiten. Texteditoren wie Vim, Emacs etc. erfreuen sich großer Beliebtheit zum erstellen von \LaTeX-Dokumenten. (\TODO Wie belege ich das? Internet?) Ich selbst ziehe den Texteditor TextMate trotz umfangreicher Recherchen in diesem Bereich jedem spezialisierten \LaTeX-Editor vor. Die Frage ist also, wie ein pragmatisches Werkzeug aussieht, dass einem typischen \LaTeX-Anwender die Arbeit an seinem Dokument insbesondere die Eingabe von mathematischen Formeln erleichtert.
+Viele Benutzer fühlen sich aber durchaus wohl damit ihre Dokumente direkt im Quelltext zu bearbeiten. Texteditoren wie Vim, Emacs etc. erfreuen sich großer Beliebtheit zum erstellen von Dokumenten. (\TODO Wie belege ich das? Internet?) Ich selbst ziehe den Texteditor TextMate trotz umfangreicher Recherchen in diesem Bereich jedem spezialisierten \LaTeX-Editor vor. Die Frage ist also, wie ein pragmatisches Werkzeug aussieht, dass einem typischen Anwender die Arbeit an seinem Dokument insbesondere die Eingabe von mathematischen Formeln erleichtert ohne dessen Arbeitsweise komplett umzukrempeln.
 
+Ein Problem, das jeder Anwender egal ob Einsteiger oder Fortgeschrittener einmal hat, ist, dass er den Befehl für ein Symbol nicht weiss. Vielleicht hat er ihn noch nie gebraucht, oder er ist ihm entfallen. Das Symbol ist auch nicht in den Symboltabellen in seinem \LaTeX-Editor (falls er nicht sowieso einen Texteditor verwendet). Also muss er ein Buch oder die "`Comprehensive \LaTeX\ Symbol List"'~\cite{Pakin:2009p2664} wälzen, um das gewünschte Symbol zu finden. Das geht bei der großen Anzahl an Symbolen~\footnote{\cite{Pakin:2009p2664} listet 4947 Symbole auf.} nicht besonders schnell. Genau hier könnte ein pragmatisches Werkzeug ansetzen und auf einem Mittelweg zwischen den in \ref{sec:alternativen} vorgestellten Werkzeugen eine Lösung für dieses Problem anbieten.
 
+Das Werkzeug müsste also Symbolsuche bieten, durch die sehr schnell der Befehl zum gesuchten Symbol gefunden werden kann. Der Benutzer kann sein Dokument im Editor seiner Wahl bearbeiten und im Bedarfsfall das Suchwerkzeug aufrufen, um schnell wieder an die eigentliche Arbeit, das Verfassen des Dokuments, zu gehen. Um ein solches Werkzeug wird es im folgenden gehen.
 
-\url{http://url.de}
+% section ein_pragmatischer_ansatz (end)

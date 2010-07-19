@@ -1,0 +1,22 @@
+%!TEX root = /Users/daniel/Documents/thesis/thesis.tex
+\chapter[Detexify]{Detexify - \LaTeX-Symbolsuche als Webanwendung} % (fold)
+\label{cha:detexify}
+
+Bevor ich auf die technischen Details von Detexify eingehe sollten Sie, lieber Leser, sich kurz mit dem Programm vertraut gemacht haben. Die Beschreibungen sind dann viel verständlicher. Die Benutzung von Detexify sollte selbsterklärend sein. Sollten Sie doch Schwierigkeiten haben finden sie in \ref{cha:benutzerhandbuch} ein kurzes Benutzerhandbuch. Sie können auf Detexify mit einem modernen Browser\footnote[1]{Aktuelle Versionen von Firefox, Chrome, Safari und Opera funktionieren prima.} unter der Adresse \url{http://detexify.kirelabs.org} zugreifen.
+
+\section{Die Architektur} % (fold)
+\label{sec:architektur}
+
+Bei jeder Anwendung muss man sich, bevor sie geschrieben wird, entscheiden, wie die Anwendung zur Verfügung gestellt werden soll. Daraus resultieren weitere Entscheidungen, wie z.B. die Wahl der Programmiersprache und der Datenformate.
+
+Bei Detexify lag aus Augenmerk vor allem auf Plattformunabhängigkeit. Jeder sollte einfach und schnell Zugriff zum Programm haben, egal auf was für einem System er seine Dokumente bearbeitet und es sollte möglichst ohne Installation auskommen. Es sollte sich zudem einfach zentral warten lassen und vor allem sollten die Trainingsdaten für die Mustererkennung zentral gespeichert sein und außerdem leicht und jederzeit erweitern werden können. Um diese Anforderungen zu erfüllen wurde Detexify als Webanwendung implementiert.
+
+\TODO Crowd-Sourced Training... Training einer so großen Datenbank für einen Einzelnen langwierig aber zu vielen...
+
+\begin{itemize}
+  \item \textbf{Plattformunabhängigkeit:} Heutzutage ist ein Webbrowser auf jedem Computer verfügbar. Um Detexify verwenden zu können wird nur ein moderner\footnotemark[1] Webbrowser benötigt.
+  \item \textbf{Zentrale Wartung:} Fehlerbehebungen und Verbesserungen sind zentral anwendbar und stehen jedem Benutzer beim nächsten Besuch der Anwendung sofort zur Verfügung.
+  \item \textbf{Zentrale Trainingsdaten:} Die Trainingsdaten sind zentral in einer Datenbank gespeichert. Jeder Benutzer profitiert 
+\end{itemize}
+
+% chapter detexify (end)
