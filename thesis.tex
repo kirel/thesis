@@ -4,7 +4,8 @@
 \synctex=1
 \usepackage{amssymb} % Mathe
 \usepackage{amsmath} % Mathe
-\usepackage{verbatim}
+\usepackage{listings}
+\lstset{basicstyle=\ttfamily}
 
 % Math Fonts
 \usepackage[mathcal]{euler}
@@ -59,11 +60,12 @@
 % \pagestyle{headings}
 % 
 
-\begin{document}
+\begin{document}  
 
 \frontmatter
 
-\title{Detexify: Erkennung handgemalter \LaTeX-Symbole}
+\title{Detexify: Erkennung handgemalter \LaTeX-Symbole \\
+\vspace{5mm} \includegraphics[height=7.5cm]{figures/icon.png} }
 
 \author{Daniel Kirsch}
 
@@ -74,6 +76,13 @@
 
 \maketitle
 
+% \newpage\mbox{}\vfill
+% \begin{center}
+% \large
+% \includegraphics{figures/icon.png}
+% \normalsize
+% \end{center}
+% \vfill\mbox{}\newpage
 
 \rule{0mm}{1mm}
 \newpage
@@ -97,6 +106,7 @@
 \appendix
 \input{content/acronyms}
 \input{content/manual}
+\input{content/web}
 \input{content/listings}
 
 \backmatter
