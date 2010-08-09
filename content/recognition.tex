@@ -2,37 +2,93 @@
 \chapter{Erkennung handgeschriebener Symbole} % (fold)
 \label{cha:erkennung_handgeschriebener_symbole}
 
+Die Erkennung handgeschriebener Symbole ist das Herzstück von Detexify. Hier wird einer unbekannten Eingabe von Daten ein \LaTeX-Symbol zugeordnet. Genau genommen wird der Eingabe eine Rangfolge von Symbolen zugeordnet, welche in der in \ref{sub:symbolsuche} beschriebenen Liste auftaucht, nachdem ein Nutzer ein Symbol gezeichnet hat.
 
+Zur Erkennung einzelner handgeschriebener Symbole wurden bereits unterschiedlichste Klassifikationsverfahren verwendet \cite{Plamondon:2000p10303}. Um ein leistungsstarkes Backend für Detexify zu entwickeln musste also ein Verfahren ausgewählt und gegebenenfalls optimiert werden, dass den spezifischen Anforderungen der Anwendung und der Architektur gerecht wurde.
+
+Die Anforderungen sind die folgenden:
+
+\begin{description}
+  \item[Adaptionsfähigkeit] Es sollte jeder Zeit ein Training zusätzlicher Symbole möglich sein.
+  \item[Skalierbarkeit] Die Erkennungsraten sollten auch bei einer großen Anzahl von Klassen gut sein.
+  \item[Laufzeitverhalten] Das Laufzeitverhalten sollte eine Erkennung in Echtzeit ermöglichen.
+\end{description}
+
+Ein besonderes Interesse galt in meinem Fall natürlichen den Verfahren, die für Symbolerkennung, insbesondere mathematischer Symbole, bereits erfolgreich eingesetzt wurden. Dabei handelt es sich um \ac{SVM}, \ac{HMM} und \ac{DTW}. Es gibt auch einige wenige Strukturelle Ansätze \cite{Genoe:2006p10601}.
+
+Die Entscheidung ist im Fall von Detexify auf \ac{DTW} gefallen.
+
+Eine Analyse zur Eignung der unterschiedlichen Verfahren findet sich in \ref{sec:klassifizierung}. Im folgenden wird zuerst auf die verwendete Terminologie und die Herausforderungen der Erkennung von \LaTeX-Symbolen eingegangen.
 
 \section{Terminologie} % (fold)
 \label{sec:terminologie}
 
-online/offline pen-up/down etc
+Wie in jedem Forschungsgebiet hat sich auch bei der Handschrifterkennung eine Nomenklatur entwickelt, die die verschiendenen Aspekte des Themas beschreibt.
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Man unterscheidet zwischen \emph{Online}- und \emph{Offline}-Systemen \cite{Tappert:1990p10302}. Bei Online-Systemen wird die Erkennung durchgeführt während der Nutzer schreibt. Die Striche werden dabei vom Eingabegerät (häufig ein Grafiktablett) als Funktion $ t \mapsto \alpha $, wobei $\alpha$ den Zustand der Stiftspitze kodiert, an das System übertragen. Das heißt, es stehen für die Erkennung alle dynamischen Eigenschaften des Geschriebenen zur Verfügung, wie die Anzahl, Reihenfolge und Richtung der einzelnen Pinselstriche. Im Gegensatz dazu verarbeiten Offline-Systeme Scans von Geschriebenem, arbeiten also zu einem Zeitpunkt, wenn der Schreibvorgang längst beendet ist. Sie können also außer Pixeln keine weiteren Informationen verwenden.
+Detexify ist ein Online-System.
 
-% section terminologie (end)
+Der Zustand der Stiftspitze besteht in Online-Systemen in der Regel aus den Koordinaten $(x,y)$, der Information, ob die Spitze das Tablett berührt, oft bezeichnet mit \emph{pen-up} bzw. \emph{pen-down} und in manchen Fällen auch aus der Neigung und dem Azimut.
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Aus den Daten werden dann häufig Eigenschaften abgeleitet, sog. \emph{Features}. Man unterscheidet zwischen \emph{globalen} und \emph{lokalen} Features \cite{Tapia:2007p9160}. Lokale Features sind solche, die von einzelnen Punkten auf einem Strich und dessen benachbarten Punkten abgeleitet werden. Globale Features werden hingegen von der Menge der Striche als Ganzes abgeleitet.
+
+\section[Herausforderungen]{Herausforderungen der Erkennung von \LaTeX-Symbolen}
+Die Erkennung von handgemalten \LaTeX-Symbolen ist allein durch die enorme Anzahl der Symbole eine große Herausforderung \cite{Koerich:2003p1562}. Hinzu kommt, dass die Symbole aus sehr unterschiedlichen Alphabeten kommen. Es kommen lateinische, griechische, mathematische und weitere Symbole vor. Im Gegensatz zu asiatischen Sprachen, die ebenfalls sehr große Alphabete aufweisen\footnote{In Japan werden heute 6000-7000 Buchstaben verwendet. In China ist die Anzahl der im täglichen Leben verwendeten Buchstaben bei etwa 5000 \cite{Jaeger:2003p1097}}, ist jedoch die Anzahl und Reihenfolge der Striche nicht vorgegeben, was die Erkennung zusätzlich verkompliziert \cite{Watt:2005p1816}. Außerdem gibt es sehr viele sehr ähnliche Symbole wie $\rightarrow,\mapsto,\leadsto,\rightharpoonup,\hookrightarrow,\rightarrowtail$. Dazu kommen noch die Probleme vor der jede Handschrifterkennung steht, wie unterschiedliche Schreibstile sowohl von unterschiedlichen Schreibern als auch natürliche Variationen in der Schreibweise eines Einzelnen.
+
+Ein guter Klassifizierer muss also einiges leisten und der Situation gerecht zu werden.
 
 \section{Preprocessing und Normalisierung} % (fold)
 \label{sec:preprocessing_und_normalisierung}
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Eine Vorverarbeitung der Daten bevor sie an die Erkennungsalgorithmen ausgeliefert werden, ist eine wirksame Methode um Rauschen, das z.B. durch Ungenauigkeiten der Eingabegeräte oder Unachtsamkeit des Schreibers, entstehen kann, zu relativieren. Vorverarbeitung kann aber auch überflüssige Informationen entfernen, die vom verwendeten Erkennungsalgorithmus nicht verwendet werden. Zudem kann durch Normalisierung der Daten ungewollte Variation reduziert werden. Es gibt kaum ein System zu Handschrifterkennung, das keine Vorverarbeitung durchführt.
+
+Wie gesagt verwendet Detexify zur Klassifizierung \ac{DTW}, was natürlich das Preprocessing beeinflusst. In Detexify werden die folgenden Maßnahmen ergriffen:
+
+\begin{description}
+  \item[Normalisierung der Größe und Position]
+    Die ankommenden Striche werden verschoben und skaliert, so dass sie unter Beibehaltung ihres Seitenverhältnisses zentriert und maximal im Quadrat $[0,1]\times[0,1]$ liegen. Das ist notwendig, damit \ac{DTW} sinnvoll angewandt werden kann.
+  %\item[Entfernung von Haken]
+    %An den Enden von Strichen kann es zu Haken kommen, die beim Aufsetzen\dots
+  \item[Glättung]
+    Jeder Punkt eines Striches wird durch das arithmetische Mittel des Punktes und seiner beiden Nachbarn ersetzt.
+  \item[Äquidistante Verteilung]
+    Da die Zeichenfläche im Browser in Detexify eine gewisse Abtastrate hat, die erstens Herstellerabhängig sein kann, und zweitens zeitabhängig ist, kann die Verteilung der Punkte auf den Strichen sehr ungleich sein. Daher werden die Punkte neu verteilt, so dass sie Entfernung zwischen zwei je Punkten gleichmäßig groß ist. Die Anfangs- und Endpunkte von Strichen werden dabei erhalten.
+  \item[Verkettung]
+    Da \ac{DTW} zwei Zeitreihen vergleicht, werden die Striche miteinander verkettet, so dass das Abstandsmaß direkt angewendet werden kann. \TODO das ist doch Mist! Das muss ich begründen. Verschlechtert ja die Erkennung total.
+\end{description}
 
 % section preprocessing_und_normalisierung (end)
 
 \section{Klassifizierung} % (fold)
 \label{sec:klassifizierung}
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Die Klassifizierung der normalisierten Daten 
+
+\cite{Tappert:1990p10302} sagt bei Online-Erkennung reichen wegen der Interaktivität einfachere Methoden, was bei mir ja voll zutrifft.
 
 \begin{itemize}
-  \item KNN
-  \item SVM
-  \item HNN
-  \item Nets
+  \item KNN - bevorzugt in Japan \cite{Jaeger:2003p1097} / auch template matching genannt / Abstandsmaß entscheidend
+  \item SVM - binärer klassifizierer ~> nicht so sinnvoll bei vielen klassen, bes. lineare SVMs nicht sinnvoll weil keine konvexen Klassen
+  \item HMM - substrokemodelling macht keinen sinn + brauchen keine segmentierung
+  \item Nets - ganz schlecht bei vielen Klassen laut \cite{Jaeger:2003p1097}
 \end{itemize}
+- SVM z.B. JMathNotes (MathFor) \TODO Paper suchen! siehe \cite{Vuong:2010p10279} - auch SVM \cite{Golubitsky:2009p2456}
+- KNN z.B. FFES mit 50 features und verm. euklidischem Abstand \TODO Paper suchen! siehe \cite{Vuong:2010p10279}
+
+Natural Log, symbol recognition is implemented using a statistical approach based on Gaussian Density Estimation \dots siehe auch \cite{Vuong:2010p10279} \TODO Paper suchen
+
+Among the distance measures used for classifying handwritten mathematical sym- bols, the elastic matching distance is known to be one of the most accurate \cite{Golubitsky:2009p2433}
+ 
+\cite{Vuong:2010p10279} benutzt Elastic Matching mit Steigung und Krümmung
+
+MathBrush \cite{Labahn:2008p10301} benutzt Kombi aus Elastic Matching und anderen Methoden siehe auch \cite{MacLean:2010p9970} DTW in linear time and constant space
+
+Strukturelle Methoden gehen auch nicht gut, weil unterschiedliche Alphabete ~> keine gemeinsame Struktur
+
+\subsection[DTW]{Dynamic Time Warping}
+\label{sub:dtw}
+
+- DTW/Elastic matching/DP matching wird benutzt für Lateinische Schriftzeihen, Chinesisch, \cite{Tappert:1990p10302}
 
 % section klassifizierung (end)
 
