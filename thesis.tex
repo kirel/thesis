@@ -4,8 +4,36 @@
 \synctex=1
 \usepackage{amssymb} % Mathe
 \usepackage{amsmath} % Mathe
+\usepackage[usenames,dvipsnames]{color}
 \usepackage{listings}
-\lstset{basicstyle=\ttfamily}
+\lstdefinelanguage{Javascript} {
+	morekeywords={
+		break,const,continue,delete,do,while,export,for,in,function,
+		if,else,import,in,instanceOf,label,let,new,return,switch,this,
+		throw,try,catch,typeof,var,void,with,yield
+	},
+	sensitive=false,
+	morecomment=[l]{//},
+	morecomment=[s]{/*}{*/},
+	morestring=[b]",
+	morestring=[d]'
+}
+\lstset{
+  language=Javascript,
+	frame=tb,
+	framesep=5pt,
+	basicstyle=\footnotesize\ttfamily,
+	showstringspaces=false,
+	keywordstyle=\ttfamily\bfseries\color{CadetBlue},
+	identifierstyle=\ttfamily,
+	stringstyle=\ttfamily\color{OliveGreen},
+	commentstyle=\color{GrayBlue},
+	rulecolor=\color{Gray},
+	xleftmargin=5pt,
+	xrightmargin=5pt,
+	aboveskip=\bigskipamount,
+	belowskip=\bigskipamount
+}
 
 % Math Fonts
 \usepackage[mathcal]{euler}
