@@ -12,6 +12,7 @@ Die Anforderungen sind die folgenden:
   \item[Adaptionsfähigkeit] Es sollte jeder Zeit ein Training zusätzlicher Symbole möglich sein.
   \item[Skalierbarkeit] Die Erkennungsraten sollten auch bei einer großen Anzahl von Klassen gut sein.
   \item[Laufzeitverhalten] Das Laufzeitverhalten sollte eine Erkennung in Echtzeit ermöglichen.
+  \item[Interaktivität] Es sollten die besten $N$ Symbole zur Auswahl angezeigt werden. 
 \end{description}
 
 Ein besonderes Interesse galt in meinem Fall natürlichen den Verfahren, die für Symbolerkennung, insbesondere mathematischer Symbole, bereits erfolgreich eingesetzt wurden. Dabei handelt es sich um \ac{SVM}, \ac{HMM} und \ac{DTW}. Es gibt auch einige wenige Strukturelle Ansätze \cite{Genoe:2006p10601}.
@@ -35,14 +36,21 @@ Aus den Daten werden dann häufig Eigenschaften abgeleitet, sog. \emph{Features}
 \section[Herausforderungen]{Herausforderungen der Erkennung von \LaTeX-Symbolen}
 Die Erkennung von handgemalten \LaTeX-Symbolen ist allein durch die enorme Anzahl der Symbole eine große Herausforderung \cite{Koerich:2003p1562}. Hinzu kommt, dass die Symbole aus sehr unterschiedlichen Alphabeten kommen. Es kommen lateinische, griechische, mathematische und weitere Symbole vor. Im Gegensatz zu asiatischen Sprachen, die ebenfalls sehr große Alphabete aufweisen\footnote{In Japan werden heute 6000-7000 Buchstaben verwendet. In China ist die Anzahl der im täglichen Leben verwendeten Buchstaben bei etwa 5000 \cite{Jaeger:2003p1097}}, ist jedoch die Anzahl und Reihenfolge der Striche nicht vorgegeben, was die Erkennung zusätzlich verkompliziert \cite{Watt:2005p1816}. Außerdem gibt es sehr viele sehr ähnliche Symbole wie $\rightarrow,\mapsto,\leadsto,\rightharpoonup,\hookrightarrow,\rightarrowtail$. Dazu kommen noch die Probleme vor der jede Handschrifterkennung steht, wie unterschiedliche Schreibstile sowohl von unterschiedlichen Schreibern als auch natürliche Variationen in der Schreibweise eines Einzelnen.
 
+\TODO Schwierigkeiten weil Eingabe per Maus erwähnen?
+
 Ein guter Klassifizierer muss also einiges leisten und der Situation gerecht zu werden.
 
-\section{Preprocessing und Normalisierung} % (fold)
+\section{Eingabe}
+\label{sec:input}
+
+Die Eingabe erfolgt für Handschrifterkennungssysteme häufig durch ein Grafiktablett. Dies ist auch in Detexify eine Möglichkeit. Die in \ref{sub:symbolsuche} beschriebene Zeichenfläche erlaubt sowohl die Eingabe über ein Grafiktablett als auch per Maus. Die Eingabe erfolgt in der Webanwendung und die Daten, die an Server gesendet werden und damit den Erkennungsalgorithmus erreichen sind durch das \ac{REST}-Interface (siehe \ref{subsub:erkennung}) spezifiziert. Die Daten bestehen aus einer Liste von Strichen, wobei jeder Strich aus einzelnen Punkten, die die Bewegung der Stiftspitze beschreiben, besteht. Ein Punkt beinhaltet seine Koordinaten $x$ und $y$ sowie einen Zeitstempel $t$. Im \ac{JSON}-Format sieht das z.B. wiefolgt aus: \lstinline![[{"x":125.5, "y":219.133331298828, "t":1269620535913}, ...], [...]]!
+
+\section{Vorverarbeitung und Normalisierung} % (fold)
 \label{sec:preprocessing_und_normalisierung}
 
-Eine Vorverarbeitung der Daten bevor sie an die Erkennungsalgorithmen ausgeliefert werden, ist eine wirksame Methode um Rauschen, das z.B. durch Ungenauigkeiten der Eingabegeräte oder Unachtsamkeit des Schreibers, entstehen kann, zu relativieren. Vorverarbeitung kann aber auch überflüssige Informationen entfernen, die vom verwendeten Erkennungsalgorithmus nicht verwendet werden. Zudem kann durch Normalisierung der Daten ungewollte Variation reduziert werden. Es gibt kaum ein System zu Handschrifterkennung, das keine Vorverarbeitung durchführt.
+Eine Vorverarbeitung (Preprocessing) der Daten bevor sie an die Erkennungsalgorithmen ausgeliefert werden, ist eine wirksame Methode um Rauschen, das z.B. durch Ungenauigkeiten der Eingabegeräte oder Unachtsamkeit des Schreibers, entstehen kann, zu relativieren. Vorverarbeitung kann aber auch überflüssige Informationen entfernen, die vom verwendeten Erkennungsalgorithmus nicht verwendet werden. Zudem kann durch Normalisierung der Daten ungewollte Variation reduziert werden. Es gibt kaum ein System zu Handschrifterkennung, das keine Vorverarbeitung durchführt.
 
-Wie gesagt verwendet Detexify zur Klassifizierung \ac{DTW}, was natürlich das Preprocessing beeinflusst. In Detexify werden die folgenden Maßnahmen ergriffen:
+Wie gesagt verwendet Detexify zur Klassifizierung \ac{DTW}, was natürlich das die Form der Vorverarbeitung beeinflusst. In Detexify werden die folgenden Maßnahmen ergriffen:
 
 \begin{description}
   \item[Normalisierung der Größe und Position]
@@ -55,6 +63,8 @@ Wie gesagt verwendet Detexify zur Klassifizierung \ac{DTW}, was natürlich das P
     Da die Zeichenfläche im Browser in Detexify eine gewisse Abtastrate hat, die erstens Herstellerabhängig sein kann, und zweitens zeitabhängig ist, kann die Verteilung der Punkte auf den Strichen sehr ungleich sein. Daher werden die Punkte neu verteilt, so dass sie Entfernung zwischen zwei je Punkten gleichmäßig groß ist. Die Anfangs- und Endpunkte von Strichen werden dabei erhalten.
   \item[Verkettung]
     Da \ac{DTW} zwei Zeitreihen vergleicht, werden die Striche miteinander verkettet, so dass das Abstandsmaß direkt angewendet werden kann. \TODO das ist doch Mist! Das muss ich begründen. Verschlechtert ja die Erkennung total.
+  \item[Sortierung der Striche]
+    \TODO mache ich noch gar nicht. Sollte ich aber vielleicht.
 \end{description}
 
 % section preprocessing_und_normalisierung (end)
@@ -62,13 +72,17 @@ Wie gesagt verwendet Detexify zur Klassifizierung \ac{DTW}, was natürlich das P
 \section{Klassifizierung} % (fold)
 \label{sec:klassifizierung}
 
-Die Klassifizierung der normalisierten Daten 
+Die Klassifizierung ist in der Mustererkennung der Vorgang unbekannten Daten eine Klasse zuzuordnen. Im Fall von Detexify ist dies ein \LaTeX-Symbol. Sie kann auf unterschiedliche Weisen erfolgen.
 
-\cite{Tappert:1990p10302} sagt bei Online-Erkennung reichen wegen der Interaktivität einfachere Methoden, was bei mir ja voll zutrifft.
+\TODO Allgemeinere Erklärung nötig?
+
+
+
+\citet{Tappert:1990p10302} sagt bei Online-Erkennung reichen wegen der Interaktivität einfachere Methoden, was bei mir ja voll zutrifft.
 
 \begin{itemize}
   \item KNN - bevorzugt in Japan \cite{Jaeger:2003p1097} / auch template matching genannt / Abstandsmaß entscheidend
-  \item SVM - binärer klassifizierer ~> nicht so sinnvoll bei vielen klassen, bes. lineare SVMs nicht sinnvoll weil keine konvexen Klassen
+  \item SVM - binärer klassifizierer ~> nicht so sinnvoll bei vielen klassen, bes. lineare SVMs nicht sinnvoll weil keine konvexen Klassen, Einer gegen alle = n binäre Klassifizierer + alle neu ausrechnen wenn enues Trainingsmuster / Mehrheitsvotum sogar (n)(n-1)/2 (eek!) Jiang Kapitel 10
   \item HMM - substrokemodelling macht keinen sinn + brauchen keine segmentierung
   \item Nets - ganz schlecht bei vielen Klassen laut \cite{Jaeger:2003p1097}
 \end{itemize}
@@ -83,8 +97,13 @@ Among the distance measures used for classifying handwritten mathematical sym- b
 
 MathBrush \cite{Labahn:2008p10301} benutzt Kombi aus Elastic Matching und anderen Methoden siehe auch \cite{MacLean:2010p9970} DTW in linear time and constant space
 
+- DTW kann schwer durch Elimination (Pruning) optimiert werden, da DTW keine Metrik ist ~> Voronoi-Trick geht nicht also keine exakte Lösung. Vielleicht trotzdem mal Greedy-Algorithmus nach Hart (siehe Jiang-Script) testen?
+
+- Laut Jiang Script Kapitel 4 ist KNN mit vielen Trainingsdaten nahezu so gut wie Bayes (optimal)
+
 Strukturelle Methoden gehen auch nicht gut, weil unterschiedliche Alphabete ~> keine gemeinsame Struktur
 
+- HMMS ~> Definition einer HMM pro Musterklasse :/
 \subsection[DTW]{Dynamic Time Warping}
 \label{sub:dtw}
 
