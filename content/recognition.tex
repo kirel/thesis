@@ -9,7 +9,7 @@ Im Zentrum jeder Mustererkennungsaufgabe steht dabei der Erkennungsalgorithmus (
 \section{Terminologie} % (fold)
 \label{sec:terminologie}
 
-Wie in jedem Forschungsgebiet hat sich auch bei der Handschrifterkennung eine Nomenklatur entwickelt, die die verschiendenen Aspekte des Themas beschreibt.
+Wie in jedem Forschungsgebiet hat sich auch bei der Handschrifterkennung eine Nomenklatur entwickelt, die die verschiedenen Aspekte des Themas beschreibt.
 
 Man unterscheidet zwischen \emph{Online}- und \emph{Offline}-Systemen \cite{Tappert:1990p10302}. Bei Online-Systemen wird die Erkennung durchgeführt während der Nutzer schreibt. Die Striche werden dabei vom Eingabegerät (häufig ein Grafiktablett) als Funktion $ t \mapsto \alpha $, wobei $\alpha$ den Zustand der Stiftspitze kodiert, an das System übertragen. Das heißt, es stehen für die Erkennung alle dynamischen Eigenschaften des Geschriebenen zur Verfügung, wie die Anzahl, Reihenfolge und Richtung der einzelnen Pinselstriche. Im Gegensatz dazu verarbeiten Offline-Systeme Scans von Geschriebenem, arbeiten also zu einem Zeitpunkt, wenn der Schreibvorgang längst beendet ist. Sie können also außer Pixeln keine weiteren Informationen verwenden.
 Detexify ist ein Online-System.
@@ -97,21 +97,18 @@ Neuronale Netze haben bekanntlich Schwierigkeiten, wenn die Anzahl der Klassen g
 
 \ac{SVM}s haben sich zu einem beliebten Klassifikationsverfahren für bestimmte Problemklassen entwickelt. Bei dem Verfahren betrachtet man eine Menge von (Trainigs-)Objekten in einem Verktorraum (dem Merkmalsraum). Jedes Objekt gehört einer Klasse an und nun legt man eine Hyperebene so durch den Raum, dass die Klassen getrennt und der Rand zu beiden seiten der Hyperebene maximal wird. Das Verfahren ist natürlich nur sinnvoll, wenn sich die Klassen linear trennen lassen. Ist dies nicht der Fall, kann man sich des Kernel-Tricks bedienen und den Merkmalsraum auf einen höherdimensionalen Verktorraum abbilden, in dem die Klassen linear trennbar sind.
 
-\ac{SVM}s sind binäre Klassifizierer. Um sie also bei $N>2$ Klassen verwenden zu können gibt es unterschiedliche Strategien. Zum einen gibt es die \ac{WTA}-Strategie bei der $N$ binäre Klassifizierer konstruiert werden, wobei der $i$-te Klassifizierer $\rho_i$ die Klasse $C_i$ und $C_i^{\complement}$ (also alle anderen Klassen) unterscheidet. Einem unbekannten Objekt $x$ wird dann die Klasse zugeordnet, deren SVM $\rho_i$ das beste Ergebnis zurückliefert\footnote{Eine SVM ist als Funktion realisiert, die die Lage eines Eingabevektors zur Hyperebene zurückgibt. Das Ergebnis ist besser wenn der Eingabevektor weit auf der richtigen Seite liegt, also der Abstand größer ist.}. Zum anderen gibt es die \ac{MWV}-Strategie bei der für jedes Paar von Klassen $C_i$ und $C_j$ ein Klassifizierer $\rho_{ij}$ mit den Objekten aus $C_i$ gegen die Objekte aus $C_j$ trainiert wird. Für ein unbekanntes Objekt $x$ werden nun alle $N(N-1)/2$ Klassifizierer nach ihrer Stimme gefragt und die Klasse mit den meisten Stimmen gewinnt. Weitere Kombinationsstrategien finden sich in \cite{Duan:2005p11426}.
+\ac{SVM}s sind binäre Klassifizierer. Um sie also bei $N>2$ Klassen verwenden zu können gibt es unterschiedliche Strategien. Zum einen gibt es die \ac{WTA}-Strategie bei der $N$ binäre Klassifizierer konstruiert werden, wobei der $i$-te Klassifizierer $\rho_i$ die Klasse $C_i$ und $C_i^{\complement}$ (also alle anderen Klassen) unterscheidet. Einem unbekannten Objekt $x$ wird dann die Klasse zugeordnet, deren SVM $\rho_i$ das beste Ergebnis zurückliefert\footnote{Eine SVM ist als Funktion realisiert, die die Lage eines Eingabevektors zur Hyperebene zurückgibt. Das Ergebnis ist besser wenn der Eingabevektor weit auf der richtigen Seite liegt, also der Abstand größer ist.}. Zum anderen gibt es die \ac{MWV}-Strategie bei der für jedes Paar von Klassen $C_i$ und $C_j$ ein Klassifizierer $\rho_{ij}$ mit den Objekten aus $C_i$ gegen die Objekte aus $C_j$ trainiert wird. Für ein unbekanntes Objekt $x$ werden nun alle $N(N-1)/2$ Klassifizierer nach ihrer Stimme gefragt und die Klasse mit den meisten Stimmen gewinnt. Weitere Kombinationsstrategien finden sich in \cite{Duan:2005p11426} und \cite{Platt:2000p11488}.
 
 \TODO SVM in Literatur, insb. Kernel-Trick
 Bernhard Schölkopf, Alex Smola: Learning with Kernels: Support Vector Machines, Regularization, Optimization, and Beyond (Adaptive Computation and Machine Learning), MIT Press, Cambridge, MA, 2002, ISBN 0-262-19475-9.
 Ingo Steinwart, Andreas Christmann: Support Vector Machines, Springer, New York, 2008. ISBN 978-0-387-77241-7. 602 pp.
 
-\citet{Tapia:2003p11202,Tapia:2005p11236} verwenden \ac{SVM}s (aber ich hab noch keine Ahnung wie) 
+\citet{Tapia:2003p11202,Tapia:2005p11236} verwenden \ac{DAGSVM}s \cite{Platt:2000p11488} zur Symbolerkennung in einem System, dass u.a. mathematische Formeln auf einer Elektronischen Tafel erkennt.
 % später dann MathFor \cite{Tapia:2008p11059}. 
-\citet{Golubitsky:2009p2456} verwenden \ac{SVM}s zusammen mit funktionalapprox\dots \TODO
+\citet{Golubitsky:2009p2456,Keshari:2008p528,Golubitsky:2009p2321} stellen Mathematische Symbole als Merkmalsvektor bestehend aus der Koeffitienten einer Funktionalapproximation der Striche dar und trainieren damit \ac{SVM}s, die sie mit \ac{MWV} kombinieren. Die genannten Autoren berichten auch von guten Ergebnissen — jedoch hätten \ac{SVM}s für handgemalten entscheidende Nachteile.
 
+Das Hauptproblem besteht darin, dass SVMs schlecht nachtrainiert werden können. Um nachträglich ein neues Trainingsmuster hinzuzufügen, müssen bei $N$ Klassen beim deutlich besseren \cite{Duan:2005p11426} MWV-Verfahren $N-1$ SVMs angepasst (das heißt die Hyperebenen neu ausgerechnet) werden. Um eine neue Klasse hinzuzufügen müssen ebenfalls $N$ neue SVMs eingefügt werden. Ein inkrementelles Training ist also bei SVMs gar nicht denkbar. SVMs sind also ebenfalls nicht \emph{adaptionsfähig} und kommen daher nicht wirklich in Frage.
 
-SVM - binärer klassifizierer ~> nicht so sinnvoll bei vielen klassen, bes. lineare SVMs nicht sinnvoll weil keine konvexen Klassen, Einer gegen alle = n binäre Klassifizierer + alle neu ausrechnen wenn enues Trainingsmuster / Mehrheitsvotum sogar (n)(n-1)/2 (eek!) Jiang Kapitel 10
-Lorem
-
-i% siehe \cite{Vuong:2010p10279} - 
 \subsection[HMM]{HMM - Hidden Markov Models}
 \label{sub:hmm}
 
@@ -126,16 +123,20 @@ HMM - substrokemodelling macht keinen sinn + brauchen keine segmentierung
 
 Die Entscheidung ist im Fall von Detexify auf \ac{DTW} gefallen. Dabei ist \ac{DTW} eigentlich das Abstandsmaß und zur Klassifikation wird der Nearest-Neighbor-Algorithmus verwendet.
 
+- \cite{Golubitsky:2009p1842} enthält ganz viele Statistiken zu Parametern für DTW (und Vergleich mit Funktionalapproximationsmaß)
+
+- \cite{Golubitsky:2009p2433} Among the distance measures used for classifying handwritten mathematical sym- bols, the elastic matching distance [14] is known to be one of the most accurate. In diesem Paper gibts auch Infos zum verwendete Datensatz. Weitere Statistiken zu Elastic matching Parametern.
+
 KNN - bevorzugt in Japan \cite{Jaeger:2003p1097} / auch template matching genannt / Abstandsmaß entscheidend
 - KNN z.B. FFES mit 50 features und verm. euklidischem Abstand \TODO Paper suchen! siehe \cite{Vuong:2010p10279}
 Natural Log, symbol recognition is implemented using a statistical approach based on Gaussian Density Estimation \dots siehe auch \cite{Vuong:2010p10279} \TODO Paper suchen
 
 \citet{Tappert:1990p10302} sagt bei Online-Erkennung reichen wegen der Interaktivität einfachere Methoden, was bei mir ja voll zutrifft.
 
-Among the distance measures used for classifying handwritten mathematical sym- bols, the elastic matching distance is known to be one of the most accurate \cite{Golubitsky:2009p2433}
-
 \cite{Vuong:2010p10279} benutzt Elastic Matching mit Steigung und Krümmung
 MathBrush \cite{Labahn:2008p10301} benutzt Kombi aus Elastic Matching und anderen Methoden siehe auch \cite{MacLean:2010p9970} DTW in linear time and constant space
+
+\cite{Watt:2005p1816} schlägt pruning durch klassische features vor
 
 - DTW kann schwer durch Elimination (Pruning) optimiert werden, da DTW keine Metrik ist ~> Voronoi-Trick geht nicht also keine exakte Lösung. Vielleicht trotzdem mal Greedy-Algorithmus nach Hart (siehe Jiang-Script) testen?
 
