@@ -1,6 +1,17 @@
 %!TEX TS-program = xelatex
 %!TEX encoding = UTF-8 Unicode
 \documentclass[12pt]{book}
+
+\usepackage{caption2} % fuer captions in Figures
+\usepackage{scrpage2} % fuer Kopf- und Fusszeilenlayout
+\usepackage{titlesec} % um das Layout von Ueberschriften zu aendern
+  
+% \documentclass[a4paper, twoside, headsepline, 11pt, BCOR10mm, DIV10, footinclude, headinclude]{scrbook}
+% BCOR: ``binding correction'' am besten an einem Probedruck ausmessen
+% DIV:  beinflusst, wie ``gross'' der Satzspiegel wird -- s. Koma-Dokumentation
+% footinclude, headinclude: dadurch werden die Fuss- und Kopfzeilen
+%       in den Satzspiegel eingebunden (empfiehlt sich bei lebendenden
+
 \synctex=1
 \usepackage{amssymb} % Mathe
 \usepackage{amsmath} % Mathe
@@ -44,7 +55,8 @@ belowskip        = \bigskipamount
 \defaultfontfeatures{Mapping=tex-text} % converts LaTeX specials (``quotes'' --- dashes etc.) to unicode
 \setromanfont [Ligatures={Common}, Numbers={OldStyle}]{Adobe Caslon Pro}
 \setmonofont[Scale=0.8]{Monaco} 
-\setsansfont[Scale=0.9]{Optima Regular} 
+% \setsansfont[Scale=0.9]{Optima Regular} 
+\setsansfont[Scale=0.9]{Myriad Pro} 
 % ---- CUSTOM AMPERSAND
 \newcommand{\amper}{{\fontspec[Scale=.95]{Adobe Caslon Pro}\selectfont\itshape\&}}
 
@@ -52,7 +64,6 @@ belowskip        = \bigskipamount
 \newcommand{\FIXME}{\textsc{\textbf{\textcolor{red}{Fixme\ }}}}
 
 % HEADINGS
-\pagestyle{headings}
 % \usepackage{sectsty} 
 % \usepackage[normalem]{ulem} 
 % \sectionfont{\sffamily\mdseries\large} 
@@ -86,7 +97,9 @@ belowskip        = \bigskipamount
 \usepackage[numbers,round]{natbib}
 
 % \pagestyle{headings}
-% 
+%
+
+\hyphenation{Mannig-faltig-keit}
 
 \begin{document}  
 
@@ -112,15 +125,20 @@ belowskip        = \bigskipamount
 % \end{center}
 % \vfill\mbox{}\newpage
 
-\rule{0mm}{1mm}
-\newpage
-\rule{0mm}{1mm}
-\newpage
+%\rule{0mm}{1mm}
+%\newpage
+\pagestyle{empty}
+\cleardoublepage
+\input{statement}
+% \rule{0mm}{1mm}
+% \newpage
+\pagestyle{empty}
+\cleardoublepage
+
 
 % Fürs Prüfungsamt ein paar Seiten frei.
+\pagestyle{headings}
 
-\listoffigures    % Abbildungsverzeichnis
-\listoftables     % Tabellenverzeichnis
 \tableofcontents  % Inhaltsverzeichnis
 
 \input{content/preface}
@@ -139,9 +157,16 @@ belowskip        = \bigskipamount
 \input{content/listings}
 
 \backmatter
-\input{statement}
 \input{acknowledgement}
 \input{bibliography}
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{Abbildungsverzeichnis}
+\listoffigures    % Abbildungsverzeichnis
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{Tabellenverzeichnis}
+\listoftables     % Tabellenverzeichnis
 
 \end{document}
 

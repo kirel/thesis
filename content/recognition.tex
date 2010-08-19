@@ -1,18 +1,23 @@
+
+
 %!TEX root = /Users/daniel/Documents/thesis/thesis.tex
-\chapter{Erkennung handgeschriebener Symbole} % (fold)
+\chapter{Erkennung handgeschriebener Symbole} 
+
+% (fold)
 \label{cha:erkennung_handgeschriebener_symbole}
 
 Die Erkennung handgeschriebener Symbole ist das Herzstück von Detexify. Hier wird einer unbekannten Eingabe von Daten ein \LaTeX-Symbol zugeordnet. Genau genommen wird der Eingabe eine Rangfolge von Symbolen zugeordnet, welche in der in \ref{sub:symbolsuche} beschriebenen Liste auftaucht, nachdem ein Nutzer ein Symbol gezeichnet hat.
 
 Im Zentrum jeder Mustererkennungsaufgabe steht dabei der Erkennungsalgorithmus (\ref{sec:klassifizierung}). Je nach verwendetem Verfahren geht dem eine Vorverarbeitung (\ref{sec:vorverarbeitung}) und Merkmalsextraktion (\ref{sec:merkmale}) voraus. In diesem Kapitel beschreibe ich welche Verfahren bei Detexify zum Einsatz kommen und begründe die Auswahl.
 
-\section{Terminologie} % (fold)
+\section{Terminologie} 
+
+% (fold)
 \label{sec:terminologie}
 
 Wie in jedem Forschungsgebiet hat sich auch bei der Handschrifterkennung eine Nomenklatur entwickelt, die die verschiedenen Aspekte des Themas beschreibt.
 
-Man unterscheidet zwischen \emph{Online}- und \emph{Offline}-Systemen \cite{Tappert:1990p10302}. Bei Online-Systemen wird die Erkennung durchgeführt während der Nutzer schreibt. Die Striche werden dabei vom Eingabegerät (häufig ein Grafiktablett) als Funktion $ t \mapsto \alpha $, wobei $\alpha$ den Zustand der Stiftspitze kodiert, an das System übertragen. Das heißt, es stehen für die Erkennung alle dynamischen Eigenschaften des Geschriebenen zur Verfügung, wie die Anzahl, Reihenfolge und Richtung der einzelnen Pinselstriche. Im Gegensatz dazu verarbeiten Offline-Systeme Scans von Geschriebenem, arbeiten also zu einem Zeitpunkt, wenn der Schreibvorgang längst beendet ist. Sie können also außer Pixeln keine weiteren Informationen verwenden.
-Detexify ist ein Online-System.
+Man unterscheidet zwischen \emph{Online}- und \emph{Offline}-Systemen \cite{Tappert:1990p10302}. Bei Online-Systemen wird die Erkennung durchgeführt während der Nutzer schreibt. Die Striche werden dabei vom Eingabegerät (häufig ein Grafiktablett) als Funktion $ t \mapsto \alpha $, wobei $\alpha$ den Zustand der Stiftspitze kodiert, an das System übertragen. Das heißt, es stehen für die Erkennung alle dynamischen Eigenschaften des Geschriebenen zur Verfügung, wie die Anzahl, Reihenfolge und Richtung der einzelnen Pinselstriche. Im Gegensatz dazu verarbeiten Offline-Systeme Scans von Geschriebenem, arbeiten also zu einem Zeitpunkt, wenn der Schreibvorgang längst beendet ist. Sie können also außer Pixeln keine weiteren Informationen verwenden. Detexify ist ein Online-System.
 
 Der Zustand der Stiftspitze besteht in Online-Systemen in der Regel aus den Koordinaten $(x,y)$, der Information, ob die Spitze das Tablett berührt, oft bezeichnet mit \emph{pen-up} bzw. \emph{pen-down} und in manchen Fällen auch aus der Neigung und dem Azimut.
 
@@ -20,48 +25,48 @@ Aus den Daten werden dann häufig Merkmale abgeleitet, sog. \emph{Features}. Man
 
 \TODO Typ 1,2,3 Klassifizierer
 
-\section[Herausforderungen]{Herausforderungen der Erkennung von \LaTeX-Symbolen}
-Die Erkennung von handgemalten \LaTeX-Symbolen ist allein durch die enorme Anzahl der Symbole eine große Herausforderung \cite{Koerich:2003p1562}. Hinzu kommt, dass die Symbole aus sehr unterschiedlichen Alphabeten kommen. Es kommen lateinische, griechische, mathematische und weitere Symbole vor. Im Gegensatz zu asiatischen Sprachen, die ebenfalls sehr große Alphabete aufweisen\footnote{In Japan werden heute 6000-7000 Buchstaben verwendet. In China ist die Anzahl der im täglichen Leben verwendeten Buchstaben bei etwa 5000 \cite{Jaeger:2003p1097}}, ist jedoch die Anzahl und Reihenfolge der Striche nicht vorgegeben, was die Erkennung zusätzlich verkompliziert \cite{Watt:2005p1816}. Außerdem gibt es sehr viele sehr ähnliche Symbole wie $\rightarrow,\mapsto,\leadsto,\rightharpoonup,\hookrightarrow,\rightarrowtail$. Dazu kommen noch die Probleme vor der jede Handschrifterkennung steht, wie unterschiedliche Schreibstile sowohl von unterschiedlichen Schreibern als auch natürliche Variationen in der Schreibweise eines Einzelnen.
+\section[Herausforderungen]{Herausforderungen der Erkennung von \LaTeX-Symbolen} Die Erkennung von handgemalten \LaTeX-Symbolen ist allein durch die enorme Anzahl der Symbole eine große Herausforderung \cite{Koerich:2003p1562}. Hinzu kommt, dass die Symbole aus sehr unterschiedlichen Alphabeten kommen. Es kommen lateinische, griechische, mathematische und weitere Symbole vor. Im Gegensatz zu asiatischen Sprachen, die ebenfalls sehr große Alphabete aufweisen\footnote{In Japan werden heute 6000-7000 Buchstaben verwendet. In China ist die Anzahl der im täglichen Leben verwendeten Buchstaben bei etwa 5000 \cite{Jaeger:2003p1097}}, ist jedoch die Anzahl und Reihenfolge der Striche nicht vorgegeben, was die Erkennung zusätzlich verkompliziert \cite{Watt:2005p1816}. Außerdem gibt es sehr viele sehr ähnliche Symbole wie $\rightarrow,\mapsto,\leadsto,\rightharpoonup,\hookrightarrow,\rightarrowtail$. Dazu kommen noch die Probleme vor der jede Handschrifterkennung steht, wie unterschiedliche Schreibstile sowohl von unterschiedlichen Schreibern als auch natürliche Variationen in der Schreibweise eines Einzelnen.
 
 \TODO Schwierigkeiten weil Eingabe per Maus erwähnen?
 
 Ein guter Klassifizierer muss also einiges leisten und der Situation gerecht zu werden.
 
-\section{Eingabe}
-\label{sec:input}
+\section{Eingabe} \label{sec:input}
 
 Die Eingabe erfolgt für Handschrifterkennungssysteme häufig durch ein Grafiktablett. Dies ist auch in Detexify eine Möglichkeit. Die in \ref{sub:symbolsuche} beschriebene Zeichenfläche erlaubt sowohl die Eingabe über ein Grafiktablett als auch per Maus. Die Eingabe erfolgt in der Webanwendung und die Daten, die an Server gesendet werden und damit den Erkennungsalgorithmus erreichen sind durch das \ac{REST}-Interface (siehe \ref{subsub:erkennung}) spezifiziert. Die Daten bestehen aus einer Liste von Strichen, wobei jeder Strich aus einzelnen Punkten, die die Bewegung der Stiftspitze beschreiben, besteht. Ein Punkt beinhaltet seine Koordinaten $x$ und $y$ sowie einen Zeitstempel $t$. Im \ac{JSON}-Format sieht das z.B. wiefolgt aus: \lstinline![[{"x":125.5, "y":219.133331298828, "t":1269620535913}, ...], [...]]!
 
-\section{Vorverarbeitung und Normalisierung} % (fold)
+\section{Vorverarbeitung und Normalisierung} 
+
+% (fold)
 \label{sec:vorverarbeitung}
 
 Eine Vorverarbeitung (Preprocessing) der Daten bevor sie an die Erkennungsalgorithmen ausgeliefert werden, ist eine wirksame Methode um Rauschen, das z.B. durch Ungenauigkeiten der Eingabegeräte oder Unachtsamkeit des Schreibers, entstehen kann, zu relativieren. Vorverarbeitung kann aber auch überflüssige Informationen entfernen, die vom verwendeten Erkennungsalgorithmus nicht verwendet werden. Zudem kann durch Normalisierung der Daten ungewollte Variation reduziert werden. Es gibt kaum ein System zu Handschrifterkennung, das keine Vorverarbeitung durchführt.
 
 Wie gesagt verwendet Detexify zur Klassifizierung \ac{DTW}, was natürlich das die Form der Vorverarbeitung beeinflusst. In Detexify werden die folgenden Maßnahmen ergriffen:
 
+\TODO Andere blasen sich hier mächtig auf und beschrieben alles haarklein mit vorher/nacher Schaubildern. Will ich das auch?
+
 \begin{description}
-  \item[Normalisierung der Größe und Position]
-    Die ankommenden Striche werden verschoben und skaliert, so dass sie unter Beibehaltung ihres Seitenverhältnisses zentriert und maximal im Quadrat $[0,1]\times[0,1]$ liegen. Das ist notwendig, damit \ac{DTW} sinnvoll angewandt werden kann.
-  %\item[Entfernung von Haken]
-    %An den Enden von Strichen kann es zu Haken kommen, die beim Aufsetzen\dots
-  \item[Glättung]
-    Jeder Punkt eines Striches wird durch das arithmetische Mittel des Punktes und seiner beiden Nachbarn ersetzt.
-  \item[Äquidistante Verteilung]
-    Da die Zeichenfläche im Browser in Detexify eine gewisse Abtastrate hat, die erstens Herstellerabhängig sein kann, und zweitens zeitabhängig ist, kann die Verteilung der Punkte auf den Strichen sehr ungleich sein. Daher werden die Punkte neu verteilt, so dass sie Entfernung zwischen zwei je Punkten gleichmäßig groß ist. Die Anfangs- und Endpunkte von Strichen werden dabei erhalten.
-  \item[Verkettung]
-    Da \ac{DTW} zwei Zeitreihen vergleicht, werden die Striche miteinander verkettet, so dass das Abstandsmaß direkt angewendet werden kann. \TODO das ist doch Mist! Das muss ich begründen. Verschlechtert ja die Erkennung total.
-  \item[Sortierung der Striche]
-    \TODO mache ich noch gar nicht. Sollte ich aber vielleicht.
+  \item[Normalisierung der Größe und Position] Die ankommenden Striche werden verschoben und skaliert, so dass sie unter Beibehaltung ihres Seitenverhältnisses zentriert und maximal im Quadrat $[0,1]\times[0,1]$ liegen. Das ist notwendig, damit \ac{DTW} sinnvoll angewandt werden kann.
+  \item[Entfernung von Haken]
+  \TODO An den Enden von Strichen kann es zu Haken kommen, die beim Aufsetzen\dots
+  \item[Glättung] Jeder Punkt eines Striches wird durch das arithmetische Mittel des Punktes und seiner beiden Nachbarn ersetzt. 
+  \item[Äquidistante Verteilung] Da die Zeichenfläche im Browser in Detexify eine gewisse Abtastrate hat, die erstens Herstellerabhängig sein kann, und zweitens zeitabhängig ist, kann die Verteilung der Punkte auf den Strichen sehr ungleich sein. Daher werden die Punkte neu verteilt, so dass sie Entfernung zwischen zwei je Punkten gleichmäßig groß ist. Die Anfangs- und Endpunkte von Strichen werden dabei erhalten. 
+  \item[Verkettung] Da \ac{DTW} zwei Zeitreihen vergleicht, werden die Striche miteinander verkettet, so dass das Abstandsmaß direkt angewendet werden kann. \TODO das ist doch Mist! Das muss ich begründen. Verschlechtert ja die Erkennung total. 
+  \item[Richtungskorrektur der Striche] \TODO mache ich noch gar nicht. Sollte ich aber vielleicht. 
+  \item[Sortierung der Striche] \TODO mache ich noch gar nicht. Sollte ich aber vielleicht.
 \end{description}
 
 % section preprocessing_und_normalisierung (end)
-
-\section{Merkmale}
-\label{sec:merkmale}
+\section{Merkmale} \label{sec:merkmale}
 
 \TODO das in Detexify verwendete Verfahren erfordert keine Merkmalsextraktion.
+\citet{Xie:2007p11427} sagt man wisse noch nicht recht welche Merkmale für Handschrifterkennung optimal seinen.
 
-\section{Klassifizierung} % (fold)
+
+\section{Klassifizierung} 
+
+% (fold)
 \label{sec:klassifizierung}
 
 Die Klassifizierung ist in der Mustererkennung der Vorgang unbekannten Daten eine Klasse zuzuordnen. Im Fall von Detexify ist dies ein \LaTeX-Symbol. Sie kann auf unterschiedliche Weisen erfolgen.
@@ -69,57 +74,59 @@ Die Klassifizierung ist in der Mustererkennung der Vorgang unbekannten Daten ein
 Zur Erkennung einzelner handgeschriebener Symbole wurden bereits unterschiedlichste Klassifikationsverfahren verwendet \cite{Plamondon:2000p10303}. Um ein leistungsstarkes Backend für Detexify zu entwickeln musste also ein Verfahren ausgewählt und gegebenenfalls optimiert werden, dass den spezifischen Anforderungen der Anwendung und der Architektur gerecht wurde.
 
 Die Anforderungen sind die folgenden:
-
 \begin{description}
-  \label{desc:anforderungen}
-  \item[Adaptionsfähigkeit] Es sollte jeder Zeit ein Training zusätzlicher Symbole möglich sein.
-  \item[Skalierbarkeit] Die Erkennungsraten sollten auch bei einer großen Anzahl von Klassen gut sein.
-  \item[Laufzeitverhalten] Das Laufzeitverhalten sollte eine Erkennung in Echtzeit ermöglichen.
-  \item[Interaktivität] Es sollten die besten $N$ Symbole zur Auswahl angezeigt werden. 
+	\label{desc:anforderungen} 
+	\item[Adaptionsfähigkeit] Es sollte jeder Zeit ein Training zusätzlicher Symbole möglich sein. 
+	\item[Skalierbarkeit] Die Erkennungsraten sollten auch bei einer großen Anzahl von Klassen gut sein. 
+	\item[Laufzeitverhalten] Das Laufzeitverhalten sollte eine Erkennung in Echtzeit ermöglichen. 
+	\item[Interaktivität] Es sollten die besten $N$ Symbole zur Auswahl angezeigt werden. 
 \end{description}
 
 Ein besonderes Interesse galt in meinem Fall natürlichen den Verfahren, die für Symbolerkennung, insbesondere mathematischer Symbole, bereits erfolgreich eingesetzt wurden. Dabei handelt es sich um \ac{SVM}, \ac{HMM} und \ac{DTW}. Es gibt auch einige wenige Strukturelle Ansätze.
 
-\subsection{Strukturelle Methoden}
-\label{sub:strukturelle_methoden}
+\subsection{Strukturelle Methoden} \label{sub:strukturelle_methoden}
 
-Strukturelle Methoden basieren auf der Annahme, dass Handschrift aus elementaren Formen, auch Allographen genannt, besteht. Die Vorgehensweise lässt sich am besten an einem Beispiel illustrieren. \citet{Fitzgerald:2004p10858} stellen mathematische Symbole als eine Kombination von Merkmalen der Typen \emph{Linie}, \emph{C-Form} oder \emph{O-Form} dar. Diese Merkmale werden mithilfe von Fuzzylogik aus den Strichen extrahiert und zur Zuordnung des richtigen Labels kommt wieder Fuzzylogik zum Einsatz. Dabei haben sie für jede Symbolklasse, die sie verwenden eine eigene Fuzzy-Regel erstellt. Im zitierten Artikel waren das Regeln für die Zahlen 1-9 und kleingeschriebene lateinische Buchstaben.
-Es ist offensichtlich, dass ein solches Vorgehen für Detexify mit nahezu 1000 Symbolklassen nicht in Frage kommen kann. Zum Problem für jede Klasse ein Modell zu definieren kommt hinzu, dass das System nicht \emph{adaptionsfähig} im in \ref{desc:anforderungen} definierten Sinne ist, da jedes neue Symbol ein neues Modell braucht. Ohnehin ist es schwierig bei einer so großen Anzahl von Symbolklassen eine gemeinsame Struktur zu finden, die einen Strukturellen Ansatz praktikabel macht.
-Aus den genannten Gründen habe ich Strukturelle Methoden als ungeeignet für Detexify verworfen.
+Strukturelle Methoden basieren auf der Annahme, dass Handschrift aus elementaren Formen, auch Allographen genannt, besteht. Die Vorgehensweise lässt sich am besten an einem Beispiel illustrieren. \citet{Fitzgerald:2004p10858} stellen mathematische Symbole als eine Kombination von Merkmalen der Typen \emph{Linie}, \emph{C-Form} oder \emph{O-Form} dar. Diese Merkmale werden mithilfe von Fuzzylogik aus den Strichen extrahiert und zur Zuordnung des richtigen Labels kommt wieder Fuzzylogik zum Einsatz. Dabei haben sie für jede Symbolklasse, die sie verwenden eine eigene Fuzzy-Regel erstellt. Im zitierten Artikel waren das Regeln für die Zahlen 1-9 und kleingeschriebene lateinische Buchstaben. Es ist offensichtlich, dass ein solches Vorgehen für Detexify mit nahezu 1000 Symbolklassen nicht in Frage kommen kann. Zum Problem für jede Klasse ein Modell zu definieren kommt hinzu, dass das System nicht \emph{adaptionsfähig} im in \ref{desc:anforderungen} definierten Sinne ist, da jedes neue Symbol ein neues Modell braucht. Ohnehin ist es schwierig bei einer so großen Anzahl von Symbolklassen eine gemeinsame Struktur zu finden, die einen Strukturellen Ansatz praktikabel macht. Aus den genannten Gründen habe ich Strukturelle Methoden als ungeeignet für Detexify verworfen.
 
-\subsection{Künstliche Neuronale Netze}
-\label{sub:kuenstliche_neuronale_netze}
+\subsection{Künstliche Neuronale Netze} \label{sub:kuenstliche_neuronale_netze}
 
 Neuronale Netze haben bekanntlich Schwierigkeiten, wenn die Anzahl der Klassen groß ist \cite{Jaeger:2003p1097}. Dementsprechend ist die Anzahl der in Übersichtsartikeln zur Erknennung von Mathematischen Formeln wie \cite{Chan:2000p559} und \cite{Tapia:2007p9160} zitierten Arbeiten, die neuronale Netze verwenden, äußerst gering und ich habe keinen nach 1996 veröffentlichten Artikel gefunden, der Neuronale Netze für diese Aufgabe verwendet. Neuronale Netze können also als irrelevant abgehakt werden.
 
-\subsection[SVM]{SVM - Support Vector Machines}
-\label{sub:svm}
+\subsection[SVM]{SVM - Support Vector Machines} \label{sub:svm}
 
-\ac{SVM}s haben sich zu einem beliebten Klassifikationsverfahren für bestimmte Problemklassen entwickelt. Bei dem Verfahren betrachtet man eine Menge von (Trainigs-)Objekten in einem Verktorraum (dem Merkmalsraum). Jedes Objekt gehört einer Klasse an und nun legt man eine Hyperebene so durch den Raum, dass die Klassen getrennt und der Rand zu beiden seiten der Hyperebene maximal wird. Das Verfahren ist natürlich nur sinnvoll, wenn sich die Klassen linear trennen lassen. Ist dies nicht der Fall, kann man sich des Kernel-Tricks bedienen und den Merkmalsraum auf einen höherdimensionalen Verktorraum abbilden, in dem die Klassen linear trennbar sind.
+\ac{SVM}s haben sich zu einem beliebten Klassifikationsverfahren für bestimmte Problemklassen entwickelt. Bei dem Verfahren betrachtet man eine Menge von (Trainings-)Objekten in einem Verktorraum (dem Merkmalsraum). Jedes Objekt gehört einer Klasse an und nun legt man eine Hyperebene so durch den Raum, dass die Klassen getrennt und der Rand zu beiden Seiten der Hyperebene maximal wird. Das Verfahren ist natürlich nur sinnvoll, wenn sich die Klassen linear trennen lassen. Ist dies nicht der Fall, kann man sich des Kernel-Tricks bedienen und den Merkmalsraum auf einen höherdimensionalen Verktorraum abbilden, in dem die Klassen linear trennbar sind.
 
-\ac{SVM}s sind binäre Klassifizierer. Um sie also bei $N>2$ Klassen verwenden zu können gibt es unterschiedliche Strategien. Zum einen gibt es die \ac{WTA}-Strategie bei der $N$ binäre Klassifizierer konstruiert werden, wobei der $i$-te Klassifizierer $\rho_i$ die Klasse $C_i$ und $C_i^{\complement}$ (also alle anderen Klassen) unterscheidet. Einem unbekannten Objekt $x$ wird dann die Klasse zugeordnet, deren SVM $\rho_i$ das beste Ergebnis zurückliefert\footnote{Eine SVM ist als Funktion realisiert, die die Lage eines Eingabevektors zur Hyperebene zurückgibt. Das Ergebnis ist besser wenn der Eingabevektor weit auf der richtigen Seite liegt, also der Abstand größer ist.}. Zum anderen gibt es die \ac{MWV}-Strategie bei der für jedes Paar von Klassen $C_i$ und $C_j$ ein Klassifizierer $\rho_{ij}$ mit den Objekten aus $C_i$ gegen die Objekte aus $C_j$ trainiert wird. Für ein unbekanntes Objekt $x$ werden nun alle $N(N-1)/2$ Klassifizierer nach ihrer Stimme gefragt und die Klasse mit den meisten Stimmen gewinnt. Weitere Kombinationsstrategien finden sich in \cite{Duan:2005p11426} und \cite{Platt:2000p11488}.
+\ac{SVM}s sind binäre Klassifizierer. Um sie also bei $N>2$ Klassen verwenden zu können gibt es unterschiedliche Strategien. Zum einen gibt es die \ac{WTA}-Strategie bei der $N$ binäre Klassifizierer konstruiert werden, wobei der $i$-te Klassifizierer $\rho_i$ die Klasse $C_i$ und $C_i^{\complement}$ (also alle anderen Klassen) unterscheidet. Einem unbekannten Objekt $x$ wird dann die Klasse zugeordnet, deren SVM $\rho_i$ das beste Ergebnis zurückliefert\footnote{Eine SVM ist als Funktion realisiert, die die Lage eines Eingabevektors zur Hyperebene zurückgibt. Das Ergebnis ist besser wenn der Eingabevektor weit auf der richtigen Seite liegt, also der Abstand zur Ebene größer ist.}. Zum anderen gibt es die \ac{MWV}-Strategie bei der für jedes Paar von Klassen $C_i$ und $C_j$ ein Klassifizierer $\rho_{ij}$ mit den Objekten aus $C_i$ gegen die Objekte aus $C_j$ trainiert wird. Für ein unbekanntes Objekt $x$ werden nun alle $N(N-1)/2$ Klassifizierer nach ihrer Stimme gefragt und die Klasse mit den meisten Stimmen gewinnt. Weitere Kombinationsstrategien finden sich in \cite{Duan:2005p11426} und \cite{Platt:2000p11488}.
 
-\TODO SVM in Literatur, insb. Kernel-Trick
-Bernhard Schölkopf, Alex Smola: Learning with Kernels: Support Vector Machines, Regularization, Optimization, and Beyond (Adaptive Computation and Machine Learning), MIT Press, Cambridge, MA, 2002, ISBN 0-262-19475-9.
-Ingo Steinwart, Andreas Christmann: Support Vector Machines, Springer, New York, 2008. ISBN 978-0-387-77241-7. 602 pp.
+\TODO SVM in Literatur, insb. Kernel-Trick Bernhard Schölkopf, Alex Smola: Learning with Kernels: Support Vector Machines, Regularization, Optimization, and Beyond (Adaptive Computation and Machine Learning), MIT Press, Cambridge, MA, 2002, ISBN 0-262-19475-9. Ingo Steinwart, Andreas Christmann: Support Vector Machines, Springer, New York, 2008. ISBN 978-0-387-77241-7. 602 pp.
 
 \citet{Tapia:2003p11202,Tapia:2005p11236} verwenden \ac{DAGSVM}s \cite{Platt:2000p11488} zur Symbolerkennung in einem System, dass u.a. mathematische Formeln auf einer Elektronischen Tafel erkennt.
-% später dann MathFor \cite{Tapia:2008p11059}. 
-\citet{Golubitsky:2009p2456,Keshari:2008p528,Golubitsky:2009p2321} stellen Mathematische Symbole als Merkmalsvektor bestehend aus der Koeffitienten einer Funktionalapproximation der Striche dar und trainieren damit \ac{SVM}s, die sie mit \ac{MWV} kombinieren. Die genannten Autoren berichten auch von guten Ergebnissen — jedoch hätten \ac{SVM}s für handgemalten entscheidende Nachteile.
+\citet{Golubitsky:2009p2456,Keshari:2008p528,Golubitsky:2009p2321} stellen Mathematische Symbole als Merkmalsvektor bestehend aus der Koeffizienten einer Funktionalapproximation der Striche dar und trainieren damit \ac{SVM}s, die sie mit \ac{MWV} kombinieren. Die genannten Autoren berichten auch von guten Ergebnissen — jedoch hätten \ac{SVM}s für Detexify einen entscheidenden Nachteil.
 
-Das Hauptproblem besteht darin, dass SVMs schlecht nachtrainiert werden können. Um nachträglich ein neues Trainingsmuster hinzuzufügen, müssen bei $N$ Klassen beim deutlich besseren \cite{Duan:2005p11426} MWV-Verfahren $N-1$ SVMs angepasst (das heißt die Hyperebenen neu ausgerechnet) werden. Um eine neue Klasse hinzuzufügen müssen ebenfalls $N$ neue SVMs eingefügt werden. Ein inkrementelles Training ist also bei SVMs gar nicht denkbar. SVMs sind also ebenfalls nicht \emph{adaptionsfähig} und kommen daher nicht wirklich in Frage.
+Das Hauptproblem besteht darin, dass SVMs schlecht nachtrainiert werden können. Um nachträglich ein neues Trainingsmuster hinzuzufügen, müssen bei $N$ Klassen beim deutlich besseren MWV-Verfahren \cite{Duan:2005p11426} $N-1$ SVMs angepasst (das heißt die Hyperebenen neu ausgerechnet) werden. Um eine neue Klasse hinzuzufügen müssen ebenfalls $N$ neue SVMs eingefügt werden. Ein inkrementelles Training ist also bei SVMs gar nicht denkbar. SVMs sind also ebenfalls nicht \emph{adaptionsfähig} und kommen daher nicht wirklich in Frage.
 
-\subsection[HMM]{HMM - Hidden Markov Models}
-\label{sub:hmm}
+\subsection[HMM]{HMM - Hidden Markov Models} \label{sub:hmm}
 
-HMM - substrokemodelling macht keinen sinn + brauchen keine segmentierung
-- HMMS ~> Definition einer HMM pro Musterklasse :/
+\ac{HMM} sind ein statistisches Mustererkennungsverfahren, das schon seit langem in der Spracherkennung eingesetzt wird \cite{Rabiner:1989p11574}. Das liegt daran, dass es besonders geeignet ist zeitliche Muster zu modellieren und außerdem Segmentierung und Klassifizierung integriert \cite{Kosmala:1998p11691}. Der Merkmalsvektor darf dabei von Muster zu Muster in der Länge variieren.
+Dabei beschreibt ein HMM einen diskreten Markovprozess $q=(q_t)_{t=0,1.\dots}$ dessen Zustandsfolge aber nicht sichtbar (also verborgen, daher der Name) ist. Stattdessen sieht der Beobachter eine Symbolfolge $\mathbf{O}=O_1\dots O_T, O_t\in V$ aus einem endlichen Alphabet $V=\{v_i\}_{i=1\dots K}$ wobei zu jedem Zeitpunkt $t$ jeweils $O_t$ nur vom verborgenen Zustand $q_t$ der diskreten Markovkette abhängt. Abb.~\ref{fig:hmm} illustriert das Modell. Eine ausführliche Einführung zu HMMs inklusive Erklärung von diskreten Markovprozessen findet sich bei \citet{Rabiner:1989p11574}. 
+
+\begin{figure}
+  \centering \includegraphics[width=\textwidth]{figures/hmm.png}
+  \caption{HMM}
+  \label{fig:hmm}
+\end{figure}
+
+Man verwendet eine HMM dann folgendermaßen: Jede Klasse $C_i$ bekommt eine HMM $\lambda_i$ deren Parameter anhand einer Stichprobe trainiert werden\footnote{Die Definition der HMM umfasst die Wahl der Topologie, Anzahl der Zustände sowie der Verteilung der Ausgabesymbole.}. Einem unbekannten Objekt, das als Folge $\mathbf{O}$ von Merkmalsvektoren beobachtet wird, wird dann die Klasse zugeordnet, für die die Wahrscheinlichkeit $P(\mathbf{O}|\lambda_i)$, dass die Folge von der zugehörigen HMM erzeugt wurde, maximiert wird.
+
+\citet{Xie:2007p11427} beschreibt ein System zur Erkennung mathematischer Symbole, das auf HMM basiert. In derselben Arbeit wird auch ein Klassifizierer, der auf DTW basiert vorgestellt, und für diesen werden beeindruckende Erkennungsraten von im besten Fall 94.8 \% angeben. Obwohl sich ein Vergleich angeboten hätte werden jedoch für das HMM-basierte System keine absoluten Erkennungsraten vorgestellt, sondern lediglich relative Veränderungen, wenn mit den Parametern der HMM gespielt wird. Das stimmt etwas nachdenklich.
+
+\citet{Winkler:1996p11716} kombiniert mehrere HMMs, die mit unterschiedlichen Merkmalen trainiert werden, und erreicht bei einem Alphabet von 84 Symbolen im besten Fall eine Erkennungsrate von 91 \%.
+
 \cite{Fitzgerald:2005p331}
 
 \cite{Oksuz:2008p11363} auch HMM
 
-\subsection[DTW]{DTW - Dynamic Time Warping}
-\label{sub:dtw}
+\subsection[DTW]{DTW - Dynamic Time Warping} \label{sub:dtw}
 
 Die Entscheidung ist im Fall von Detexify auf \ac{DTW} gefallen. Dabei ist \ac{DTW} eigentlich das Abstandsmaß und zur Klassifikation wird der Nearest-Neighbor-Algorithmus verwendet.
 
@@ -127,14 +134,11 @@ Die Entscheidung ist im Fall von Detexify auf \ac{DTW} gefallen. Dabei ist \ac{D
 
 - \cite{Golubitsky:2009p2433} Among the distance measures used for classifying handwritten mathematical sym- bols, the elastic matching distance [14] is known to be one of the most accurate. In diesem Paper gibts auch Infos zum verwendete Datensatz. Weitere Statistiken zu Elastic matching Parametern.
 
-KNN - bevorzugt in Japan \cite{Jaeger:2003p1097} / auch template matching genannt / Abstandsmaß entscheidend
-- KNN z.B. FFES mit 50 features und verm. euklidischem Abstand \TODO Paper suchen! siehe \cite{Vuong:2010p10279}
-Natural Log, symbol recognition is implemented using a statistical approach based on Gaussian Density Estimation \dots siehe auch \cite{Vuong:2010p10279} \TODO Paper suchen
+KNN - bevorzugt in Japan \cite{Jaeger:2003p1097} / auch template matching genannt / Abstandsmaß entscheidend - KNN z.B. FFES mit 50 features und verm. euklidischem Abstand \TODO Paper suchen! siehe \cite{Vuong:2010p10279} Natural Log, symbol recognition is implemented using a statistical approach based on Gaussian Density Estimation \dots siehe auch \cite{Vuong:2010p10279} \TODO Paper suchen
 
 \citet{Tappert:1990p10302} sagt bei Online-Erkennung reichen wegen der Interaktivität einfachere Methoden, was bei mir ja voll zutrifft.
 
-\cite{Vuong:2010p10279} benutzt Elastic Matching mit Steigung und Krümmung
-MathBrush \cite{Labahn:2008p10301} benutzt Kombi aus Elastic Matching und anderen Methoden siehe auch \cite{MacLean:2010p9970} DTW in linear time and constant space
+\cite{Vuong:2010p10279} benutzt Elastic Matching mit Steigung und Krümmung MathBrush \cite{Labahn:2008p10301} benutzt Kombi aus Elastic Matching und anderen Methoden siehe auch \cite{MacLean:2010p9970} DTW in linear time and constant space
 
 \cite{Watt:2005p1816} schlägt pruning durch klassische features vor
 
