@@ -187,8 +187,8 @@ Das gesuchte Minimum kann mithilfe von Dynamischer Programmierung gefunden werde
   \label{eqn:dp}
   \gamma(i,j) =
   \begin{cases}
-    = \sum_{k=0}^j \delta(a_0, b_k) & i = 0 \\
-    = \sum_{k=0}^i \delta(a_k, b_0) & j = 0 \\
+    \sum_{k=0}^j \delta(a_0, b_k) & i = 0 \\
+    \sum_{k=0}^i \delta(a_k, b_0) & j = 0 \\
     \delta(a_i,~b_j) + \min\{~\gamma(i-1,j-1),~\gamma(i-1,j),~\gamma(i,j-1)~\} & sonst
   \end{cases}  
 \end{equation}
