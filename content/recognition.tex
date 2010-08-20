@@ -75,11 +75,11 @@ Zur Erkennung einzelner handgeschriebener Symbole wurden bereits unterschiedlich
 
 Die Anforderungen sind die folgenden:
 \begin{description}
-	\label{desc:anforderungen} 
-	\item[Adaptionsfähigkeit] Es sollte jeder Zeit ein Training zusätzlicher Symbole möglich sein. 
-	\item[Skalierbarkeit] Die Erkennungsraten sollten auch bei einer großen Anzahl von Klassen gut sein. 
-	\item[Laufzeitverhalten] Das Laufzeitverhalten sollte eine Erkennung in Echtzeit ermöglichen. 
-	\item[Interaktivität] Es sollten die besten $N$ Symbole zur Auswahl angezeigt werden. 
+  \label{desc:anforderungen} 
+  \item[Adaptionsfähigkeit] Es sollte jeder Zeit ein Training zusätzlicher Symbole möglich sein. 
+  \item[Skalierbarkeit] Die Erkennungsraten sollten auch bei einer großen Anzahl von Klassen gut sein. 
+  \item[Laufzeitverhalten] Das Laufzeitverhalten sollte eine Erkennung in Echtzeit ermöglichen. 
+  \item[Interaktivität] Es sollten die besten $N$ Symbole zur Auswahl angezeigt werden. 
 \end{description}
 
 Ein besonderes Interesse galt in meinem Fall natürlichen den Verfahren, die für Symbolerkennung, insbesondere mathematischer Symbole, bereits erfolgreich eingesetzt wurden. Dabei handelt es sich um \ac{SVM}, \ac{HMM} und \ac{DTW}. Es gibt auch einige wenige Strukturelle Ansätze.
@@ -116,15 +116,26 @@ Dabei beschreibt ein HMM einen diskreten Markovprozess $q=(q_t)_{t=0,1.\dots}$ d
   \label{fig:hmm}
 \end{figure}
 
-Man verwendet eine HMM dann folgendermaßen: Jede Klasse $C_i$ bekommt eine HMM $\lambda_i$ deren Parameter anhand einer Stichprobe trainiert werden\footnote{Die Definition der HMM umfasst die Wahl der Topologie, Anzahl der Zustände sowie der Verteilung der Ausgabesymbole.}. Einem unbekannten Objekt, das als Folge $\mathbf{O}$ von Merkmalsvektoren beobachtet wird, wird dann die Klasse zugeordnet, für die die Wahrscheinlichkeit $P(\mathbf{O}|\lambda_i)$, dass die Folge von der zugehörigen HMM erzeugt wurde, maximiert wird.
+Man verwendet eine HMM dann folgendermaßen: Jede Klasse $C_i$ bekommt eine HMM $\lambda_i$ deren Parameter anhand einer Stichprobe trainiert werden. Einem unbekannten Objekt, das als Folge $\mathbf{O}$ von Merkmalsvektoren beobachtet wird, wird dann die Klasse zugeordnet, für die die Wahrscheinlichkeit $P(\mathbf{O}|\lambda_i)$ (\TODO ich würde das $P_{\lambda_i}(\mathbf{O})$ schreiben...), dass die Folge von der zugehörigen HMM erzeugt wurde, maximiert wird.
 
 \citet{Xie:2007p11427} beschreibt ein System zur Erkennung mathematischer Symbole, das auf HMM basiert. In derselben Arbeit wird auch ein Klassifizierer, der auf DTW basiert vorgestellt, und für diesen werden beeindruckende Erkennungsraten von im besten Fall 94.8 \% angeben. Obwohl sich ein Vergleich angeboten hätte werden jedoch für das HMM-basierte System keine absoluten Erkennungsraten vorgestellt, sondern lediglich relative Veränderungen, wenn mit den Parametern der HMM gespielt wird. Das stimmt etwas nachdenklich.
 
 \citet{Winkler:1996p11716} kombiniert mehrere HMMs, die mit unterschiedlichen Merkmalen trainiert werden, und erreicht bei einem Alphabet von 84 Symbolen im besten Fall eine Erkennungsrate von 91 \%.
 
-\cite{Fitzgerald:2005p331}
+Von der Leistungsfähigkeit her scheinen HMMs also durchaus eine Option für Detexify zu sein. Ein Problem ergibt sich aber wieder bei der \emph{Adaptionsfähigkeit}: Die Effektivität einer HMM hängt von ihrer Modellierung ab (Anzahl der Zustände, Übergangswahrscheinlichkeiten, Ausgabewahrscheinlichkeiten) und diese müssten idealerweise für jede Symbolklasse individuell optimiert werden \cite{Fitzgerald:2005p331}. Das Hinzufügen einer neuen Symbolklasse umfasst also die Definition eines neuen HMMs und dessen Training.
 
-\cite{Oksuz:2008p11363} auch HMM
+\subsection{Nächste-Nachbarn-Klassifikation} \label{sub:knn}
+
+Der $k$-nächste-Nachbarn-Algorithmus ist eines der einfachsten Verfahren um einem unbekannten Muster eine Klasse zuzuweisen. Dazu werden als Training einfach Vertreter der Klassen im Merkmalsraum gespeichert. Dem unbekannten Muster wird dann durch ein Mehrheitsvotum der $k$ nächsten Nachbarn eine Klasse zugeordnet. Eine zentrale Rolle nimmt dabei das Abstandsmaß ein. Es bestimmt die Güte der Klassifikation, aber auch durch seine Laufzeitkomplexität, den zeitlichen Aufwand des Vorgangs.
+
+Die Bedingung der \emph{Adaptionsfähigkeit}, die ich in \ref{sec:klassifizierung} gefordert hatte, und die bei den bisher vorgestellten Verfahren schwierig umzusetzen war, ist dabei bei der Nächste-Nachbarn-Klassifikation auf natürliche weisee
+
+\item[Skalierbarkeit] Die Erkennungsraten sollten auch bei einer großen Anzahl von Klassen gut sein. 
+\item[Laufzeitverhalten] Das Laufzeitverhalten sollte eine Erkennung in Echtzeit ermöglichen. 
+\item[Interaktivität] Es sollten die besten $N$ Symbole zur Auswahl angezeigt werden. 
+
+
+\citet{Tappert:1990p10302} sagt bei Online-Erkennung reichen wegen der Interaktivität einfachere Methoden, was bei mir ja voll zutrifft.
 
 \subsection[DTW]{DTW - Dynamic Time Warping} \label{sub:dtw}
 
@@ -136,7 +147,7 @@ Die Entscheidung ist im Fall von Detexify auf \ac{DTW} gefallen. Dabei ist \ac{D
 
 KNN - bevorzugt in Japan \cite{Jaeger:2003p1097} / auch template matching genannt / Abstandsmaß entscheidend - KNN z.B. FFES mit 50 features und verm. euklidischem Abstand \TODO Paper suchen! siehe \cite{Vuong:2010p10279} Natural Log, symbol recognition is implemented using a statistical approach based on Gaussian Density Estimation \dots siehe auch \cite{Vuong:2010p10279} \TODO Paper suchen
 
-\citet{Tappert:1990p10302} sagt bei Online-Erkennung reichen wegen der Interaktivität einfachere Methoden, was bei mir ja voll zutrifft.
+
 
 \cite{Vuong:2010p10279} benutzt Elastic Matching mit Steigung und Krümmung MathBrush \cite{Labahn:2008p10301} benutzt Kombi aus Elastic Matching und anderen Methoden siehe auch \cite{MacLean:2010p9970} DTW in linear time and constant space
 
