@@ -6,3 +6,9 @@ task :clean do
     end
   end
 end
+
+desc "list TODO items"
+task :todo do
+  puts "LaTeX files containing TODO"
+  system 'ack -l TODO **/*.tex'
+end
