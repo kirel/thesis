@@ -146,7 +146,7 @@ Ein vielversprechendes Abstandsmaß wurde bereits in \ref{sub:hmm} erwähnt. Es 
 
 \citet{Golubitsky:2009p1842} vergleichen DTW mit einem eigenen Abstandsmaß, das zwar deutlich schneller zu berechnen ist, aber auch 1-1,5\% schlechtere Erkennungsraten liefert. \citet{Labahn:2008p10301} kombinieren DTW mit weiteren Methoden in einem System, das die handschriftliche Eingabe von Formeln in ein \ac{CAS} ermöglicht.
 Auch \citet{Vuong:2010p10279} verwenden DTW % mit Steigung und Krümmung
-zu Erkennung mathematischer Symbole in einer erst kürzlich veröffentlichten Arbeit zum Thema Web-basiertes CAS mit handschriftlicher Eingabe. Es ist auffällig, dass gerade aktuellere Arbeiten DTW einsetzen. Obwohl das Verfahren schon so lange bekannt ist \cite{Tappert:1982p10305}, ist es immer noch Konkurrenzfähig.
+zu Erkennung mathematischer Symbole in einer erst kürzlich veröffentlichten Arbeit zum Thema Web-basiertes CAS mit handschriftlicher Eingabe. Es ist auffällig, dass gerade aktuellere Arbeiten DTW einsetzen. Obwohl das Verfahren schon so lange bekannt ist \cite{Tappert:1982p10305}, ist es immer noch konkurrenzfähig.
 
 Aus diesen Gründen ist die Wahl für die Klassifikation in Detexify auf DTW gefallen. Damit war die Aufgabe also den Algorithmus so zu implementieren und zu optimieren, dass die Bedingungen \emph{Skalierbarkeit} und \emph{Laufzeitkomplexität} erfüllt sind. Im folgenden wird der klassische DTW-Algorithmus beschrieben und unterschiedliche Optimierungsmöglichkeiten werden diskutiert.
 
@@ -161,20 +161,41 @@ und
 \begin{equation*}
   B = b_1, \dots, b_m
 \end{equation*}
-in einem Raum \( S \ni a_i, b_i ~\forall~i \) und die Menge von Abbildungen
-\begin{equation*}
-  F = \{f:\{1,\dots,n\} \rightarrow \{1,\dots,m\}, ~f~\text{monoton wachsend} \}  
-\end{equation*}
-gegeben, dann ist der DTW-Abstand definiert durch
+in einem Raum \( S \ni a_i, b_i ~\forall~i \) und %die Menge von Abbildungen
+% \begin{equation*}
+%   \label{eqn:mappings}
+%   F = \{f:\{1,\dots,n\} \rightarrow \{1,\dots,m\}, ~f~\text{surjektiv, monoton wachsend} \}  
+% \end{equation*}
+\( \delta : S\times S \rightarrow \mathbb{R}_0^+ \) eine Kostenfunktion
+gegeben. In der Regel sind \(A\) und \(B\) Folgen in einem metrischen Raum z.B. \(\mathbb{R}^n\) und \(\delta\) ist eine Metrik.
+Betrachten wir nun \( n\times m\)-Matrix 
+\begin{equation} \label{eqn:matrix}
+  M = (d_{i,j})_{i=1\dots n, j=1\dots m} ~\text{mit}~ d_{i,j} = \delta(a_i,b_j)
+\end{equation}
+, dann ist ein Warping-Pfad ein stetiger (im unten erläuterten Sinne) Pfad durch diese Matrix. 
+
+\begin{align}
+  W = w_0,\dots,w_K \hspace{1cm} w_l = (i,j)_l
+\end{align}
+
+$K$ ist dabei die Länge des Warping-Pfads. Die Stetigkeit des Pfads unterliegt den folgenden Bedingungen:
+
+\begin{description}
+  \item[Randbedingung] \( w_1 = (1,1) \) und \( w_K = (n,m) \). Dadurch beginnt der Warping-Pfad in der linken unteren Ecke der Matrix und endet in der rechten oberen Ecke.
+  \item[Stetigkeitbedingung] Gegeben \( w_k = (i,j) \) und \( w_{k-1} = (i',j') \) so muss gelten \( i-i' \leqslant 1 \) und \( j-j' \leqslant 1 \). Dadurch sind nur Schritte zu benachbarten Zellen (auch diagonal) erlaubt.
+  \item[Monotoniebedingung] Gegeben \( w_k = (i,j) \) und \( w_{k-1} = (i',j') \) so muss gelten \( i-i' \geqslant 0 \) und \( j-j' \geqslant 0 \). Dadurch werden rückwärtige Schritte (nach links oder unten) verhindert.
+\end{description}
+
+Es gibt natürlich einige Pfade die diese Bedingungen erfüllen. Nennen wir die Menge dieser Pfade
+\[ \mathcal{W}=\{W~\text{ist Warping-Pfad}\} \]
+dann ist der DTW-Abstand definiert durch
 \begin{equation}
   \label{eqn:dtw}
-  DTW(A,B) = \min_{f \in F}{\sum_{i=1}^{n}{\delta(a_i,b_{f(i)})}}  
+  DTW(A,B) = \min_{W \in \mathcal{W}}{\frac{\sum_{i=1}^K d_{w_i}}{K}}
 \end{equation}
-wobei \( \delta : S\times S \rightarrow \mathbb{R}_0^+ \) eine Kostenfunktion ist.
+. Dabei ist \( d_{w_i} \) das entsprechende Element der Matrix \ref{eqn:matrix}.
 
-In der Regel sind \(A\) und \(B\) Folgen in einem metrischen Raum z.B. \(\mathbb{R}^n\) und \(\delta\) ist eine Metrik.
-
-Diese abstrakte Definition bedeutet anschaulich, die Punkte in den zwei Folgen einander elastisch zugeordnet werden können. Der erste Punkt der ersten Folge wird immer dem ersten Punkt der zweiten Folge und der letzte Punkt der ersten Folge immer dem letzten Punkt der zweiten Folge zugeordnet werden. Dazwischen müssen die Punkte zwar in der richtigen Reihenfolge bleiben und es dürfen keine übersprungen werden, aber sonst sind Mehrfachzuordnungen erlaubt. Gesucht wird die Zuordnung, die den Abstand minimiert. Abbildung~\ref{fig:dtw} illustriert dies.
+Diese abstrakte Definition bedeutet anschaulich, dass die Punkte in den zwei Folgen einander elastisch zugeordnet werden können, wobei es einige Beschränkungen gibt. Der erste Punkt der ersten Folge wird immer dem ersten Punkt der zweiten Folge und der letzte Punkt der ersten Folge immer dem letzten Punkt der zweiten Folge zugeordnet werden. Dazwischen müssen die Punkte zwar in der richtigen Reihenfolge bleiben und es dürfen keine übersprungen werden, aber es sind Mehrfachzuordnungen erlaubt. Gesucht wird die Zuordnung, die den Abstand minimiert. Abbildung~\ref{fig:dtw} illustriert dies.
 
 \begin{figure}
   \centering \includegraphics[width=4cm]{figures/dtw.png}
@@ -189,28 +210,44 @@ Das gesuchte Minimum kann mithilfe von Dynamischer Programmierung gefunden werde
   \begin{cases}
     \sum_{k=0}^j \delta(a_0, b_k) & i = 0 \\
     \sum_{k=0}^i \delta(a_k, b_0) & j = 0 \\
-    \delta(a_i,~b_j) + \min\{~\gamma(i-1,j-1),~\gamma(i-1,j),~\gamma(i,j-1)~\} & sonst
+    \delta(a_i,~b_j) + \min\{~\gamma(i-1,j-1),~\gamma(i-1,j),~\gamma(i,j-1)~\} & \text{sonst}
   \end{cases}  
 \end{equation}
 
 dann ist
 \begin{equation}
   \label{eqn:dpdtw}
-  DTW(A,B) = \gamma(n,m)
-\end{equation}.
+  DTW(A,B) = \frac{\gamma(n,m)}{K}
+\end{equation}. \TODO Wo kommt das K her?
 
-In dieser Form hat DTW die Laufzeitkomplexität \(\mathcal{O}(n*m)\). Darum wundert es nicht, dass bereits einige Wissenschaftler versucht haben, den Algorithmus zu optimieren. Auch für Detexify ist dieses Laufzeitverhalten nicht ausreichend um eine Erkennung in Echtzeit zu ermöglichen.
+In dieser Form hat DTW die Laufzeitkomplexität \(\mathcal{O}(nm)\). Darum wundert es nicht, dass bereits einige Wissenschaftler versucht haben, den Algorithmus zu optimieren. Auch für Detexify ist dieses Laufzeitverhalten nicht ausreichend um eine Erkennung in Echtzeit zu ermöglichen.
 
 % subsubsection der_klassische_dtw_algorithmus (end)
 
-\subsubsection{constrained warping window} % (fold)
+\subsubsection{Beschränkung des Warping-Pfads} % (fold)
 \label{ssub:constrained_warping_window}
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+Es ist möglich DTW dadurch zu optimieren, dass bei der Suche nach dem optimalen Warping-Pfad nicht die ganze Matrix durchsucht wird. Stattdessen wird der Suchraum beschränkt.
+\TODO in der Spracherkennung wird das schon lange gemacht mit dem 10\% Sakoe-Chiba-Band
+- Auch Itakura Parallelogramm
+- Leichte Geschwindigkeitsverbesserung \( \mathcal{O}(ns) \) für fest gewähltes $s$
+- Verhindert pathologisches Warpen \cite{Keogh:2005p7751}
+- Lokale Beschränkungen werden in Rabiner and Juang 1993 beschrieben aber an sich sind das auch bloß globale Beschränkungen \cite{Keogh:2005p7751}
+- Sakoe and Chiba 1978 haben wohl schon rausgefunden, dass globale beschränkungen helfen \cite{Keogh:2005p7751}
+
+\citet{Ann:2008p7714} zitieren!
 % subsubsection constrained_warping_window (end)
 
-\subsubsection{lower bounding} % (fold)
+\subsubsection{Untere Schranken} % (fold)
 \label{ssub:lower_bounding}
+
+
 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+\cite{Keogh:2005p7751} beschreibt LBmKeogh
+
+\citet{Ann:2008p7714} auch hier!
+
 % subsubsection lower_bounding (end)
 
 \subsubsection{linear space and time} % (fold)
