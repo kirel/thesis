@@ -154,13 +154,12 @@ Aus diesen Gründen ist die Wahl für die Klassifikation in Detexify auf DTW gef
 \label{ssub:der_klassische_dtw_algorithmus}
 
 Seien zwei Folgen von Punkten
-\begin{equation*}
-  A = a_1, \dots, a_n
-\end{equation*}
-und
-\begin{equation*}
-  B = b_1, \dots, b_m
-\end{equation*}
+\begin{align}
+  \label{eqn:a}
+  A &= a_1, \dots, a_n \\
+  \label{eqn:b}
+  B &= b_1, \dots, b_m
+\end{align}
 in einem Raum \( S \ni a_i, b_i ~\forall~i \) und %die Menge von Abbildungen
 % \begin{equation*}
 %   \label{eqn:mappings}
@@ -227,26 +226,25 @@ In dieser Form hat DTW die Laufzeitkomplexität \(\mathcal{O}(nm)\). Darum wunde
 \subsubsection{Beschränkung des Warping-Pfads} % (fold)
 \label{ssub:constrained_warping_window}
 
-Es ist möglich DTW dadurch zu optimieren, dass bei der Suche nach dem optimalen Warping-Pfad nicht die ganze Matrix durchsucht wird. Stattdessen wird der Suchraum beschränkt.
-\TODO in der Spracherkennung wird das schon lange gemacht mit dem 10\% Sakoe-Chiba-Band
-- Auch Itakura Parallelogramm
-- Leichte Geschwindigkeitsverbesserung \( \mathcal{O}(ns) \) für fest gewähltes $s$
-- Verhindert pathologisches Warpen \cite{Keogh:2005p7751}
-- Lokale Beschränkungen werden in Rabiner and Juang 1993 beschrieben aber an sich sind das auch bloß globale Beschränkungen \cite{Keogh:2005p7751}
-- Sakoe and Chiba 1978 haben wohl schon rausgefunden, dass globale beschränkungen helfen \cite{Keogh:2005p7751}
+Es ist möglich DTW dadurch zu beschleunigen, dass bei der Suche nach dem optimalen Warping-Pfad nicht die ganze Matrix durchsucht wird. Stattdessen wird der Suchraum beschränkt. Abb.~\TODO zeigt üblicherweise verwendete globale Beschränkungen. Es ist auch möglich lokale Beschränkungen wie in \cite{Rabiner:1993p11752} beschrieben festzulegen, \citet{Keogh:2005p7751} bemerken aber, dass das im Prinzip dasselbe, wie globale Beschränkungen sind, darum gehe ich darauf nicht näher ein. Nun könnte man glauben, dass sich eine solche Einschränkung nachteilig auswirkt. \citet{Ratanamahatana:2004p7522} berichten aber in ihrer Arbeit, dass eher das Gegenteil der Fall ist und Beschränkungen des Pfades sogar helfen, die Erkennungsraten zu verbessern. Dies kann dadurch verstanden werden, dass durch Beschränkungen pathologisches Warpen verhindert wird \cite{Keogh:2005p7751}.
+%- Leichte Geschwindigkeitsverbesserung \( \mathcal{O}(ns) \) für fest gewähltes $s$
+%- Sakoe and Chiba 1978 haben wohl schon rausgefunden, dass globale beschränkungen helfen \cite{Keogh:2005p7751}
 
-\citet{Ann:2008p7714} zitieren!
+Eine Beschränkung des Warping-Pfades ermöglicht eine weitere viel effektivere Optimierung:
+
 % subsubsection constrained_warping_window (end)
 
 \subsubsection{Untere Schranken} % (fold)
 \label{ssub:lower_bounding}
 
+Seinen zwei Folgen (wie \ref{eqn:a} und \ref{eqn:b}) gleicher Länge $K$ gegeben.
+% Dann ist eine globale Beschränkung des Warping-Pfades das dasselbe wie die Beschränkung der Indizes der Elemente des Pfades \( w_k = (i,j)_k \) und zwar gilt dann \( j−r \leq i \leq j+r \), wobei $r$ den erlaubten Korridor beschreibt. Für die folgenden Ausführungen ist $r$ konstant. Es gibt aber auch Beschränkungen bei denen $r$ eine Funktion von $i$ ist (z.B. im Itakura-Parallelogramm in Abb.~\TODO).
+Sei \( DTW_c \) die DTW-Entfernung mit einer Beschränkung des Warping-Pfades $c$
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+\TODO von wem eingeführt?
+Diese Maßnahme ist allerdings nur möglich, wenn die beiden Folgen, die miteinander verglichen werden sollen, dieselbe Länge haben. ~> Lineare Interpolation (kein Problem nach \citet{Ratanamahatana:2004p7522})
 
-\cite{Keogh:2005p7751} beschreibt LBmKeogh
-
-\citet{Ann:2008p7714} auch hier!
+\citet{Keogh:2005p7751} beschreiben LB\_Keogh
 
 % subsubsection lower_bounding (end)
 
