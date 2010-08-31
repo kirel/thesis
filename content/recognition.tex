@@ -151,10 +151,15 @@ Ein vielversprechendes Abstandsmaß wurde bereits in \ref{sub:hmm} erwähnt. Es 
 Auch \citet{Vuong:2010p10279} verwenden DTW % mit Steigung und Krümmung
 zu Erkennung mathematischer Symbole in einer erst kürzlich veröffentlichten Arbeit zum Thema Web-basiertes CAS mit handschriftlicher Eingabe. Es ist auffällig, dass gerade aktuellere Arbeiten DTW einsetzen. Obwohl das Verfahren schon so lange bekannt ist \cite{Tappert:1982p10305}, ist es immer noch konkurrenzfähig.
 
-Aus diesen Gründen ist die Wahl für die Klassifikation in Detexify auf DTW gefallen. Damit war die Aufgabe also den Algorithmus so zu implementieren und zu optimieren, dass die Bedingungen \emph{Skalierbarkeit} und \emph{Laufzeitkomplexität} erfüllt sind. Im folgenden wird der klassische DTW-Algorithmus beschrieben und unterschiedliche Optimierungsmöglichkeiten werden diskutiert.
+Aus diesen Gründen ist die Wahl für die Klassifikation in Detexify auf DTW gefallen. Damit war die Aufgabe also den Algorithmus so zu implementieren und zu optimieren, dass die Bedingungen \emph{Skalierbarkeit} und \emph{Laufzeitkomplexität} erfüllt sind.
 
-\subsubsection{Der klassische DTW-Algorithmus} % (fold)
-\label{ssub:der_klassische_dtw_algorithmus}
+\section{DTW} % (fold)
+\label{sec:dtw}
+
+Im folgenden wird der klassische DTW-Algorithmus beschrieben und unterschiedliche Optimierungsmöglichkeiten werden diskutiert.
+
+\subsection{Der klassische DTW-Algorithmus} % (fold)
+\label{sub:der_klassische_dtw_algorithmus}
 
 Seien zwei Folgen von Punkten
 \begin{align}
@@ -224,12 +229,19 @@ dann ist
 
 In dieser Form hat DTW die Laufzeit- und Speicherplatzkomplexität \(\mathcal{O}(nm)\). Darum wundert es nicht, dass bereits einige Wissenschaftler versucht haben, den Algorithmus zu optimieren. Auch für Detexify ist dieses Laufzeitverhalten nicht ausreichend um eine Erkennung in Echtzeit zu ermöglichen.
 
-% subsubsection der_klassische_dtw_algorithmus (end)
 
-\subsubsection{Beschränkung des Warping-Pfads} % (fold)
-\label{ssub:constrained_warping_window}
+\subsection{Beschränkung des Warping-Pfads} % (fold)
+\label{sub:constrained_warping_window}
 
-Es ist möglich DTW dadurch zu beschleunigen, dass bei der Suche nach dem optimalen Warping-Pfad nicht die ganze Matrix durchsucht wird. Stattdessen wird der Suchraum beschränkt. Abb.~\TODO zeigt üblicherweise verwendete globale Beschränkungen. Es ist auch möglich lokale Beschränkungen wie in \cite{Rabiner:1993p11752} beschrieben festzulegen, \citet{Keogh:2005p7751} bemerken aber, dass das im Prinzip dasselbe, wie globale Beschränkungen sind, darum gehe ich darauf nicht näher ein. Nun könnte man glauben, dass sich eine solche Einschränkung nachteilig auswirkt. \citet{Ratanamahatana:2004p7522} berichten aber in ihrer Arbeit, dass eher das Gegenteil der Fall ist und Beschränkungen des Pfades sogar helfen, die Erkennungsraten zu verbessern. Dies kann dadurch verstanden werden, dass durch Beschränkungen pathologisches Warpen verhindert wird \cite{Keogh:2005p7751}.
+\begin{figure}
+  \centering \includegraphics[width=\textwidth]{figures/constraints.png}
+  \caption{Typische Beschränkungen das Warping-Pfades}
+   Links: Sakoe-Chiba-Band, Rechts: Ikatura-Parallelogramm
+  \label{fig:constraints}
+\end{figure}
+
+
+Es ist möglich DTW dadurch zu beschleunigen, dass bei der Suche nach dem optimalen Warping-Pfad nicht die ganze Matrix durchsucht wird. Stattdessen wird der Suchraum beschränkt. Abb.~\ref{fig:constraints} zeigt üblicherweise verwendete globale Beschränkungen. Es ist auch möglich lokale Beschränkungen wie in \cite{Rabiner:1993p11752} beschrieben festzulegen, \citet{Keogh:2005p7751} bemerken aber, dass das im Prinzip dasselbe, wie globale Beschränkungen sind, darum gehe ich darauf nicht näher ein. Nun könnte man glauben, dass sich eine solche Einschränkung nachteilig auswirkt. \citet{Ratanamahatana:2004p7522} berichten aber in ihrer Arbeit, dass eher das Gegenteil der Fall ist und Beschränkungen des Pfades sogar helfen, die Erkennungsraten zu verbessern. Dies kann dadurch verstanden werden, dass durch Beschränkungen pathologisches Warpen verhindert wird \cite{Keogh:2005p7751}.
 %- Leichte Geschwindigkeitsverbesserung \( \mathcal{O}(ns) \) für fest gewähltes $s$
 %- Sakoe and Chiba 1978 haben wohl schon rausgefunden, dass globale beschränkungen helfen \cite{Keogh:2005p7751}
 
@@ -242,10 +254,8 @@ Wenn beide Folgen die gleiche Länge $n$ haben, ist eine Möglichkeit den Warpin
 
 Im Fall von \(r(i) = s\) also $r$ konstant reduziert sich damit die Komplexität von DTW von \( \mathcal{O}(n^2) \) auf \( \mathcal{O}(ns) \). Zusätzlich ermöglicht die Beschränkung aber eine weitere viel effektivere Optimierung:
 
-% subsubsection constrained_warping_window (end)
-
-\subsubsection{Untere Schranken} % (fold)
-\label{ssub:lower_bounding}
+\subsection{Untere Schranken} % (fold)
+\label{sub:lower_bounding}
 
 Gegeben ein Abstandsmaß \( \delta : S\times S \rightarrow \mathbb{R}_0^+ \) und eine untere Schranke \( \delta_{LB} \) d.h. \( \delta_{LB}(a,b) \leq \delta(a,b) ~\forall~ a,b \in S \), die deutlich günstiger zu berechnen ist, dann lässt sich mit dem folgenden naiven Algorithmus eine sequentielle Suche nach dem nächsten Nachbarn eines Elementes \( c \in S \) beschleunigen (vergl. \cite{Keogh:2005p7751}).
 
@@ -266,22 +276,40 @@ Gegeben ein Abstandsmaß \( \delta : S\times S \rightarrow \mathbb{R}_0^+ \) und
   \end{algorithmic}
 \end{algorithm}
 
-Für DTW für Folgen derselben Länge $n$ mit reellen Messpunkten mit einer Beschränkung des Warping-Pfads der Form \ref{eq:constraints} haben \citet{Keogh:2005p7751} eine scharfe untere Schranke angegeben. In 
+Für DTW für Folgen derselben Länge $n$ mit reellen Messpunkten mit einer Beschränkung des Warping-Pfades der Form \ref{eq:constraints} haben \citet{Keogh:2005p7751} eine scharfe untere Schranke angegeben. Zudem haben \citet{Ratanamahatana:2004p7522} die Kritik entkräftet, dass vor der Verwendung einer solchen Optimierung eine lineare Interpolation der Folgen nötig ist, um sie auf dieselbe Länge zu bringen, und damit der Vorteil Folgen unterschiedlicher Länge vergleichen zu können verlogen ginge. Eine untere Schranke scheint also eine reizvolle Möglichkeit zu sein DTW zu beschleunigen.
 
-\TODO von wem eingeführt?
-Diese Maßnahme ist allerdings nur möglich, wenn die beiden Folgen, die miteinander verglichen werden sollen, dieselbe Länge haben. ~> Lineare Interpolation (kein Problem nach \citet{Ratanamahatana:2004p7522})
+\TODO wer hat vor \citet{Keogh:2005p7751} untere Schranken angegeben? Muss ich das erwähnen?
 
-\citet{Keogh:2005p7751} beschreiben LB\_Keogh
+In Fall von Detexify sind die einzelnen Punkte der Folgen aber Punkte im \( \mathbb{R}^2 \) (siehe \ref{sec:vorverarbeitung}) und es ist intuitiv einzusehen, dass eine Reduktion auf eine Dimension einen zu hohen Informationsverlust nach sich ziehen würde. Es ist zwar möglich auf eine zu \cite{Keogh:2005p7751} analoge Weise eine untere Schranke zu definieren, und das werde ich als nächstes tun - es zeigt sich jedoch, dass diese untere Schranke keine vorteilhaften Laufzeiteigenschaften mehr hat. Darum wird auch der formale Beweis, dass es sich wirklich um eine untere Schranke handelt übergangen.
+
+\subsection{Eine untere Schranke für DTW für Folgen im \( \mathbb{R}^2 \)}
+
+Bevor ich meine untere Schranke erkläre, gebe ich noch eine kurze Erklärung der von \citet{Keogh:2005p7751} definierten unteren Schranke LB\_Keogh.
+
+Seien
+\begin{align}
+  Q &= q_1 \dots q_n \\
+  C &= c_1 \dots c_n
+\end{align}
+zwei Folgen gleicher Länge $n$. \( \mathcal{W}_r \) sei die Menge der durch \(r\) beschränkten Warping-Pfade (siehe \ref{eq:constraints}). DTW sei (leicht verändert) gegeben durch
+
+\begin{equation}
+  \label{eq:keoghdtw}
+  DTW(Q,C) = \min_{W \in \mathcal{W}_r}{\sqrt{\sum_{i=1}^n d_{w_i}}}
+\end{equation}
+
+
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
 % subsubsection lower_bounding (end)
 
-\subsubsection{linear space and time} % (fold)
-\label{ssub:linear_space_and_time}
+\subsection{linear space and time} % (fold)
+\label{sec:linear_space_and_time}
 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 % subsubsection linear_space_and_time (end)
 
-\subsubsection{\TODO Parameter} % (fold)
-\label{ssub:todo_parameter}
+\subsection{\TODO Parameter} % (fold)
+\label{sec:todo_parameter}
 
 % subsubsection todo_parameter (end)
 
@@ -305,5 +333,3 @@ Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor 
 weitere Argumente für KNN
 
 -> gleicht Schreibstile aus wenn genug Muster
-
-% chapter erkennung_handgeschriebener_symbole (end)
