@@ -6,7 +6,8 @@
 % (fold)
 \label{cha:erkennung_handgeschriebener_symbole}
 
-Die Erkennung handgeschriebener Symbole ist das Herzstück von Detexify. Hier wird einer unbekannten Eingabe von Daten ein \LaTeX-Symbol zugeordnet. Genau genommen wird der Eingabe eine Rangfolge von Symbolen zugeordnet, welche in der in \ref{sub:symbolsuche} beschriebenen Liste auftaucht, nachdem ein Nutzer ein Symbol gezeichnet hat.
+Die Erkennung handgeschriebener Symbole ist das Herzstück von Detexify. Hier wird einer unbekannten Eingabe von Daten ein \LaTeX-Symbol zugeordnet.
+% Genau genommen wird der Eingabe eine Rangfolge von Symbolen zugeordnet, welche in der in \ref{sub:symbolsuche} beschriebenen Liste auftaucht, nachdem ein Nutzer ein Symbol gezeichnet hat.
 
 Im Zentrum jeder Mustererkennungsaufgabe steht dabei der Erkennungsalgorithmus (\ref{sec:klassifizierung}). Je nach verwendetem Verfahren geht dem eine Vorverarbeitung (\ref{sec:vorverarbeitung}) und Merkmalsextraktion (\ref{sec:merkmale}) voraus. In diesem Kapitel beschreibe ich welche Verfahren bei Detexify zum Einsatz kommen und begründe die Auswahl.
 
@@ -17,7 +18,7 @@ Im Zentrum jeder Mustererkennungsaufgabe steht dabei der Erkennungsalgorithmus (
 
 Wie in jedem Forschungsgebiet hat sich auch bei der Handschrifterkennung eine Nomenklatur entwickelt, die die verschiedenen Aspekte des Themas beschreibt.
 
-Man unterscheidet zwischen \emph{Online}- und \emph{Offline}-Systemen \cite{Tappert:1990p10302}. Bei Online-Systemen wird die Erkennung durchgeführt während der Nutzer schreibt. Die Striche werden dabei vom Eingabegerät (häufig ein Grafiktablett) als Funktion \( t \mapsto \alpha \), wobei \( \alpha \) den Zustand der Stiftspitze kodiert, an das System übertragen. Das heißt, es stehen für die Erkennung alle dynamischen Eigenschaften des Geschriebenen zur Verfügung, wie die Anzahl, Reihenfolge und Richtung der einzelnen Pinselstriche. Im Gegensatz dazu verarbeiten Offline-Systeme Scans von Geschriebenem, arbeiten also zu einem Zeitpunkt, wenn der Schreibvorgang längst beendet ist. Sie können also außer Pixeln keine weiteren Informationen verwenden. Detexify ist ein Online-System.
+Man unterscheidet zwischen \emph{Online}- und \emph{Offline}-Systemen \cite{Tappert:1990p10302}. Bei Online-Systemen wird die Erkennung durchgeführt während der Nutzer schreibt. Die Striche werden dabei vom Eingabegerät (häufig ein Grafiktablett, in Detexify i.d.R. eine Computermaus) als Funktion \( t \mapsto \alpha \), wobei \( \alpha \) den Zustand der Stiftspitze kodiert, an das System übertragen. Das heißt, es stehen für die Erkennung alle dynamischen Eigenschaften des Geschriebenen zur Verfügung, wie die Anzahl, Reihenfolge und Richtung der einzelnen Pinselstriche. Im Gegensatz dazu verarbeiten Offline-Systeme Scans von Geschriebenem, arbeiten also zu einem Zeitpunkt, wenn der Schreibvorgang längst beendet ist. Sie können also außer Pixeln keine weiteren Informationen verwenden. Detexify ist ein Online-System.
 
 Der Zustand der Stiftspitze besteht in Online-Systemen in der Regel aus den Koordinaten $(x,y)$, der Information, ob die Spitze das Tablett berührt, oft bezeichnet mit \emph{pen-up} bzw. \emph{pen-down} und in manchen Fällen auch aus der Neigung und dem Azimut.
 
@@ -27,22 +28,24 @@ Aus den Daten werden dann häufig Merkmale abgeleitet, sog. \emph{Features}. Man
 
 \section[Herausforderungen]{Herausforderungen der Erkennung von \LaTeX-Symbolen} Die Erkennung von handgemalten \LaTeX-Symbolen ist allein durch die enorme Anzahl der Symbole eine große Herausforderung \cite{Koerich:2003p1562}. Hinzu kommt, dass die Symbole aus sehr unterschiedlichen Alphabeten kommen. Es kommen lateinische, griechische, mathematische und weitere Symbole vor. Im Gegensatz zu asiatischen Sprachen, die ebenfalls sehr große Alphabete aufweisen\footnote{In Japan werden heute 6000-7000 Buchstaben verwendet. In China ist die Anzahl der im täglichen Leben verwendeten Buchstaben bei etwa 5000 \cite{Jaeger:2003p1097}}, ist jedoch die Anzahl und Reihenfolge der Striche nicht vorgegeben, was die Erkennung zusätzlich verkompliziert \cite{Watt:2005p1816}. Außerdem gibt es sehr viele sehr ähnliche Symbole wie $\rightarrow,\mapsto,\leadsto,\rightharpoonup,\hookrightarrow,\rightarrowtail$. Dazu kommen noch die Probleme vor der jede Handschrifterkennung steht, wie unterschiedliche Schreibstile sowohl von unterschiedlichen Schreibern als auch natürliche Variationen in der Schreibweise eines Einzelnen.
 
-\TODO Schwierigkeiten weil Eingabe per Maus erwähnen?
+In Detexify wird diese Variation noch zusätzlich erhöht, da in den meisten Fällen eine herkömmliche Computermaus zum zeichnen der Symbole Verwendung findet, statt ein Grafiktablett, das eine gewohnte Stiftführung ermöglicht.
 
-Ein guter Klassifizierer muss also einiges leisten und der Situation gerecht zu werden.
+Ein guter Klassifizierer muss also einiges leisten um der Situation gerecht zu werden.
 
 \section{Eingabe} \label{sec:input}
 
-Die Eingabe erfolgt für Handschrifterkennungssysteme häufig durch ein Grafiktablett. Dies ist auch in Detexify eine Möglichkeit. Die in \ref{sub:symbolsuche} beschriebene Zeichenfläche erlaubt sowohl die Eingabe über ein Grafiktablett als auch per Maus. Die Eingabe erfolgt in der Webanwendung und die Daten, die an Server gesendet werden und damit den Erkennungsalgorithmus erreichen sind durch das \ac{REST}-Interface (siehe \ref{subsub:erkennung}) spezifiziert. Die Daten bestehen aus einer Liste von Strichen, wobei jeder Strich aus einzelnen Punkten, die die Bewegung der Stiftspitze beschreiben, besteht. Ein Punkt beinhaltet seine Koordinaten $x$ und $y$ sowie einen Zeitstempel $t$. Im \ac{JSON}-Format sieht das z.B. wiefolgt aus: \lstinline![[{"x":125.5, "y":219.133331298828, "t":1269620535913}, ...], [...]]!
+Die Eingabe erfolgt für Handschrifterkennungssysteme häufig durch ein Grafiktablett. Dies ist auch in Detexify eine Möglichkeit, aber nicht die Regel. Die in \ref{sub:symbolsuche} beschriebene Zeichenfläche erlaubt sowohl die Eingabe über ein Grafiktablett als auch per Maus, wobei letzteres jeder Computeranwender zuhause hat. Die Eingabe erfolgt in der Webanwendung und die Daten, die an Server gesendet werden und damit den Erkennungsalgorithmus erreichen sind durch das \ac{REST}-Interface (siehe \ref{subsub:erkennung}) spezifiziert. Die Daten bestehen aus einer Liste von Strichen, wobei jeder Strich aus einzelnen Punkten, die die Bewegung der Stiftspitze beschreiben, besteht. Ein Punkt beinhaltet seine Koordinaten $x$ und $y$ sowie einen Zeitstempel $t$. Im \ac{JSON}-Format sieht das wiefolgt aus:
+
+\lstinline![[{"x":125.5, "y":219.133331298828, "t":1269620535913}, ...], [...]]!
 
 \section{Vorverarbeitung und Normalisierung} 
 
 % (fold)
 \label{sec:vorverarbeitung}
 
-Eine Vorverarbeitung (Preprocessing) der Daten bevor sie an die Erkennungsalgorithmen ausgeliefert werden, ist eine wirksame Methode um Rauschen, das z.B. durch Ungenauigkeiten der Eingabegeräte oder Unachtsamkeit des Schreibers, entstehen kann, zu relativieren. Vorverarbeitung kann aber auch überflüssige Informationen entfernen, die vom verwendeten Erkennungsalgorithmus nicht verwendet werden. Zudem kann durch Normalisierung der Daten ungewollte Variation reduziert werden. Es gibt kaum ein System zu Handschrifterkennung, das keine Vorverarbeitung durchführt.
+Eine Vorverarbeitung (Preprocessing) der Daten bevor sie an die Erkennungsalgorithmen ausgeliefert werden, ist eine wirksame Methode um Rauschen, das z.B. durch Ungenauigkeiten der Eingabegeräte oder Unachtsamkeit des Schreibers, entstehen kann, zu relativieren. Vorverarbeitung kann aber auch überflüssige Informationen entfernen, die vom verwendeten Erkennungsalgorithmus nicht verwendet werden. Zudem kann durch Normalisierung der Daten ungewollte Variation reduziert werden. Es gibt kaum ein System zu Handschrifterkennung, das keine Vorverarbeitung durchführt \cite{Jaeger:2003p1097,Plamondon:2000p10303,Tappert:1990p10302}.
 
-Wie gesagt verwendet Detexify zur Klassifizierung \ac{DTW}, was natürlich das die Form der Vorverarbeitung beeinflusst. In Detexify werden die folgenden Maßnahmen ergriffen:
+Die Auswahl der Maßnahmen hängt natürlich auch vom verwendeten Erkennungsalgorithmus ab. Detexify verwendet zur Klassifizierung \ac{DTW}, daher werden die folgenden Maßnahmen ergriffen:
 
 \TODO Andere blasen sich hier mächtig auf und beschrieben alles haarklein mit vorher/nacher Schaubildern. Will ich das auch?
 
@@ -52,9 +55,9 @@ Wie gesagt verwendet Detexify zur Klassifizierung \ac{DTW}, was natürlich das d
   \TODO An den Enden von Strichen kann es zu Haken kommen, die beim Aufsetzen\dots
   \item[Glättung] Jeder Punkt eines Striches wird durch das arithmetische Mittel des Punktes und seiner beiden Nachbarn ersetzt. 
   \item[Äquidistante Verteilung] Da die Zeichenfläche im Browser in Detexify eine gewisse Abtastrate hat, die erstens Herstellerabhängig sein kann, und zweitens zeitabhängig ist, kann die Verteilung der Punkte auf den Strichen sehr ungleich sein. Daher werden die Punkte neu verteilt, so dass sie Entfernung zwischen zwei je Punkten gleichmäßig groß ist. Die Anfangs- und Endpunkte von Strichen werden dabei erhalten. 
-  \item[Verkettung] Da \ac{DTW} zwei Zeitreihen vergleicht, werden die Striche miteinander verkettet, so dass das Abstandsmaß direkt angewendet werden kann. \TODO das ist doch Mist! Das muss ich begründen. Verschlechtert ja die Erkennung total. Aber: Stroke joining macht manchmal Sinn... wenn Ende und Anfang nah beieinander liegen...
-  \item[Richtungskorrektur der Striche] \TODO mache ich noch gar nicht. Sollte ich aber vielleicht. 
-  \item[Sortierung der Striche] \TODO mache ich noch gar nicht. Sollte ich aber vielleicht.
+  % \item[Verkettung] Da \ac{DTW} zwei Zeitreihen vergleicht, werden die Striche miteinander verkettet, so dass das Abstandsmaß direkt angewendet werden kann. \TODO das ist doch Mist! Das muss ich begründen. Verschlechtert ja die Erkennung total. Aber: Stroke joining macht manchmal Sinn... wenn Ende und Anfang nah beieinander liegen...
+  \item[Richtungskorrektur der Striche] \TODO mache ich noch gar nicht. Sollte ich aber vielleicht. So wie bei \citet{Xie:2007p11427} z.B.
+  \item[Sortierung der Striche] \TODO mache ich noch gar nicht. Sollte ich aber vielleicht. . So wie bei \citet{Xie:2007p11427} z.B.
 \end{description}
 
 % section preprocessing_und_normalisierung (end)
@@ -86,7 +89,7 @@ Ein besonderes Interesse galt in meinem Fall natürlichen den Verfahren, die fü
 
 \subsection{Strukturelle Methoden} \label{sub:strukturelle_methoden}
 
-Strukturelle Methoden basieren auf der Annahme, dass Handschrift aus elementaren Formen, auch Allographen genannt, besteht. Die Vorgehensweise lässt sich am besten an einem Beispiel illustrieren. \citet{Fitzgerald:2004p10858} stellen mathematische Symbole als eine Kombination von Merkmalen der Typen \emph{Linie}, \emph{C-Form} oder \emph{O-Form} dar. Diese Merkmale werden mithilfe von Fuzzylogik aus den Strichen extrahiert und zur Zuordnung des richtigen Labels kommt wieder Fuzzylogik zum Einsatz. Dabei haben sie für jede Symbolklasse, die sie verwenden eine eigene Fuzzy-Regel erstellt. Im zitierten Artikel waren das Regeln für die Zahlen 1-9 und kleingeschriebene lateinische Buchstaben. Es ist offensichtlich, dass ein solches Vorgehen für Detexify mit nahezu 1000 Symbolklassen nicht in Frage kommen kann. Zum Problem für jede Klasse ein Modell zu definieren kommt hinzu, dass das System nicht \emph{adaptionsfähig} im in \ref{desc:anforderungen} definierten Sinne ist, da jedes neue Symbol ein neues Modell braucht. Ohnehin ist es schwierig bei einer so großen Anzahl von Symbolklassen eine gemeinsame Struktur zu finden, die einen Strukturellen Ansatz praktikabel macht. Aus den genannten Gründen habe ich Strukturelle Methoden als ungeeignet für Detexify verworfen.
+Strukturelle Methoden basieren auf der Annahme, dass Handschrift aus elementaren Formen, auch Allographen genannt, besteht. Die Darstellung einer Klasse erfolgt dann als strukturelle Repräsentation (z.B. als Baum oder Graph) bestehend aus diesen Allomorphen. Die Vorgehensweise lässt sich am besten an einem Beispiel illustrieren. \citet{Fitzgerald:2004p10858} stellen mathematische Symbole als eine Kombination von Merkmalen der Typen \emph{Linie}, \emph{C-Form} oder \emph{O-Form} dar. Diese Merkmale werden mithilfe von Fuzzylogik aus den Strichen extrahiert und zur Zuordnung des richtigen Labels kommt wieder Fuzzylogik zum Einsatz. Dabei haben sie für jede Symbolklasse, die sie verwenden eine eigene Fuzzy-Regel erstellt. Im zitierten Artikel waren das Regeln für die Zahlen 1-9 und kleingeschriebene lateinische Buchstaben. Es ist offensichtlich, dass ein solches Vorgehen für Detexify mit nahezu 1000 Symbolklassen nicht in Frage kommen kann. Zum Problem für jede Klasse ein Modell zu definieren kommt hinzu, dass das System nicht \emph{adaptionsfähig} im in \ref{desc:anforderungen} definierten Sinne ist, da jedes neue Symbol ein neues Modell braucht. Ohnehin ist es schwierig bei einer so großen Anzahl von Symbolklassen eine gemeinsame Struktur zu finden, die einen Strukturellen Ansatz praktikabel macht. Aus den genannten Gründen habe ich Strukturelle Methoden als ungeeignet für Detexify verworfen.
 
 \subsection{Künstliche Neuronale Netze} \label{sub:kuenstliche_neuronale_netze}
 
@@ -219,7 +222,7 @@ dann ist
   DTW(A,B) = \frac{\gamma(n,m)}{K}
 \end{equation}. \TODO Wo kommt das K her?
 
-In dieser Form hat DTW die Laufzeitkomplexität \(\mathcal{O}(nm)\). Darum wundert es nicht, dass bereits einige Wissenschaftler versucht haben, den Algorithmus zu optimieren. Auch für Detexify ist dieses Laufzeitverhalten nicht ausreichend um eine Erkennung in Echtzeit zu ermöglichen.
+In dieser Form hat DTW die Laufzeit- und Speicherplatzkomplexität \(\mathcal{O}(nm)\). Darum wundert es nicht, dass bereits einige Wissenschaftler versucht haben, den Algorithmus zu optimieren. Auch für Detexify ist dieses Laufzeitverhalten nicht ausreichend um eine Erkennung in Echtzeit zu ermöglichen.
 
 % subsubsection der_klassische_dtw_algorithmus (end)
 
@@ -230,16 +233,40 @@ Es ist möglich DTW dadurch zu beschleunigen, dass bei der Suche nach dem optima
 %- Leichte Geschwindigkeitsverbesserung \( \mathcal{O}(ns) \) für fest gewähltes $s$
 %- Sakoe and Chiba 1978 haben wohl schon rausgefunden, dass globale beschränkungen helfen \cite{Keogh:2005p7751}
 
-Eine Beschränkung des Warping-Pfades ermöglicht eine weitere viel effektivere Optimierung:
+Wenn beide Folgen die gleiche Länge $n$ haben, ist eine Möglichkeit den Warping-Pfad zu beschränken, einen Korridor um die Diagonale der Matrix festzulegen, aus dem nicht ausgebrochen werden darf. Beschrieben werden kann dies durch eine Beschränkung der Indizes des Warping-Pfades \( w_k = (i,j)_k \) und zwar gilt dann
+\begin{equation}
+  \label{eq:constraints}
+  j−r(i) \leq i \leq j+r(i)
+\end{equation}
+, wobei $r(i)$ den erlaubten Korridor beschreibt.
+
+Im Fall von \(r(i) = s\) also $r$ konstant reduziert sich damit die Komplexität von DTW von \( \mathcal{O}(n^2) \) auf \( \mathcal{O}(ns) \). Zusätzlich ermöglicht die Beschränkung aber eine weitere viel effektivere Optimierung:
 
 % subsubsection constrained_warping_window (end)
 
 \subsubsection{Untere Schranken} % (fold)
 \label{ssub:lower_bounding}
 
-Seinen zwei Folgen (wie \ref{eqn:a} und \ref{eqn:b}) gleicher Länge $K$ gegeben.
-% Dann ist eine globale Beschränkung des Warping-Pfades das dasselbe wie die Beschränkung der Indizes der Elemente des Pfades \( w_k = (i,j)_k \) und zwar gilt dann \( j−r \leq i \leq j+r \), wobei $r$ den erlaubten Korridor beschreibt. Für die folgenden Ausführungen ist $r$ konstant. Es gibt aber auch Beschränkungen bei denen $r$ eine Funktion von $i$ ist (z.B. im Itakura-Parallelogramm in Abb.~\TODO).
-Sei \( DTW_c \) die DTW-Entfernung mit einer Beschränkung des Warping-Pfades $c$
+Gegeben ein Abstandsmaß \( \delta : S\times S \rightarrow \mathbb{R}_0^+ \) und eine untere Schranke \( \delta_{LB} \) d.h. \( \delta_{LB}(a,b) \leq \delta(a,b) ~\forall~ a,b \in S \), die deutlich günstiger zu berechnen ist, dann lässt sich mit dem folgenden naiven Algorithmus eine sequentielle Suche nach dem nächsten Nachbarn eines Elementes \( c \in S \) beschleunigen (vergl. \cite{Keogh:2005p7751}).
+
+\begin{algorithm}
+  \caption{Beschleunigung der Suche nach dem nächsten Nachbarn eines Elementes \(c\) durch eine untere Schranke}
+  \begin{algorithmic}
+    \STATE $\text{best\_so\_far} \gets \infty$
+    \FORALL{samples $s$}
+      \STATE $\text{lb\_dist} \gets \delta_{LB}(c,s)$
+      \IF{$\text{lb} < \text{best\_so\_far}$}
+        \STATE true\_dist $\gets \delta(c,s)$
+        \IF{$\text{true\_dist} < \text{best\_so\_far}$}
+          \STATE best\_so\_far $\gets$ true\_dist
+          \STATE nearest\_neighbor $\gets s$
+        \ENDIF
+      \ENDIF
+    \ENDFOR
+  \end{algorithmic}
+\end{algorithm}
+
+Für DTW für Folgen derselben Länge $n$ mit reellen Messpunkten mit einer Beschränkung des Warping-Pfads der Form \ref{eq:constraints} haben \citet{Keogh:2005p7751} eine scharfe untere Schranke angegeben. In 
 
 \TODO von wem eingeführt?
 Diese Maßnahme ist allerdings nur möglich, wenn die beiden Folgen, die miteinander verglichen werden sollen, dieselbe Länge haben. ~> Lineare Interpolation (kein Problem nach \citet{Ratanamahatana:2004p7522})
