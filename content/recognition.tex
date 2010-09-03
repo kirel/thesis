@@ -284,22 +284,78 @@ In Fall von Detexify sind die einzelnen Punkte der Folgen aber Punkte im \( \mat
 
 \subsection{Eine untere Schranke für DTW für Folgen im \( \mathbb{R}^2 \)}
 
-Bevor ich meine untere Schranke erkläre, gebe ich noch eine kurze Erklärung der von \citet{Keogh:2005p7751} definierten unteren Schranke LB\_Keogh.
+\subsubsection{LB\_Keogh}
+\label{ssub:lb_keogh}
+
+Bevor ich meine untere Schranke erläutere, gebe ich noch eine kurze Erklärung der von \citet{Keogh:2005p7751} definierten unteren Schranke LB\_Keogh an.
 
 Seien
 \begin{align}
-  Q &= q_1 \dots q_n \\
-  C &= c_1 \dots c_n
+  Q &= q_1 \dots q_n  & q_i \in \mathbb{R} \\
+  C &= c_1 \dots c_n  & c_i \in \mathbb{R}
 \end{align}
 zwei Folgen gleicher Länge $n$. \( \mathcal{W}_r \) sei die Menge der durch \(r\) beschränkten Warping-Pfade (siehe \ref{eq:constraints}). DTW sei (leicht verändert) gegeben durch
-
 \begin{equation}
   \label{eq:keoghdtw}
   DTW(Q,C) = \min_{W \in \mathcal{W}_r}{\sqrt{\sum_{i=1}^n d_{w_i}}}
+\end{equation}.
+Mithilfe von \(r\) werden nun weitere Folgen $U$ und $L$ definiert:
+\begin{align}
+  U_i &= \max ~\{ q_{i-r}, \dots, q_{i+r} \}\\
+  L_i &= \min ~\{ q_{i-r}, \dots, q_{i+r} \}
+\end{align}
+Es gilt offensichtlich
+\begin{equation}
+  \forall ~ i ~ U_i \geq q_i \geq L_i
+\end{equation}.
+Nun können wir eine untere Schranke für \ref{eq:keoghdtw} wiefolgt definieren:
+\begin{equation}
+  \label{eq:lbkeogh}
+  \operatorname{LB\_Keogh}(Q,C) = \sqrt{\sum_{i=1}^n
+  \begin{cases}
+    \delta(c_i, U_i) & c_i > U_i \\
+    \delta(c_i, L_i) & c_i < L_i \\
+    0 & \text{sonst}
+  \end{cases}  
+  }
 \end{equation}
 
+Die Intuition dahinter ist die folgende. Die Folgen $U$ und $L$ bilden eine Hülle um die ursprüngliche Folge $Q$. LB\_Keogh ist dann sozusagen der Abstand einer neuen Folge $C$ zu dieser Hülle (siehe Abbildung \ref{fig:lb_keogh}). Dass dies tatsächlich eine untere Schranke ist, haben \citet{Keogh:2005p7751} gezeigt. Sie argumentieren auch, dass ihre Schranke schärfer also die bisher in der Literatur aufgetauchten ist.
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+\begin{figure}
+  \centering \includegraphics[width=10cm]{figures/lb-keogh.png}
+  \caption{Grafische Darfstellung von LB\_Keogh. Grafik entnommen aus \cite{Keogh:2005p7751}}
+  \label{fig:lb_keogh}
+\end{figure}
+
+\subsubsection{\(\mathbb{R}^2\)-analog zu LB\_Keogh}\label{subs:lb_keogh_analog}
+
+Es ist möglich für zwei Folgen 
+\begin{align}
+  A &= a_1 \dots a_n  & a_i \in \mathbb{R}^2 \\
+  B &= b_1 \dots b_n  & b_i \in \mathbb{R}^2
+\end{align}
+auf analoge Weise eine untere Schranke zu definieren. \( \mathcal{W}_r \) sei wieder die Menge der durch \(r\) beschränkten Warping-Pfade. Wir definieren dann eine neue Folge $C$ durch
+\begin{equation}
+  C_i = \operatorname{conv} ~\{ a_{i-r}, \dots, a_{i+r} \}
+\end{equation}
+wobei
+\[
+  \operatorname{conv} X = \bigcap_{X\subseteq K \subseteq V \atop K\ \mathrm{konvex}} K
+\]
+die konvexe Hülle ist. Die neue Folge $C$ besteht also aus konvexen Polygonen. Für \ref{eq:keoghdtw} lässt sich nun eine untere Schranke wiefolgt definieren:
+\begin{equation}
+  \label{eq:lbkeoghanalog}
+  \operatorname{LB}(A,B) = \sqrt{\sum_{i=1}^n
+  \begin{cases}
+    0 & b_i \in C_i \\
+    \delta(b_i, C_i) & \text{sonst}
+  \end{cases}  
+  }
+\end{equation}
+und dabei ist natürlich \( \delta(b_i, C_i) = \min\limits_{c \in C_i} \delta(b_i, c) \).
+
+\FIXME Ich habe gerade den Verdacht, dass das gar nicht stimmt... ich darf bloß den Abstand zu den Ecken nehmen. Die Anzahl der Ecken ist kleiner gleich $r$ aber ich brauche immer noch im worst case $r$ Vergleiche womit LB also \( \mathcal{O}(rn) \) ist, also nicht schneller als der ursprüngliche Algorithmus.
 
 % subsubsection lower_bounding (end)
 
