@@ -133,6 +133,7 @@ Der $k$-nächste-Nachbarn-Algorithmus ist eines der einfachsten Verfahren um ein
 
 Dabei ist KNN besonders bei Problemen beliebt, in denen die Anzahl an Klassen sehr hoch ist, wie beispielsweise bei japanischen Schriftzeichen \cite{Jaeger:2003p1097}. Eine Analyse zur Eignung für Detexify scheint also angebracht.
 \TODO Laut Jiang Script Kapitel 4 ist KNN mit vielen Trainingsdaten nahezu so gut wie Bayes (optimal)
+\TODO weitere Argumente für KNN: gleicht Schreibstile aus wenn genug Muster
 % \citet{Tappert:1990p10302} sagt bei Online-Erkennung reichen wegen der Interaktivität einfachere Methoden, was bei mir ja voll zutrifft.
 
 Die Bedingung der \emph{Adaptionsfähigkeit}, die ich in \ref{sec:klassifizierung} gefordert hatte, die bei den bisher vorgestellten Verfahren schwierig umzusetzen war, ist dabei bei der Nächste-Nachbarn-Klassifikation auf natürliche Weise dadurch gegeben, dass neue Trainingsmuster einfach nur gespeichert werden müssen. \emph{Interaktivität} kann leicht realisiert werden, indem jeder Klasse ein auf dem Abstandsmaß basierender Wert zugewiesen wird. So erhält man für ein unbekanntes Muster eine Rangfolge der Klassen.
@@ -141,7 +142,7 @@ Es ist also zu klären, ob es ein Abstandsmaß gibt, das die Bedingungen \emph{S
 
 \subsection[DTW]{DTW - Dynamic time warping} \label{sub:dtw}
 
-Ein vielversprechendes Abstandsmaß wurde bereits in \ref{sub:hmm} erwähnt. Es wird \emph{dynamic time warping} oder auch \emph{elastic matching} genannt. \citet{Xie:2007p11427} erreicht damit für die Erkennung mathematischer Symbole  eine Erkennungsrate von 94.8 \%. Auch \citet{Golubitsky:2009p2433} bemerken:
+Ein vielversprechendes Abstandsmaß wurde bereits in \ref{sub:hmm} erwähnt. Es wird \emph{dynamic time warping} oder auch \emph{elastic matching} genannt. Es wurde bereits erfolgreich für lateinische und chinesische Schriftzeihen eingesetzt \cite{Tappert:1990p10302}. \citet{Xie:2007p11427} erreicht damit für die Erkennung mathematischer Symbole eine Erkennungsrate von 94.8 \%. Auch \citet{Golubitsky:2009p2433} bemerken:
 % In diesem Paper gibts auch Infos zum verwendete Datensatz. Weitere Statistiken zu Elastic matching Parametern.
 \begin{quote}
   Among the distance measures used for classifying handwritten mathematical symbols, the elastic matching distance is known to be one of the most accurate.
@@ -227,6 +228,8 @@ dann ist
   DTW(A,B) = \frac{\gamma(n,m)}{K}
 \end{equation}. \TODO Wo kommt das K her?
 
+\TODO Dynamische Programmierung in der Literatur? z.B. Algorithmik - U Schöning - 2001
+
 In dieser Form hat DTW die Laufzeit- und Speicherplatzkomplexität \(\mathcal{O}(nm)\). Darum wundert es nicht, dass bereits einige Wissenschaftler versucht haben, den Algorithmus zu optimieren. Auch für Detexify ist dieses Laufzeitverhalten nicht ausreichend um eine Erkennung in Echtzeit zu ermöglichen.
 
 
@@ -252,7 +255,7 @@ Wenn beide Folgen die gleiche Länge $n$ haben, ist eine Möglichkeit den Warpin
 \end{equation}
 , wobei $r(i)$ den erlaubten Korridor beschreibt.
 
-Im Fall von \(r(i) = s\) also $r$ konstant reduziert sich damit die Komplexität von DTW von \( \mathcal{O}(n^2) \) auf \( \mathcal{O}(ns) \). Zusätzlich ermöglicht die Beschränkung aber eine weitere viel effektivere Optimierung:
+Im Fall von \(r(i) = s\) also $r$ konstant reduziert sich damit die Komplexität von DTW von \( \mathcal{O}(n^2) \) auf \( \mathcal{O}(ns) \). Zusätzlich ermöglicht die Beschränkung bei fester Länge $n$ der Folgen aber eine weitere viel effektivere Optimierung:
 
 \subsection{Untere Schranken} % (fold)
 \label{sub:lower_bounding}
@@ -355,15 +358,15 @@ die konvexe Hülle ist. Die neue Folge $C$ besteht also aus konvexen Polygonen. 
 \end{equation}
 und dabei ist natürlich \( \delta(b_i, C_i) = \min\limits_{c \in C_i} \delta(b_i, c) \).
 
-\FIXME Ich habe gerade den Verdacht, dass das gar nicht stimmt... ich darf bloß den Abstand zu den Ecken nehmen. Die Anzahl der Ecken ist kleiner gleich $r$ aber ich brauche immer noch im worst case $r$ Vergleiche womit LB also \( \mathcal{O}(rn) \) ist, also nicht schneller als der ursprüngliche Algorithmus.
+\FIXME Ich habe gerade den Verdacht, dass das gar nicht stimmt... ich darf bloß den Abstand zu den Ecken nehmen. Die Anzahl der Ecken ist kleiner gleich $r$ aber ich brauche immer noch im worst case $r$ Vergleiche womit LB also \( \mathcal{O}(rn) \) ist, also nicht schneller als der ursprüngliche Algorithmus. Passt auch mit dem zusammen, was ich hier sagen will, aber ich muss wohl anders argumentieren...
 
 % subsubsection lower_bounding (end)
 
 \subsection{Greedy Matching} % (fold)
 \label{sec:greedy}
 
-Es ist möglich DTW mit einem Greedy-Algorithmus zu Approximieren.
-\TODO Allgemeines zu Greedy-Algorithmen (unterschiede zu Dynamischer Programmierung (nicht-erschöpfend))
+Es ist möglich DTW mit einem Greedy-Algorithmus zu approximieren.
+\TODO Allgemeines zu Greedy-Algorithmen (unterschiede zu Dynamischer Programmierung (nicht-erschöpfend)) z.B. Algorithmik - U Schöning - 2001
 
 Grundsätzlich funktioniert eine Greedy-Approximation von DTW bei zwei Folgen $A$ und $B$ mit \(a_i,b_i \in S\) und einem Abstandsmaß \(\delta:S\times S \rightarrow \mathbb{R}_0^+\) folgendermaßen. Beginne mit den Startpunkten $a_1$ und $b_1$ ordne diese einander zu. Ordne dann jeweils die nächsten Punkte so einander zu, dass der Abstand unter \(\delta\) minimal ist (wähle das lokale Optimum). Wiederhole dies, bis in einer der beiden Folgen nur noch ein Punkt übrig ist. Ordne alle restlichen Punkte der anderen Folge diesem zu. Algorithmus \ref{alg:greedy} zeigt eine Implementierung in Pseudocode.
 Wie man sieht hat der Algorithmus einen konstanten Speicherplatzaufwand und eine lineare Laufzeit.
@@ -411,12 +414,24 @@ Wie man sieht hat der Algorithmus einen konstanten Speicherplatzaufwand und eine
 %\lstinputlisting[language=Haskell,firstline=43,lastline=56]{../../code/hs-classifier/DTW.hs}
 
 \citet{MacLean:2010p9970} stellen eine Variante dieses Algorithmus vor. Sie verwenden ihn zur Erkennung mathematischer Symbole in Mathbrush, das in dieser Arbeit bereits erwähnt wurde (siehe auch \ref{sub:mathbrush} und \cite{Labahn:2008p10301}). Sie gehen bei der Zuordnung von Punkten aber simultan von beiden Seiten vor.
-Welche Vorteile das gegenüber einer einseitigen Strategie bringt, erklären sie nicht. Sie vergleichen ihren Greedy-Algorithmus jedoch mit dem Standard-DTW-Algorithmus und kommen zum Ergebnis, dass der Greedy-Algorithmus zur Unterscheidung von mathematischen Symbolen ebenso geeignet ist. Insbesondere bei einer kleinen Anzahl von Punkten pro Strich (<30) ist der Greedy-Algorithmus sogar gleich gut geeignet. Bei ihren Tests verwenden sie 15796 handgeschriebene Symbole aus 70 Symbolklassen geschrieben von 20 unterschiedlichen Personen.
+Welche Vorteile das gegenüber einer einseitigen Strategie bringt, erklären sie nicht. Sie vergleichen ihren Greedy-Algorithmus jedoch mit dem Standard-DTW-Algorithmus und kommen zum Ergebnis, dass der Greedy-Algorithmus zur Unterscheidung von mathematischen Symbolen ebenso geeignet ist. Insbesondere bei einer kleinen Anzahl von Punkten pro Strich (<30) ist der Greedy-Algorithmus sogar gleich gut geeignet und durch seine lineare Laufzeit natürlich wesentlich schneller. Bei ihren Tests verwenden sie 15796 handgeschriebene Symbole aus 70 Symbolklassen geschrieben von 20 unterschiedlichen Personen.
 
-\subsection{\TODO Parameter} % (fold)
-\label{sec:todo_parameter}
+\subsection{Elimination}
+\label{sec:elimnimation}
 
-% subsubsection todo_parameter (end)
+Möglich Suche durch Elimination irrelevanter Trainingsmuster zu beschleunigen...
+\cite{Watt:2005p1816} schlägt Elimination durch klassische features vor
+\TODO da DTW keine Metrik ist können klassische Eliminationsverfahren wie der Voronoi-Trick nicht angewandt werden also keine exakte Lösung. Vielleicht trotzdem mal Greedy-Algorithmus nach Hart (siehe Jiang-Script) testen?
+
+\TODO Voronoi-Trick und Greedy-Hart in der Literatur?
+
+\subsection{Parameter}
+\label{sec:parameter}
+
+Die unterschiedlichen Varianten von DTW können durch unterschedliche Parameterwahlen beeinflusst werden.
+n - Anzahl Punkte im Striche
+r - Fensterbreite bei beschränktem DTW
+Verwendetes inneres Abstandsmaß (Manhatten/Euklidisch/Mit Steigung und Krümmung \citet{Vuong:2010p10279})
 
 \citet{Golubitsky:2009p1842} enthält ganz viele Statistiken zu Parametern für DTW (und Vergleich mit Funktionalapproximationsmaß)
 \begin{itemize}
@@ -427,14 +442,3 @@ Welche Vorteile das gegenüber einer einseitigen Strategie bringt, erklären sie
 
 % eigentlich egal: siehe \cite{Vuong:2010p10279} Natural Log, symbol recognition is implemented using a statistical approach based on Gaussian Density Estimation \dots siehe auch \cite{Vuong:2010p10279} \TODO Paper suchen
 
-\cite{MacLean:2010p9970} DTW in linear time and constant space
-
-\cite{Watt:2005p1816} schlägt pruning durch klassische features vor
-
-- DTW kann schwer durch Elimination (Pruning) optimiert werden, da DTW keine Metrik ist ~> Voronoi-Trick geht nicht also keine exakte Lösung. Vielleicht trotzdem mal Greedy-Algorithmus nach Hart (siehe Jiang-Script) testen?
-
-- DTW/Elastic matching/DP matching wird benutzt für Lateinische Schriftzeihen, Chinesisch, \cite{Tappert:1990p10302}
-
-weitere Argumente für KNN
-
--> gleicht Schreibstile aus wenn genug Muster
