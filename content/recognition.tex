@@ -359,10 +359,59 @@ und dabei ist natürlich \( \delta(b_i, C_i) = \min\limits_{c \in C_i} \delta(b_
 
 % subsubsection lower_bounding (end)
 
-\subsection{linear space and time} % (fold)
-\label{sec:linear_space_and_time}
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-% subsubsection linear_space_and_time (end)
+\subsection{Greedy Matching} % (fold)
+\label{sec:greedy}
+
+Es ist möglich DTW mit einem Greedy-Algorithmus zu Approximieren.
+\TODO Allgemeines zu Greedy-Algorithmen (unterschiede zu Dynamischer Programmierung (nicht-erschöpfend))
+
+Grundsätzlich funktioniert eine Greedy-Approximation von DTW bei zwei Folgen $A$ und $B$ mit \(a_i,b_i \in S\) und einem Abstandsmaß \(\delta:S\times S \rightarrow \mathbb{R}_0^+\) folgendermaßen. Beginne mit den Startpunkten $a_1$ und $b_1$ ordne diese einander zu. Ordne dann jeweils die nächsten Punkte so einander zu, dass der Abstand unter \(\delta\) minimal ist (wähle das lokale Optimum). Wiederhole dies, bis in einer der beiden Folgen nur noch ein Punkt übrig ist. Ordne alle restlichen Punkte der anderen Folge diesem zu. Algorithmus \ref{alg:greedy} zeigt eine Implementierung in Pseudocode.
+Wie man sieht hat der Algorithmus einen konstanten Speicherplatzaufwand und eine lineare Laufzeit.
+% hier schon haskell-implementierung erwähnen?
+
+\begin{algorithm}
+  \caption{Greedy Matching}
+  \label{alg:greedy}
+  \begin{algorithmic}
+    \STATE $a \gets \text{next from}~A$
+    \STATE $b \gets \text{next from}~B$
+    \STATE $d \gets \delta(a,b)$
+    \STATE $a' \gets \text{next from}~A$
+    \STATE $b' \gets \text{next from}~B$
+    \WHILE{points left in $A$ $\wedge$ points left in $B$}
+      \STATE $l, m, r \gets \delta(a',b), \delta(a', b'), \delta(a, b')$
+      \STATE $\mu \gets \min ~\{l, m, r\}$
+      %\COMMENT{ Important line }
+      \STATE $d \gets d + \mu$
+      \IF{$l = \mu$}
+        \STATE $a \gets a'$
+        \STATE $a' \gets \text{next from}~A$
+      \ELSIF{$r = \mu$}
+        \STATE $b \gets b'$
+        \STATE $b' \gets \text{next from}~B$
+      \ELSE
+        \STATE $a \gets a'$
+        \STATE $b \gets b'$
+        \STATE $a' \gets \text{next from}~A$
+        \STATE $b' \gets \text{next from}~B$
+      \ENDIF
+    \ENDWHILE
+    \IF{no points left in $A$}
+      \FORALL{points $p$ in $B$}
+        \STATE $d \gets d + \delta(a',p)$
+      \ENDFOR
+    \ELSIF{no points left in $B$}
+      \FORALL{points $p$ in $A$}
+        \STATE $d \gets d + \delta(b',p)$
+      \ENDFOR
+    \ENDIF
+  \end{algorithmic}
+\end{algorithm}
+
+%\lstinputlisting[language=Haskell,firstline=43,lastline=56]{../../code/hs-classifier/DTW.hs}
+
+\citet{MacLean:2010p9970} stellen eine Variante dieses Algorithmus vor. Sie verwenden ihn zur Erkennung mathematischer Symbole in Mathbrush, das in dieser Arbeit bereits erwähnt wurde (siehe auch \ref{sub:mathbrush} und \cite{Labahn:2008p10301}). Sie gehen bei der Zuordnung von Punkten aber simultan von beiden Seiten vor.
+Welche Vorteile das gegenüber einer einseitigen Strategie bringt, erklären sie nicht. Sie vergleichen ihren Greedy-Algorithmus jedoch mit dem Standard-DTW-Algorithmus und kommen zum Ergebnis, dass der Greedy-Algorithmus zur Unterscheidung von mathematischen Symbolen ebenso geeignet ist. Insbesondere bei einer kleinen Anzahl von Punkten pro Strich (<30) ist der Greedy-Algorithmus sogar gleich gut geeignet. Bei ihren Tests verwenden sie 15796 handgeschriebene Symbole aus 70 Symbolklassen geschrieben von 20 unterschiedlichen Personen.
 
 \subsection{\TODO Parameter} % (fold)
 \label{sec:todo_parameter}
