@@ -54,7 +54,7 @@ Die Auswahl der Maßnahmen hängt natürlich auch vom verwendeten Erkennungsalgo
   \item[Entfernung von Haken]
   \TODO An den Enden von Strichen kann es zu Haken kommen, die beim Aufsetzen\dots
   \item[Glättung] Jeder Punkt eines Striches wird durch das arithmetische Mittel des Punktes und seiner beiden Nachbarn ersetzt. 
-  \item[Äquidistante Verteilung] Da die Zeichenfläche im Browser in Detexify eine gewisse Abtastrate hat, die erstens Herstellerabhängig sein kann, und zweitens zeitabhängig ist, kann die Verteilung der Punkte auf den Strichen sehr ungleich sein. Daher werden die Punkte neu verteilt, so dass sie Entfernung zwischen zwei je Punkten gleichmäßig groß ist. Die Anfangs- und Endpunkte von Strichen werden dabei erhalten. 
+  \item[Äquidistante Verteilung] Da die Zeichenfläche im Browser in Detexify eine gewisse Abtastrate hat, die erstens Herstellerabhängig sein kann, und zweitens zeitabhängig ist, kann die Verteilung der Punkte auf den Strichen sehr ungleich sein. Daher werden die Punkte neu verteilt, so dass sie Entfernung zwischen zwei je Punkten gleichmäßig groß ist. Die Anfangs- und Endpunkte von Strichen werden dabei erhalten. \citet{Golubitsky:2009p1842} geben an, dass eine Äquidistante Verteilung der Punkte bei Verwendung von \ac{DTW} sogar die beste Wahl ist.
   % \item[Verkettung] Da \ac{DTW} zwei Zeitreihen vergleicht, werden die Striche miteinander verkettet, so dass das Abstandsmaß direkt angewendet werden kann. \TODO das ist doch Mist! Das muss ich begründen. Verschlechtert ja die Erkennung total. Aber: Stroke joining macht manchmal Sinn... wenn Ende und Anfang nah beieinander liegen...
   \item[Richtungskorrektur der Striche] \TODO mache ich noch gar nicht. Sollte ich aber vielleicht. So wie bei \citet{Xie:2007p11427} z.B.
   \item[Sortierung der Striche] \TODO mache ich noch gar nicht. Sollte ich aber vielleicht. . So wie bei \citet{Xie:2007p11427} z.B.
@@ -129,9 +129,10 @@ Von der Leistungsfähigkeit her scheinen HMMs also durchaus eine Option für Det
 
 \subsection{Nächste-Nachbarn-Klassifikation} \label{sub:knn}
 
-Der $k$-nächste-Nachbarn-Algorithmus ist eines der einfachsten Verfahren um einem unbekannten Muster eine Klasse zuzuweisen. Dazu werden als Training einfach Vertreter der Klassen in einem Merkmalsraum gespeichert. Dem unbekannten Muster wird dann durch ein Mehrheitsvotum der $k$ nächsten Nachbarn eine Klasse zugeordnet. Eine zentrale Rolle nimmt dabei das Abstandsmaß, das die Nachbarschaft bestimmt, ein \cite{Jaeger:2003p1097}. Es beeinflusst die Güte der Klassifikation, aber auch durch seine Laufzeitkomplexität den zeitlichen Aufwand des Vorgangs. \TODO Literatur - Bücher?
+Der $k$-nächste-Nachbarn-Algorithmus ist eines der einfachsten Verfahren um einem unbekannten Muster eine Klasse zuzuweisen. Dazu werden als Training einfach Vertreter der Klassen in einem Merkmalsraum gespeichert. Dem unbekannten Muster wird dann durch ein Mehrheitsvotum der $k$ nächsten Nachbarn eine Klasse zugeordnet. Eine zentrale Rolle nimmt dabei das Abstandsmaß, das die Nachbarschaft bestimmt, ein \cite{Jaeger:2003p1097}. Es beeinflusst die Güte der Klassifikation, aber auch durch seine Laufzeitkomplexität den zeitlichen Aufwand des Vorgangs. Darum wird diese Art der Klassifikation auch häufig \emph{template matching} genannt.
+\TODO Literatur - Bücher?
 
-Dabei ist KNN besonders bei Problemen beliebt, in denen die Anzahl an Klassen sehr hoch ist, wie beispielsweise bei japanischen Schriftzeichen \cite{Jaeger:2003p1097}. Eine Analyse zur Eignung für Detexify scheint also angebracht.
+Dabei ist Nächste-Nachbarn-Klassifikation besonders bei Problemen beliebt, in denen die Anzahl an Klassen sehr hoch ist, wie beispielsweise bei japanischen Schriftzeichen \cite{Jaeger:2003p1097}. Eine Analyse zur Eignung für Detexify scheint also angebracht.
 \TODO Laut Jiang Script Kapitel 4 ist KNN mit vielen Trainingsdaten nahezu so gut wie Bayes (optimal)
 \TODO weitere Argumente für KNN: gleicht Schreibstile aus wenn genug Muster
 % \citet{Tappert:1990p10302} sagt bei Online-Erkennung reichen wegen der Interaktivität einfachere Methoden, was bei mir ja voll zutrifft.
@@ -140,7 +141,7 @@ Die Bedingung der \emph{Adaptionsfähigkeit}, die ich in \ref{sec:klassifizierun
 
 Es ist also zu klären, ob es ein Abstandsmaß gibt, das die Bedingungen \emph{Skalierbarkeit} und \emph{Laufzeitkomplexität} miteinander vereinen kann.
 
-\subsection[DTW]{DTW - Dynamic time warping} \label{sub:dtw}
+\subsection[DTW]{DTW - Dynamic time warping}
 
 Ein vielversprechendes Abstandsmaß wurde bereits in \ref{sub:hmm} erwähnt. Es wird \emph{dynamic time warping} oder auch \emph{elastic matching} genannt. Es wurde bereits erfolgreich für lateinische und chinesische Schriftzeihen eingesetzt \cite{Tappert:1990p10302}. \citet{Xie:2007p11427} erreicht damit für die Erkennung mathematischer Symbole eine Erkennungsrate von 94.8 \%. Auch \citet{Golubitsky:2009p2433} bemerken:
 % In diesem Paper gibts auch Infos zum verwendete Datensatz. Weitere Statistiken zu Elastic matching Parametern.
@@ -160,7 +161,7 @@ Aus diesen Gründen ist die Wahl für die Klassifikation in Detexify auf DTW gef
 Im folgenden wird der klassische DTW-Algorithmus beschrieben und unterschiedliche Optimierungsmöglichkeiten werden diskutiert.
 
 \subsection{Der klassische DTW-Algorithmus} % (fold)
-\label{sub:der_klassische_dtw_algorithmus}
+\label{sub:dtw}
 
 Seien zwei Folgen von Punkten
 \begin{align}
@@ -419,26 +420,31 @@ Welche Vorteile das gegenüber einer einseitigen Strategie bringt, erklären sie
 \subsection{Elimination}
 \label{sec:elimnimation}
 
-Möglich Suche durch Elimination irrelevanter Trainingsmuster zu beschleunigen...
-\cite{Watt:2005p1816} schlägt Elimination durch klassische features vor
-\TODO da DTW keine Metrik ist können klassische Eliminationsverfahren wie der Voronoi-Trick nicht angewandt werden also keine exakte Lösung. Vielleicht trotzdem mal Greedy-Algorithmus nach Hart (siehe Jiang-Script) testen?
-
-\TODO Voronoi-Trick und Greedy-Hart in der Literatur?
+Eine weitere Optimierungsmöglichkeit besteht darin irrelevante Trainingsmuster im Suchraum zu eliminieren um für diese einen teuren DTW-Vergleich gar nicht mehr durchführen zu müssen. \citet{Watt:2005p1816} schlagen Elimination durch klassische Merkmale vor, d.h. es wird ein Merkmalsvektor gebildet und es wird nur noch für die besten $N$ Trainingsmuster die DTW-Entfernung ausgerechnet. \citet{Watt:2005p1816} verlieren durch ein solches Verfahren 3\% an Erkennungsgenauigkeit aber vermeiden für fast 90\% des Suchraumes das teurere Abstandsmaß.
+Ist das verwendete Abstandsmaß eine Metrik, so gibt es sogar exakte Eliminationsverfahren für die Nächste-Nachbarn-Klassifikation wie den Voronoi-Trick (\TODO Literatur), die ohne Genauigkeitsverlust auskommen. DTW ist leider keine Metrik, darum bleiben mir solche Mittel verschlossen.
+Aus diesem Grund werden Eliminationsverfahren in Detexify nicht zur Anwendung gebracht.
+\TODO Vielleicht trotzdem mal Greedy-Algorithmus nach Hart (siehe Jiang-Script) testen?
 
 \subsection{Parameter}
 \label{sec:parameter}
 
-Die unterschiedlichen Varianten von DTW können durch unterschedliche Parameterwahlen beeinflusst werden.
-n - Anzahl Punkte im Striche
-r - Fensterbreite bei beschränktem DTW
-Verwendetes inneres Abstandsmaß (Manhatten/Euklidisch/Mit Steigung und Krümmung \citet{Vuong:2010p10279})
+Bei der Verwendung von template matching mit DTW als Abstandsmaß müssen einige Parameter festgelegt werden. Diese beeinflussen die Leistungsfähigkeit und Geschwindigkeit des Klassifikators und müssen sorgfältig ausgewählt werden. Die Parameter sind die folgenden:
 
-\citet{Golubitsky:2009p1842} enthält ganz viele Statistiken zu Parametern für DTW (und Vergleich mit Funktionalapproximationsmaß)
-\begin{itemize}
-  \item k (Anzahl der Nachbarn)
-  \item Anzahl der Punkte
-\end{itemize}
+\begin{description}
+  \item[$n$] - Anzahl der Punkte pro Strich
+  \item[$r$] - Fensterbreite bei beschränktem DTW (siehe \ref{eq:constraints})
+  \item[$\delta$] - das verwendete innere Abstandsmaß (siehe \ref{sub:dtw})
+  \item[$k$] - Anzahl der nächsten Nachbarn beim klassischen $k$-nächste-Nachbarn-Algorithmus
+  \item[$C$] - Anzahl der Trainingsmuster pro Klasse
+\end{description}
 
+Da DTW schon häufig Verwendung gefunden hat, gibt es natürlich in der Literatur einige Angaben zu experimentell gefundenen Optima für bestimmte Parameter. Dabei ist natürlich zu bedenken, dass die optimale Parameterwahl immer vom konkreten Problem und natürlich auch von den Testdaten abhängt. Trotzdem bieten die Angaben gute Anhaltspunkte in welchen Bereichen sich sinnvolle Parameter bewegen.
 
-% eigentlich egal: siehe \cite{Vuong:2010p10279} Natural Log, symbol recognition is implemented using a statistical approach based on Gaussian Density Estimation \dots siehe auch \cite{Vuong:2010p10279} \TODO Paper suchen
+\citet{Golubitsky:2009p1842} geben an, dass bei ihrer Konfiguration mit 107 Symbolklassen die Erkennungsrate mit Steigerung von $C$ fast linear ansteigt bis 25 Trainingsmuster pro Klasse erreicht sind. Ab dann sind die Zuwächse nicht mehr signifikant. Sie geben das Optimum für $n$ bei $k = 1$ mit $25$ an. Bei mehr Punkten fällt die Erkennungsrate sogar leicht. Sie haben auch mit $k$ experimentiert und kommen zum Schluss, dass bei kleinen Klassen ($C<10$) $k = 1$ am besten abschneidet. Werden die Klassen größer, so lohnen sich nach und nach immer größere Werte für $k$. Zum Beispiel ist für $C>25$  $k=5$ die beste Wahl. Der Vorsprung in der Erkennungsrate liegt aber bei weniger als 1\%.
 
+\citet{Golubitsky:2009p2433} geben für $k=1$ und beschränkte Warping-Pfade die optimalen Parameter mit $n = 30$ und $r = 2$ an. Sie verwenden dabei quadratischen euklidischen Abstand als inneres Abstandsmaß $\delta$.
+
+\citet{MacLean:2010p9970} verwenden in ihren Greedy-Variante von DTW ein Abstandsmaß, das auch die Steigung der Striche mit einbezieht, wie auch \citet{Tappert:1982p10305} es vorgeschlagen haben.
+\citet{Vuong:2010p10279} Gehen noch einen Schritt weiter und verwenden sogar die Krümmung der Striche.
+
+\TODO Parameterwahlen in Detexify?
