@@ -26,7 +26,7 @@ Aus den Daten werden dann häufig Merkmale abgeleitet, sog. \emph{Features}. Man
 
 \TODO Typ 1,2,3 Klassifizierer
 
-\section[Herausforderungen]{Herausforderungen der Erkennung von \LaTeX-Symbolen} Die Erkennung von handgemalten \LaTeX-Symbolen ist allein durch die enorme Anzahl der Symbole eine große Herausforderung \cite{Koerich:2003p1562}. Hinzu kommt, dass die Symbole aus sehr unterschiedlichen Alphabeten kommen. Es kommen lateinische, griechische, mathematische und weitere Symbole vor. Im Gegensatz zu asiatischen Sprachen, die ebenfalls sehr große Alphabete aufweisen\footnote{In Japan werden heute 6000-7000 Buchstaben verwendet. In China ist die Anzahl der im täglichen Leben verwendeten Buchstaben bei etwa 5000 \cite{Jaeger:2003p1097}}, ist jedoch die Anzahl und Reihenfolge der Striche nicht vorgegeben, was die Erkennung zusätzlich verkompliziert \cite{Watt:2005p1816}. Außerdem gibt es sehr viele sehr ähnliche Symbole wie $\rightarrow,\mapsto,\leadsto,\rightharpoonup,\hookrightarrow,\rightarrowtail$. Dazu kommen noch die Probleme vor der jede Handschrifterkennung steht, wie unterschiedliche Schreibstile sowohl von unterschiedlichen Schreibern als auch natürliche Variationen in der Schreibweise eines Einzelnen.
+\section[Herausforderungen]{Herausforderungen der Erkennung von \LaTeX-Symbolen}\label{sec:herausforderungen} Die Erkennung von handgemalten \LaTeX-Symbolen ist allein durch die enorme Anzahl der Symbole eine große Herausforderung \cite{Koerich:2003p1562}. Hinzu kommt, dass die Symbole aus sehr unterschiedlichen Alphabeten kommen. Es kommen lateinische, griechische, mathematische und weitere Symbole vor. Im Gegensatz zu asiatischen Sprachen, die ebenfalls sehr große Alphabete aufweisen\footnote{In Japan werden heute 6000-7000 Buchstaben verwendet. In China ist die Anzahl der im täglichen Leben verwendeten Buchstaben bei etwa 5000 \cite{Jaeger:2003p1097}}, ist jedoch die Anzahl und Reihenfolge der Striche nicht vorgegeben, was die Erkennung zusätzlich verkompliziert \cite{Watt:2005p1816}. Außerdem gibt es sehr viele sehr ähnliche Symbole wie $\rightarrow,\mapsto,\leadsto,\rightharpoonup,\hookrightarrow,\rightarrowtail$. Dazu kommen noch die Probleme vor der jede Handschrifterkennung steht, wie unterschiedliche Schreibstile sowohl von unterschiedlichen Schreibern als auch natürliche Variationen in der Schreibweise eines Einzelnen.
 
 In Detexify wird diese Variation noch zusätzlich erhöht, da in den meisten Fällen eine herkömmliche Computermaus zum zeichnen der Symbole Verwendung findet, statt ein Grafiktablett, das eine gewohnte Stiftführung ermöglicht.
 
@@ -38,27 +38,12 @@ Die Eingabe erfolgt für Handschrifterkennungssysteme häufig durch ein Grafikta
 
 \lstinline![[{"x":125.5, "y":219.133331298828, "t":1269620535913}, ...], [...]]!
 
-\section{Vorverarbeitung und Normalisierung} 
-
-% (fold)
+\section{Vorverarbeitung und Normalisierung I}
 \label{sec:vorverarbeitung}
 
 Eine Vorverarbeitung (Preprocessing) der Daten bevor sie an die Erkennungsalgorithmen ausgeliefert werden, ist eine wirksame Methode um Rauschen, das z.B. durch Ungenauigkeiten der Eingabegeräte oder Unachtsamkeit des Schreibers, entstehen kann, zu relativieren. Vorverarbeitung kann aber auch überflüssige Informationen entfernen, die vom verwendeten Erkennungsalgorithmus nicht verwendet werden. Zudem kann durch Normalisierung der Daten ungewollte Variation reduziert werden. Es gibt kaum ein System zu Handschrifterkennung, das keine Vorverarbeitung durchführt \cite{Jaeger:2003p1097,Plamondon:2000p10303,Tappert:1990p10302}.
 
-Die Auswahl der Maßnahmen hängt natürlich auch vom verwendeten Erkennungsalgorithmus ab. Detexify verwendet zur Klassifizierung \ac{DTW}, daher werden die folgenden Maßnahmen ergriffen:
-
-\TODO Andere blasen sich hier mächtig auf und beschrieben alles haarklein mit vorher/nacher Schaubildern. Will ich das auch?
-
-\begin{description}
-  \item[Normalisierung der Größe und Position] Die ankommenden Striche werden verschoben und skaliert, so dass sie unter Beibehaltung ihres Seitenverhältnisses zentriert und maximal im Quadrat \([0,1]\times[0,1]\) liegen. Das ist notwendig, damit \ac{DTW} sinnvoll angewandt werden kann.
-  \item[Entfernung von Haken]
-  \TODO An den Enden von Strichen kann es zu Haken kommen, die beim Aufsetzen\dots
-  \item[Glättung] Jeder Punkt eines Striches wird durch das arithmetische Mittel des Punktes und seiner beiden Nachbarn ersetzt. 
-  \item[Äquidistante Verteilung] Da die Zeichenfläche im Browser in Detexify eine gewisse Abtastrate hat, die erstens Herstellerabhängig sein kann, und zweitens zeitabhängig ist, kann die Verteilung der Punkte auf den Strichen sehr ungleich sein. Daher werden die Punkte neu verteilt, so dass sie Entfernung zwischen zwei je Punkten gleichmäßig groß ist. Die Anfangs- und Endpunkte von Strichen werden dabei erhalten. \citet{Golubitsky:2009p1842} geben an, dass eine Äquidistante Verteilung der Punkte bei Verwendung von \ac{DTW} sogar die beste Wahl ist.
-  % \item[Verkettung] Da \ac{DTW} zwei Zeitreihen vergleicht, werden die Striche miteinander verkettet, so dass das Abstandsmaß direkt angewendet werden kann. \TODO das ist doch Mist! Das muss ich begründen. Verschlechtert ja die Erkennung total. Aber: Stroke joining macht manchmal Sinn... wenn Ende und Anfang nah beieinander liegen...
-  \item[Richtungskorrektur der Striche] \TODO mache ich noch gar nicht. Sollte ich aber vielleicht. So wie bei \citet{Xie:2007p11427} z.B.
-  \item[Sortierung der Striche] \TODO mache ich noch gar nicht. Sollte ich aber vielleicht. . So wie bei \citet{Xie:2007p11427} z.B.
-\end{description}
+Die Auswahl der Maßnahmen hängt natürlich auch vom verwendeten Erkennungsalgorithmus ab und aus diesem Grund werden die in Detexify angewandten Maßnahmen auch hier noch nicht erläutert, sondern erst in \ref{sec:vorverarbeitung2}, nach der der Analyse der Erkennungsalgorithmen. Da aber die Vorverarbeitung der ein wichtiger Schritt ist, der schon vor der Klassifikation stattfindet, möchte ich hier bereits darauf hinweisen.
 
 % section preprocessing_und_normalisierung (end)
 \section{Merkmale} \label{sec:merkmale}
@@ -129,7 +114,7 @@ Von der Leistungsfähigkeit her scheinen HMMs also durchaus eine Option für Det
 
 \subsection{Nächste-Nachbarn-Klassifikation} \label{sub:knn}
 
-Der $k$-nächste-Nachbarn-Algorithmus ist eines der einfachsten Verfahren um einem unbekannten Muster eine Klasse zuzuweisen. Dazu werden als Training einfach Vertreter der Klassen in einem Merkmalsraum gespeichert. Dem unbekannten Muster wird dann durch ein Mehrheitsvotum der $k$ nächsten Nachbarn eine Klasse zugeordnet. Eine zentrale Rolle nimmt dabei das Abstandsmaß, das die Nachbarschaft bestimmt, ein \cite{Jaeger:2003p1097}. Es beeinflusst die Güte der Klassifikation, aber auch durch seine Laufzeitkomplexität den zeitlichen Aufwand des Vorgangs. Darum wird diese Art der Klassifikation auch häufig \emph{template matching} genannt.
+Der $k$-nächste-Nachbarn-Algorithmus ist eines der einfachsten Verfahren um einem unbekannten Muster eine Klasse zuzuweisen. Dazu werden als Training einfach Vertreter der Klassen in einem Merkmalsraum gespeichert. Dem unbekannten Muster wird dann durch ein Mehrheitsvotum der $k$ nächsten Nachbarn eine Klasse zugeordnet. Darum wird diese Art der Klassifikation auch häufig \emph{template matching} genannt. Eine zentrale Rolle nimmt dabei das Abstandsmaß, das die Nachbarschaft bestimmt, ein \cite{Jaeger:2003p1097}. Es beeinflusst die Güte der Klassifikation, aber auch durch seine Laufzeitkomplexität den zeitlichen Aufwand des Vorgangs.
 \TODO Literatur - Bücher?
 
 Dabei ist Nächste-Nachbarn-Klassifikation besonders bei Problemen beliebt, in denen die Anzahl an Klassen sehr hoch ist, wie beispielsweise bei japanischen Schriftzeichen \cite{Jaeger:2003p1097}. Eine Analyse zur Eignung für Detexify scheint also angebracht.
@@ -153,7 +138,40 @@ Ein vielversprechendes Abstandsmaß wurde bereits in \ref{sub:hmm} erwähnt. Es 
 Auch \citet{Vuong:2010p10279} verwenden DTW % mit Steigung und Krümmung
 zu Erkennung mathematischer Symbole in einer erst kürzlich veröffentlichten Arbeit zum Thema Web-basiertes CAS mit handschriftlicher Eingabe. Es ist auffällig, dass gerade aktuellere Arbeiten DTW einsetzen. Obwohl das Verfahren schon so lange bekannt ist \cite{Tappert:1982p10305}, ist es immer noch konkurrenzfähig.
 
-Aus diesen Gründen ist die Wahl für die Klassifikation in Detexify auf DTW gefallen. Damit war die Aufgabe also den Algorithmus so zu implementieren und zu optimieren, dass die Bedingungen \emph{Skalierbarkeit} und \emph{Laufzeitkomplexität} erfüllt sind.
+Aus diesen Gründen ist die Wahl für die Klassifikation in Detexify auf Nächste-Nachbarn-Klassifikation mit DTW als Abstandsmaß gefallen. Damit war die Aufgabe also den Algorithmus so zu implementieren und zu optimieren, dass die Bedingungen \emph{Skalierbarkeit} und \emph{Laufzeitkomplexität} erfüllt sind.
+
+\section{Vorverarbeitung und Normalisierung II}
+\label{sec:vorverarbeitung2}
+
+Mit der Festlegung auf Nächste-Nachbarn-Klassifikation mit DTW als Abstandsmaß, können auch die notwendigen Maßnahmen zur Vorverarbeitung und Normalisierung der Striche erläutert werden. Es sind die folgenden:
+
+\begin{description}
+  \item[Normalisierung der Größe und Position]
+  Die ankommenden Striche werden verschoben und skaliert, so dass sie unter Beibehaltung ihres Seitenverhältnisses zentriert und maximal im Quadrat \([0,1]\times[0,1]\) liegen. Dieser Schritt ist notwendig um zwei Muster überhaupt sinnvoll mit DTW vergleichen zu können.
+  \item[Entfernung von Haken]
+  \TODO An den Enden von Strichen kann es zu Haken kommen, die beim Aufsetzen entstehen\dots Ich mache noch gar kein De-Hooking. Sollte ich?
+  \item[Glättung]
+  Jeder Punkt eines Striches wird durch das arithmetische Mittel des Punktes und seiner beiden Nachbarpunkte ersetzt.
+  \item[Äquidistante Verteilung] Da die Zeichenfläche im Browser in Detexify eine gewisse Abtastrate hat, die erstens Herstellerabhängig sein kann, und zweitens zeitabhängig ist, kann die Verteilung der Punkte auf den Strichen sehr ungleich sein. Daher werden die Punkte neu verteilt, so dass die Entfernung zwischen zwei je Punkten gleichmäßig groß ist. Die Anfangs- und Endpunkte von Strichen werden dabei erhalten. \citet{Golubitsky:2009p1842} geben an, dass eine Äquidistante Verteilung der Punkte bei Verwendung von \ac{DTW} sogar die beste Wahl ist.
+  % \item[Verkettung] Da \ac{DTW} zwei Zeitreihen vergleicht, werden die Striche miteinander verkettet, so dass das Abstandsmaß direkt angewendet werden kann. \TODO das ist doch Mist! Das muss ich begründen. Verschlechtert ja die Erkennung total. Aber: Stroke joining macht manchmal Sinn... wenn Ende und Anfang nah beieinander liegen...
+\end{description}
+
+\TODO Andere blasen sich hier mächtig auf und beschreiben alles haar-klein mit vorher/nachher Schaubildern. Will ich das auch?
+
+Es gibt noch zwei Maßnahmen, die in der Literatur auftauchen, aber in Detexify keine Verwendung finden:
+
+\begin{description}
+  \item[Sortierung der Striche] Wie in \ref{sec:herausforderungen} erwähnt ist die Reihenfolge der Striche bei Mathematischen Symbolen einer großen Variation unterlegen. \citet{Matasakis:1999p9465} schlägt eine kanonische Sortierung der Striche vor, die dieses Problem beheben soll.
+  \item[Richtungskorrektur der Striche] Dasselbe Problem tritt bei der Zeichenrichtung der Striche auf. Auch hier hat \citet{Matasakis:1999p9465} eine kanonische Zeichenrichtung vorgeschlagen und dreht Striche gegebenenfalls um.
+\end{description}
+
+Die Alternative zu den oben genannten Verfahren ist, für jede mögliche Zeichenreihenfolge und -richtung, ein eigenes Modell anzulegen. Es ist klar, dass das bei Symbolen mit vielen Strichen zu sehr vielen Modellen führen würde. Da das Training in Detexify aber ohnehin durch die Nutzer durchgeführt wird, habe ich mich bei Detexify für den folgenden Weg entschieden.
+
+Es wird keine Umsortierung oder Richtungsänderung vorgenommen. Stattdessen wird die Eigenschaft der Nächste-Nachbarn-Klassifikation ausgenutzt, dass die Muster ohnehin direkt gespeichert werden. Variationen in der Anzahl, Sortierung und Richtung der Striche werden bewusst in Kauf genommen. Bei der Suche nach der richtigen Klasse werden also automatisch verschiedene Variationen, eben die, die von vorherigen Benutzern eintrainiert wurden, durchsucht.
+
+Durch Umsortierung oder Richtungsänderung kann man nämlich auch genau die Probleme schaffen, die man eigentlich unterbinden wollte \cite{Matasakis:1999p9465}.
+
+\TODO Benchmarken, ob es eine Richtungskorrektur und Umsortierung doch bringt und gegebenenfalls umstellen!
 
 \section{DTW} % (fold)
 \label{sec:dtw}
@@ -411,8 +429,6 @@ Wie man sieht hat der Algorithmus einen konstanten Speicherplatzaufwand und eine
     \ENDIF
   \end{algorithmic}
 \end{algorithm}
-
-%\lstinputlisting[language=Haskell,firstline=43,lastline=56]{../../code/hs-classifier/DTW.hs}
 
 \citet{MacLean:2010p9970} stellen eine Variante dieses Algorithmus vor. Sie verwenden ihn zur Erkennung mathematischer Symbole in Mathbrush, das in dieser Arbeit bereits erwähnt wurde (siehe auch \ref{sub:mathbrush} und \cite{Labahn:2008p10301}). Sie gehen bei der Zuordnung von Punkten aber simultan von beiden Seiten vor.
 Welche Vorteile das gegenüber einer einseitigen Strategie bringt, erklären sie nicht. Sie vergleichen ihren Greedy-Algorithmus jedoch mit dem Standard-DTW-Algorithmus und kommen zum Ergebnis, dass der Greedy-Algorithmus zur Unterscheidung von mathematischen Symbolen ebenso geeignet ist. Insbesondere bei einer kleinen Anzahl von Punkten pro Strich (<30) ist der Greedy-Algorithmus sogar gleich gut geeignet und durch seine lineare Laufzeit natürlich wesentlich schneller. Bei ihren Tests verwenden sie 15796 handgeschriebene Symbole aus 70 Symbolklassen geschrieben von 20 unterschiedlichen Personen.
