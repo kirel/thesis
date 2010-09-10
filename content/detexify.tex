@@ -19,7 +19,7 @@ Detexify wurde als Webanwendung implementiert. Dies hat die folgenden Vorteile:
   \item \textbf{Zentrale Trainingsdaten:} Die Trainingsdaten sind zentral in einer Datenbank gespeichert. Das Training der Klassifizierers wird von den Nutzern selbst durchgeführt (siehe auch \ref{sec:crowdsourcing}).
 \end{itemize}
 
-Dabei besteht Detexify aus zwei lose gekoppelten Komponenten und zwar der Webanwendung und dem Klassifizierungsserver (Server). Lose Kopplung heisst dabei, dass lediglich ein Interface definiert ist, wie die Webanwendung mit dem Server zu kommunizieren hat. (\TODO loose coupling in der Literatur) Das Interface ist als \ac{REST}-Interface spezifiziert. Die beiden Komponenten kommunizieren also über \ac{HTTP}. Abbildung~\ref{fig:architecture} zeigt die Architektur schematisch.
+Dabei besteht Detexify aus zwei lose gekoppelten Komponenten und zwar der Webanwendung und dem Klassifizierungsserver (Server). Lose Kopplung heisst dabei, dass lediglich ein Interface definiert ist, wie die Webanwendung mit dem Server zu kommunizieren hat \cite{Tilkov:2005p11813}. Das Interface ist als \ac{REST}-Interface spezifiziert. Die beiden Komponenten kommunizieren also über \ac{HTTP}. Abbildung~\ref{fig:architecture} zeigt die Architektur schematisch.
 
 \begin{figure}
   \centering \includegraphics{figures/architecture.pdf}
@@ -37,9 +37,9 @@ Die Webanwendung stellt das Benutzerinterface von Detexify dar. Sie wird über e
 \subsection{Symbolsuche} % (fold)
 \label{sub:symbolsuche}
 
-Die Symbolsuche ist das Zentrum der Anwendung. Sie ist das Werkzeug, das dem \LaTeX-Entwickler das Leben vereinfachen soll. Abbildung~\ref{fig:symbolsuche} zeigt einen Screenshot eines Browsers mit geöffneter Symbolsuche.
+Die Symbolsuche ist das Zentrum der Anwendung. Sie ist das Werkzeug, das dem \LaTeX-Author das Leben vereinfachen soll. Abbildung~\ref{fig:symbolsuche} zeigt einen Screenshot eines Browsers mit geöffneter Symbolsuche.
 
-Auf der Seite der Webanwendung ist dafür eine Zeichenfläche implementiert. Auf dieser können mit der Maus (oder einem Grafiktablett) Striche gemalt werden, und nach jedem beendeten Strich wird per AJAX\footnote{Siehe \ref{sec:ajax}} eine Erkennungsanfrage an den Server gesendet. Die Symbole werden dann anhand der vom Server ermittelten Rangfolge aufgelistet wie in Abbildung~\ref{fig:symbolsuche} zu sehen. Die Kommunikation erfolgt wie in \ref{sec:server} erwähnt über das Datenformat \ac{JSON}. Die Interaktion ist mithilfe von Javascript gelöst. Die Zeichenfläche basiert auf der \ac{SVG}-Technologie.
+Auf der Seite der Webanwendung ist dafür eine Zeichenfläche implementiert. Auf dieser können mit der Maus (oder einem Grafiktablett) Striche gemalt werden, und nach jedem beendeten Strich wird per AJAX\footnote{Siehe \ref{sec:ajax}} eine Erkennungsanfrage an den Server gesendet. Die Symbole werden dann anhand der vom Server ermittelten Rangfolge aufgelistet wie in Abbildung~\ref{fig:symbolsuche} zu sehen. Die Kommunikation erfolgt wie in \ref{sec:server} beschrieben über das Datenformat \ac{JSON}. Die Interaktionen im Benutzerinterface (Zeichnen usw.) sind mithilfe von Javascript gelöst. Die Zeichenfläche basiert auf der \ac{SVG}-Technologie.
 
 \begin{figure}
   \centering \includegraphics[width=\textwidth]{figures/interface-classify.png}
@@ -52,7 +52,7 @@ Auf der Seite der Webanwendung ist dafür eine Zeichenfläche implementiert. Auf
 \subsection{Symboltabelle} % (fold)
 \label{sub:symboltabelle}
 
-Einerseits bietet die Symboltabelle einen Überblick über die in Detexify registrierten und damit über die Symbolsuche auffindbaren Symbole. Andererseits bietet die Symboltabelle durch ihre Sortierungs- und Filtermöglichkeiten von sich aus gute Möglichkeiten zur Symbolsuche, sollte die eigentliche Symbolsuche aus irgendwelchen Gründen versagen. Außerdem können in der Symboltabelle geziehlt einzelne Symbole trainiert werden. Die Funktionalität der Symboltabelle ist im Detail in \ref{man:symboltabelle} beschrieben. Die verwendeten Technologien sind sind identisch mit den bei der Symbolsuche verwendeten.
+Einerseits bietet die Symboltabelle einen Überblick über die in Detexify registrierten und damit über die Symbolsuche auffindbaren Symbole. Andererseits bietet sie durch ihre Sortierungs- und Filtermöglichkeiten von sich aus gute Möglichkeiten zur Symbolsuche, sollte die eigentliche Symbolsuche aus irgendwelchen Gründen versagen. Außerdem können in der Symboltabelle geziehlt einzelne Symbole trainiert werden. Die Funktionalität der Symboltabelle ist im Detail in \ref{man:symboltabelle} beschrieben. Die verwendeten Technologien sind sind identisch mit den bei der Symbolsuche verwendeten.
  Abbildung~\ref{fig:symboltabelle} zeigt einen Screenshot eines Browsers mit geöffneter Symboltabelle.
 
 \begin{figure}
@@ -69,7 +69,7 @@ Einerseits bietet die Symboltabelle einen Überblick über die in Detexify regis
 
 Der Server übernimmt die Mustererkennung. An ihn können im wesentlichen zwei verschiedene Anfragen gestellt werden. Die erste davon ist das Training einer Symbolklasse. Die zweite ist die Klassifizierung von unbekannten Daten. Es gibt noch eine dritte Anfrage, die aber lediglich zur Identifizierung und Statusermittlung der Serverimplementierung dient.
 
-Da der Server die eigentliche Arbeit verrichtet läuft er auf einem leistungsstarken Rechner. \TODO Wieso keine Parallelisierung, wo wir doch eh schon in der Wolke sind...
+Da der Server die eigentliche Arbeit verrichtet läuft er auf einem leistungsstarken Rechner.
 
 Das \ac{REST}-Interface\footnote{Genauere Erklärungen zu \ac{REST} findet der Leser in \ref{sec:rest}} sieht folgendermaßen aus:
 
@@ -78,7 +78,7 @@ Das \ac{REST}-Interface\footnote{Genauere Erklärungen zu \ac{REST} findet der L
 
 \subsubsection{Training}
 
-Um eine Symbolklasse zu trainieren müssen dem Server der Bezeichner der Klasse und die Trainingsdaten übergeben werden. Der Bezeichner ist dabei Teil der \ac{URL} und die Trainingsdaten werden als \ac{JSON}\footnote{Siehe \ref{sec:json}}-String im \ac{HTTP}-Request-Body übertragen.
+Um eine Symbolklasse zu trainieren müssen dem Server der Bezeichner der Klasse und die Trainingsdaten übergeben werden. Der Bezeichner ist dabei Teil der \ac{URL} und die Trainingsdaten werden als \ac{JSON}\footnote{JSON wird in \ref{sec:json} näher erklärt}-String im \ac{HTTP}-Request-Body übertragen.
 
 \begin{lstlisting}[caption={Anfrage}]
   POST /train/{id}
@@ -139,11 +139,9 @@ application/json
 \section{Crowdsourcing des Trainings} % (fold)
 \label{sec:crowdsourcing}
 
-Wie in \ref{sub:symboltabelle} erwähnt bietet Detexify den Nutzern ein Interface um das Training durchzuführen. Tatsächlich habe ich nie ein initiales Training vorgenommen. Der Plan war von Anfang an, das Training vollständig den Nutzern zu überlassen. So eine Vorgehensweise nennt man Schwarmauslagerung (Crowdsourcing) \TODO Literatur. Die Überlegung war dabei die Folgende: Wenn die Nutzer von guten Trainingsdaten durch bessere Erkennungsraten profitieren, sind sie auch bereit ein wenig Arbeit zu investieren, damit einige von ihnen ausgewählte Symbole leicht gefunden werden. Durch die Streuung der Auswahl der Nutzer wird eine große Menge an Symbolen in kurzer Zeit auf einen guten Trainingsstand gebracht. \TODO Welche anderen Beispiele für erfolgreiche Schwarmauslagerung gibt es? Delicious z.B.?
+Wie in \ref{sub:symboltabelle} erwähnt bietet Detexify den Nutzern ein Interface um das Training durchzuführen. Tatsächlich habe ich nie ein initiales Training vorgenommen. Der Plan war von Anfang an, das Training vollständig den Nutzern zu überlassen. So eine Vorgehensweise nennt man Schwarmauslagerung (Crowdsourcing) \cite{Howe:2006p11814}. Die Überlegung war dabei die Folgende: Wenn die Nutzer von guten Trainingsdaten durch bessere Erkennungsraten profitieren, sind sie auch bereit ein wenig Arbeit zu investieren, damit einige von ihnen ausgewählte Symbole leicht gefunden werden. Durch die Streuung der Auswahl der Nutzer wird eine große Menge an Symbolen in kurzer Zeit auf einen guten Trainingsstand gebracht. Ein Unternehmen, das sicherlich heutzutage jedem bekannt ist, und genau eine solche Strategie verfolgt ist das Online-Lexikon Wikipedia. Wikipedia wird vollständig von seinen Nutzern gepflegt und ist trotzdem, oder eher genau deshalb ,,heute wahrscheinlich die beste Enzyklopädie der Welt: Größer, aktueller und in vielen Fällen umfangreicher als die \emph{Encyclop\ae dia Britannica}'' \citep[S.77-86]{andersen2006long}
 
 Diese Tatik ist voll aufgegangen. Als Detexify am 11. Juli 2009 online ging, war die Idee völlig neu. Eine \LaTeX-Symbolsuche in dieser Form hatte zu diesem Zeitpunkt noch niemand gesehen, daher verbreiteten sich Links zu Detexify in Windeseile über soziale Netze wie \href{http://twitter.com}{Twitter}, \href{http://facebook.com}{Facebook} und \href{http://delicious.com}{Delicious} aber auch über Newsportale wie \href{http://reddit.com}{Reddit} und \href{http://news.ycombinator.com}{Hacker News} und am 14. Juli 2009 erreichte Detexify seinen Spitzenwert von über 10.000 Besuchern an einem Tag. Erst gegen Ende Juli 2009 normalisierten sich die Besucherzahlen. Bis zu diesem Zeitpunkt hatten die Nutzer bereits mehrere Tausend Trainingsbeispiele gespendet. Zur Zeit liegt die Anzahl an Trainingsbeispielen bei über 130.000 für 977 Symbole.
-
-\TODO Schwarmauslagerung, Schwarmintelligenz etc... da gibts doch sicher Literatur. Ich kann ja nicht nur schwafeln.
 
 \TODO http://delicious.com/popular/latex <- Platz 3 am 25.7.2010 <- kann ich das noch irgendwie unterbringen?
 

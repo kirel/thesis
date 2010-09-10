@@ -1,9 +1,10 @@
 %!TEX TS-program = xelatex
 %!TEX encoding = UTF-8 Unicode
-\documentclass[12pt]{book}
+\documentclass[12pt]{scrbook}
 
-\usepackage{caption2} % fuer captions in Figures
-\usepackage{scrpage2} % fuer Kopf- und Fusszeilenlayout
+% \usepackage{fancyhdr}
+% \usepackage{caption}[2008/08/24] % fuer captions in Figures
+% \usepackage{scrpage2} % fuer Kopf- und Fusszeilenlayout
 % \usepackage{titlesec} % um das Layout von Ueberschriften zu aendern
   
 % \documentclass[a4paper, twoside, headsepline, 11pt, BCOR10mm, DIV10, footinclude, headinclude]{scrbook}
@@ -51,7 +52,8 @@ belowskip        = \bigskipamount
 }
 
 % Math Fonts
-\usepackage[mathcal]{euler}
+%\usepackage[mathcal]{eulervm}
+\usepackage{eulervm}
 \usepackage[cm-default]{fontspec}
 % FONTS
 \usepackage{xunicode}
@@ -74,21 +76,6 @@ belowskip        = \bigskipamount
 % \subsectionfont{\rmfamily\mdseries\scshape\normalsize} 
 % \subsubsectionfont{\rmfamily\bfseries\upshape\normalsize} 
 
-% DOCUMENT LAYOUT
-\setlength{\paperwidth}{21cm}
-\setlength{\paperheight}{29.5cm}
-\setlength{\parindent}{6mm}
-\setlength{\hoffset}{-1in}
-\setlength{\voffset}{-1in}
-\setlength{\oddsidemargin}{2.7cm}
-\setlength{\evensidemargin}{2.2cm}
-\setlength{\textwidth}{15.5cm}
-\setlength{\textheight}{22.8cm}
-\setlength{\topmargin}{2.5cm}
-\setlength{\headheight}{0.5cm}
-\setlength{\headsep}{1cm}
-\setlength{\footskip}{1.4cm}
-
 % PDF SETUP
 % ---- FILL IN HERE THE DOC TITLE AND AUTHOR
 \usepackage[xetex, bookmarks, colorlinks, breaklinks, pdftitle={LaTeX-Erkennung},pdfauthor={Daniel Kirsch}]{hyperref}  
@@ -98,7 +85,8 @@ belowskip        = \bigskipamount
 \usepackage[ngerman]{babel}
 \usepackage{indentfirst}
 \usepackage[printonlyused]{acronym}
-\usepackage[numbers,round]{natbib}
+\usepackage{url}
+\usepackage[numbers,square]{natbib}
 
 % \pagestyle{headings}
 %

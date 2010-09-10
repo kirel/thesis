@@ -152,7 +152,7 @@ Mit der Festlegung auf Nächste-Nachbarn-Klassifikation mit DTW als Abstandsmaß
   \TODO An den Enden von Strichen kann es zu Haken kommen, die beim Aufsetzen entstehen\dots Ich mache noch gar kein De-Hooking. Sollte ich?
   \item[Glättung]
   Jeder Punkt eines Striches wird durch das arithmetische Mittel des Punktes und seiner beiden Nachbarpunkte ersetzt.
-  \item[Äquidistante Verteilung] Da die Zeichenfläche im Browser in Detexify eine gewisse Abtastrate hat, die erstens Herstellerabhängig sein kann, und zweitens zeitabhängig ist, kann die Verteilung der Punkte auf den Strichen sehr ungleich sein. Daher werden die Punkte neu verteilt, so dass die Entfernung zwischen zwei je Punkten gleichmäßig groß ist. Die Anfangs- und Endpunkte von Strichen werden dabei erhalten. \citet{Golubitsky:2009p1842} geben an, dass eine Äquidistante Verteilung der Punkte bei Verwendung von \ac{DTW} sogar die beste Wahl ist.
+  \item[Äquidistante Verteilung] Da die Zeichenfläche im Browser in Detexify eine gewisse Abtastrate hat, die erstens Herstellerabhängig sein kann, und zweitens zeitabhängig ist, kann die Verteilung der Punkte auf den Strichen sehr ungleich sein. Daher werden die Punkte neu verteilt, so dass die Entfernung zwischen zwei je Punkten gleichmäßig groß ist. Die Anfangs- und Endpunkte von Strichen werden dabei erhalten. \citet{Golubitsky:2009p1842} geben an, dass eine Äquidistante Verteilung der Punkte bei Verwendung von DTW sogar die beste Wahl ist.
   % \item[Verkettung] Da \ac{DTW} zwei Zeitreihen vergleicht, werden die Striche miteinander verkettet, so dass das Abstandsmaß direkt angewendet werden kann. \TODO das ist doch Mist! Das muss ich begründen. Verschlechtert ja die Erkennung total. Aber: Stroke joining macht manchmal Sinn... wenn Ende und Anfang nah beieinander liegen...
 \end{description}
 
@@ -169,7 +169,7 @@ Die Alternative zu den oben genannten Verfahren ist, für jede mögliche Zeichen
 
 Es wird keine Umsortierung oder Richtungsänderung vorgenommen. Stattdessen wird die Eigenschaft der Nächste-Nachbarn-Klassifikation ausgenutzt, dass die Muster ohnehin direkt gespeichert werden. Variationen in der Anzahl, Sortierung und Richtung der Striche werden bewusst in Kauf genommen. Bei der Suche nach der richtigen Klasse werden also automatisch verschiedene Variationen, eben die, die von vorherigen Benutzern eintrainiert wurden, durchsucht.
 
-Durch Umsortierung oder Richtungsänderung kann man nämlich auch genau die Probleme schaffen, die man eigentlich unterbinden wollte \cite{Matasakis:1999p9465}.
+Durch Umsortierung oder Richtungsänderung kann man nämlich auch genau die Probleme schaffen, die man eigentlich unterbinden wollte \cite{Matasakis:1999p9465}. Man schafft außerdem neue Parameter, die wieder optimiert werden müssen.
 
 \TODO Benchmarken, ob es eine Richtungskorrektur und Umsortierung doch bringt und gegebenenfalls umstellen!
 
@@ -274,7 +274,7 @@ Wenn beide Folgen die gleiche Länge $n$ haben, ist eine Möglichkeit den Warpin
 \end{equation}
 , wobei $r(i)$ den erlaubten Korridor beschreibt.
 
-Im Fall von \(r(i) = s\) also $r$ konstant reduziert sich damit die Komplexität von DTW von \( \mathcal{O}(n^2) \) auf \( \mathcal{O}(ns) \). Zusätzlich ermöglicht die Beschränkung bei fester Länge $n$ der Folgen aber eine weitere viel effektivere Optimierung:
+Im Fall von \(r(i) = s\) also $r$ konstant reduziert sich damit die Komplexität von DTW von \( \mathcal{O}(n^2) \) auf \( \mathcal{O}(ns) \). Zusätzlich ermöglicht die Beschränkung bei fester Länge $n$ der Folgen eine weitere noch effektivere Optimierung:
 
 \subsection{Untere Schranken} % (fold)
 \label{sub:lower_bounding}
