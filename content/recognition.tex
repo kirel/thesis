@@ -1,17 +1,17 @@
 
 
 %!TEX root = /Users/daniel/Documents/thesis/thesis.tex
-\chapter{Erkennung handgeschriebener Symbole} 
+\chapter{Erkennung handgeschriebener Symbole}
 
 % (fold)
-\label{cha:erkennung_handgeschriebener_symbole}
+\label{cha:erkennung}
 
 Die Erkennung handgeschriebener Symbole ist das Herzstück von Detexify. Hier wird einer unbekannten Eingabe von Daten ein \LaTeX-Symbol zugeordnet.
 % Genau genommen wird der Eingabe eine Rangfolge von Symbolen zugeordnet, welche in der in \ref{sub:symbolsuche} beschriebenen Liste auftaucht, nachdem ein Nutzer ein Symbol gezeichnet hat.
 
-Im Zentrum jeder Mustererkennungsaufgabe steht dabei der Erkennungsalgorithmus (\ref{sec:klassifizierung}). Je nach verwendetem Verfahren geht dem eine Vorverarbeitung (\ref{sec:vorverarbeitung}) und Merkmalsextraktion (\ref{sec:merkmale}) voraus. In diesem Kapitel beschreibe ich welche Verfahren bei Detexify zum Einsatz kommen und begründe die Auswahl.
+Im Zentrum jeder Mustererkennungsaufgabe steht dabei der Erkennungsalgorithmus (\ref{sec:klassifizierung}). Je nach verwendetem Verfahren geht dem eine Vorverarbeitung (\ref{sec:vorverarbeitung}) und Merkmalsextraktion (\ref{sec:merkmale}) voraus. In diesem Kapitel stelle ich ich Möglichkeiten vor und analysiere sie auf ihre Tauglichkeit für Detexify.
 
-\section{Terminologie} 
+\section{Terminologie}
 
 % (fold)
 \label{sec:terminologie}
@@ -52,7 +52,7 @@ Die Auswahl der Maßnahmen hängt natürlich auch vom verwendeten Erkennungsalgo
 \citet{Xie:2007p11427} sagt man wisse noch nicht recht welche Merkmale für Handschrifterkennung optimal seinen.
 
 
-\section{Klassifizierung} 
+\section{Klassifizierung}
 
 % (fold)
 \label{sec:klassifizierung}
@@ -63,11 +63,11 @@ Zur Erkennung einzelner handgeschriebener Symbole wurden bereits unterschiedlich
 
 Die Anforderungen sind die folgenden:
 \begin{description}
-  \label{desc:anforderungen} 
-  \item[Adaptionsfähigkeit] Es sollte jeder Zeit ein Training zusätzlicher Symbole möglich sein. 
-  \item[Skalierbarkeit] Die Erkennungsraten sollten auch bei einer großen Anzahl von Klassen gut sein. 
-  \item[Laufzeitverhalten] Das Laufzeitverhalten sollte eine Erkennung in Echtzeit ermöglichen. 
-  \item[Interaktivität] Es sollten die besten $N$ Symbole zur Auswahl angezeigt werden. 
+  \label{desc:anforderungen}
+  \item[Adaptionsfähigkeit] Es sollte jeder Zeit ein Training zusätzlicher Symbole möglich sein.
+  \item[Skalierbarkeit] Die Erkennungsraten sollten auch bei einer großen Anzahl von Klassen gut sein.
+  \item[Laufzeitverhalten] Das Laufzeitverhalten sollte eine Erkennung in Echtzeit ermöglichen.
+  \item[Interaktivität] Es sollten die besten $N$ Symbole zur Auswahl angezeigt werden.
 \end{description}
 
 Ein besonderes Interesse galt in meinem Fall natürlichen den Verfahren, die für Symbolerkennung, insbesondere mathematischer Symbole, bereits erfolgreich eingesetzt wurden. Dabei handelt es sich um \ac{SVM}, \ac{HMM} und \ac{DTW}. Es gibt auch einige wenige Strukturelle Ansätze.
@@ -96,7 +96,7 @@ Das Hauptproblem besteht darin, dass SVMs schlecht nachtrainiert werden können.
 \subsection[HMM]{HMM - Hidden Markov Models} \label{sub:hmm}
 
 \ac{HMM} sind ein statistisches Mustererkennungsverfahren, das schon seit langem in der Spracherkennung eingesetzt wird \cite{Rabiner:1989p11574}. Das liegt daran, dass es besonders geeignet ist zeitliche Muster zu modellieren und außerdem Segmentierung und Klassifizierung integriert \cite{Kosmala:1998p11691}. Der Merkmalsvektor darf dabei von Muster zu Muster in der Länge variieren.
-Dabei beschreibt ein HMM einen diskreten Markovprozess $q=(q_t)_{t=0,1.\dots}$ dessen Zustandsfolge aber nicht sichtbar (also verborgen, daher der Name) ist. Stattdessen sieht der Beobachter eine Symbolfolge $\mathbf{O}=O_1\dots O_T, O_t\in V$ aus einem endlichen Alphabet $V=\{v_i\}_{i=1\dots K}$ wobei zu jedem Zeitpunkt $t$ jeweils $O_t$ nur vom verborgenen Zustand $q_t$ der diskreten Markovkette abhängt. Abb.~\ref{fig:hmm} illustriert das Modell. Eine ausführliche Einführung zu HMMs inklusive Erklärung von diskreten Markovprozessen findet sich bei \citet{Rabiner:1989p11574}. 
+Dabei beschreibt ein HMM einen diskreten Markovprozess $q=(q_t)_{t=0,1.\dots}$ dessen Zustandsfolge aber nicht sichtbar (also verborgen, daher der Name) ist. Stattdessen sieht der Beobachter eine Symbolfolge $\mathbf{O}=O_1\dots O_T, O_t\in V$ aus einem endlichen Alphabet $V=\{v_i\}_{i=1\dots K}$ wobei zu jedem Zeitpunkt $t$ jeweils $O_t$ nur vom verborgenen Zustand $q_t$ der diskreten Markovkette abhängt. Abb.~\ref{fig:hmm} illustriert das Modell. Eine ausführliche Einführung zu HMMs inklusive Erklärung von diskreten Markovprozessen findet sich bei \citet{Rabiner:1989p11574}.
 
 \begin{figure}
   \centering \includegraphics[width=\textwidth]{figures/hmm.png}
@@ -110,7 +110,7 @@ Man verwendet eine HMM dann folgendermaßen: Jede Klasse $C_i$ bekommt eine HMM 
 
 \citet{Winkler:1996p11716} kombiniert mehrere HMMs, die mit unterschiedlichen Merkmalen trainiert werden, und erreicht bei einem Alphabet von 84 Symbolen im besten Fall eine Erkennungsrate von 91 \%.
 
-Von der Leistungsfähigkeit her scheinen HMMs also durchaus eine Option für Detexify zu sein. Ein Problem ergibt sich aber wieder bei der \emph{Adaptionsfähigkeit}: Die Effektivität eines HMM hängt von ihrer Modellierung ab (Anzahl der Zustände, Übergangswahrscheinlichkeiten, Ausgabewahrscheinlichkeiten) und diese müssten idealerweise für jede Symbolklasse individuell optimiert werden \cite{Fitzgerald:2005p331}. Das Hinzufügen einer neuen Symbolklasse umfasst also die Definition eines neuen HMMs und dessen Training.
+Von der Leistungsfähigkeit her scheinen HMMs also durchaus eine Option für Detexify zu sein. Ein Problem ergibt sich aber wieder bei der \emph{Adaptionsfähigkeit}: Die Effektivität eines HMM hängt von seiner Modellierung ab (Anzahl der Zustände, Übergangswahrscheinlichkeiten, Ausgabewahrscheinlichkeiten) und diese müssten idealerweise für jede Symbolklasse individuell optimiert werden \cite{Fitzgerald:2005p331}. Das Hinzufügen einer neuen Symbolklasse umfasst also die Definition eines neuen HMMs und dessen Training.
 
 \subsection{Nächste-Nachbarn-Klassifikation} \label{sub:knn}
 
@@ -119,7 +119,6 @@ Der $k$-nächste-Nachbarn-Algorithmus ist eines der einfachsten Verfahren um ein
 
 Dabei ist Nächste-Nachbarn-Klassifikation besonders bei Problemen beliebt, in denen die Anzahl an Klassen sehr hoch ist, wie beispielsweise bei japanischen Schriftzeichen \cite{Jaeger:2003p1097}. Eine Analyse zur Eignung für Detexify scheint also angebracht.
 \TODO Laut Jiang Script Kapitel 4 ist KNN mit vielen Trainingsdaten nahezu so gut wie Bayes (optimal)
-\TODO weitere Argumente für KNN: gleicht Schreibstile aus wenn genug Muster
 % \citet{Tappert:1990p10302} sagt bei Online-Erkennung reichen wegen der Interaktivität einfachere Methoden, was bei mir ja voll zutrifft.
 
 Die Bedingung der \emph{Adaptionsfähigkeit}, die ich in \ref{sec:klassifizierung} gefordert hatte, die bei den bisher vorgestellten Verfahren schwierig umzusetzen war, ist dabei bei der Nächste-Nachbarn-Klassifikation auf natürliche Weise dadurch gegeben, dass neue Trainingsmuster einfach nur gespeichert werden müssen. \emph{Interaktivität} kann leicht realisiert werden, indem jeder Klasse ein auf dem Abstandsmaß basierender Wert zugewiesen wird. So erhält man für ein unbekanntes Muster eine Rangfolge der Klassen.
@@ -191,15 +190,15 @@ Seien zwei Folgen von Punkten
 in einem Raum \( S \ni a_i, b_i ~\forall~i \) und %die Menge von Abbildungen
 % \begin{equation*}
 %   \label{eqn:mappings}
-%   F = \{f:\{1,\dots,n\} \rightarrow \{1,\dots,m\}, ~f~\text{surjektiv, monoton wachsend} \}  
+%   F = \{f:\{1,\dots,n\} \rightarrow \{1,\dots,m\}, ~f~\text{surjektiv, monoton wachsend} \}
 % \end{equation*}
 \( \delta : S\times S \rightarrow \mathbb{R}_0^+ \) eine Kostenfunktion
 gegeben. In der Regel sind \(A\) und \(B\) Folgen in einem metrischen Raum z.B. \(\mathbb{R}^n\) und \(\delta\) ist eine Metrik.
-Betrachten wir nun \( n\times m\)-Matrix 
+Betrachten wir nun \( n\times m\)-Matrix
 \begin{equation} \label{eqn:matrix}
   M = (d_{i,j})_{i=1\dots n, j=1\dots m} ~\text{mit}~ d_{i,j} = \delta(a_i,b_j)
 \end{equation}
-, dann ist ein Warping-Pfad ein stetiger (im unten erläuterten Sinne) Pfad durch diese Matrix. 
+, dann ist ein Warping-Pfad ein stetiger (im unten erläuterten Sinne) Pfad durch diese Matrix.
 
 \begin{align}
   W = w_0,\dots,w_K \hspace{1cm} w_l = (i,j)_l
@@ -238,7 +237,7 @@ Das gesuchte Minimum kann mithilfe von Dynamischer Programmierung gefunden werde
     \sum_{k=0}^j \delta(a_0, b_k) & i = 0 \\
     \sum_{k=0}^i \delta(a_k, b_0) & j = 0 \\
     \delta(a_i,~b_j) + \min\{~\gamma(i-1,j-1),~\gamma(i-1,j),~\gamma(i,j-1)~\} & \text{sonst}
-  \end{cases}  
+  \end{cases}
 \end{equation}
 
 dann ist
@@ -302,14 +301,14 @@ Für DTW für Folgen derselben Länge $n$ mit reellen Messpunkten mit einer Besc
 
 \TODO wer hat vor \citet{Keogh:2005p7751} untere Schranken angegeben? Muss ich das erwähnen?
 
-In Fall von Detexify sind die einzelnen Punkte der Folgen aber Punkte im \( \mathbb{R}^2 \) (siehe \ref{sec:vorverarbeitung}) und es ist intuitiv einzusehen, dass eine Reduktion auf eine Dimension einen zu hohen Informationsverlust nach sich ziehen würde. Es ist zwar möglich auf eine zu \cite{Keogh:2005p7751} analoge Weise eine untere Schranke zu definieren, und das werde ich als nächstes tun - es zeigt sich jedoch, dass diese untere Schranke keine vorteilhaften Laufzeiteigenschaften mehr hat. Darum wird auch der formale Beweis, dass es sich wirklich um eine untere Schranke handelt übergangen.
+In Fall von Detexify sind die einzelnen Punkte der Folgen aber Punkte im \( \mathbb{R}^2 \) (siehe \ref{sec:vorverarbeitung}) und es ist intuitiv einzusehen, dass eine Reduktion auf eine Dimension einen zu hohen Informationsverlust nach sich ziehen würde. Es ist leider nicht leicht auf zu \cite{Keogh:2005p7751} analoge Weise eine untere Schranke zu definieren.
 
-\subsection{Eine untere Schranke für DTW für Folgen im \( \mathbb{R}^2 \)}
+\subsection{Eine untere Schranke für DTW für Folgen im \( \mathbb{R}^2 \)?}
 
 \subsubsection{LB\_Keogh}
 \label{ssub:lb_keogh}
 
-Bevor ich meine untere Schranke erläutere, gebe ich noch eine kurze Erklärung der von \citet{Keogh:2005p7751} definierten unteren Schranke LB\_Keogh an.
+Bevor ich das Problem im \( \mathbb{R}^2 \) erläutere, gebe ich noch eine kurze Erklärung der von \citet{Keogh:2005p7751} definierten unteren Schranke LB\_Keogh an.
 
 Seien
 \begin{align}
@@ -338,11 +337,11 @@ Nun können wir eine untere Schranke für \ref{eq:keoghdtw} wiefolgt definieren:
     \delta(c_i, U_i) & c_i > U_i \\
     \delta(c_i, L_i) & c_i < L_i \\
     0 & \text{sonst}
-  \end{cases}  
+  \end{cases}
   }
 \end{equation}
 
-Die Intuition dahinter ist die folgende. Die Folgen $U$ und $L$ bilden eine Hülle um die ursprüngliche Folge $Q$. LB\_Keogh ist dann sozusagen der Abstand einer neuen Folge $C$ zu dieser Hülle (siehe Abbildung \ref{fig:lb_keogh}). Dass dies tatsächlich eine untere Schranke ist, haben \citet{Keogh:2005p7751} gezeigt. Sie argumentieren auch, dass ihre Schranke schärfer also die bisher in der Literatur aufgetauchten ist.
+Die Intuition dahinter ist die folgende. Die Folgen $U$ und $L$ bilden eine Hülle um die ursprüngliche Folge $Q$. LB\_Keogh ist dann sozusagen der Abstand einer neuen Folge $C$ zu dieser Hülle (siehe Abbildung \ref{fig:lb_keogh}). Dass dies tatsächlich eine untere Schranke ist, haben \citet{Keogh:2005p7751} gezeigt. Sie argumentieren auch, dass ihre Schranke schärfer als die bisher in der Literatur aufgetauchten ist.
 
 \begin{figure}
   \centering \includegraphics[width=10cm]{figures/lb-keogh.png}
@@ -352,12 +351,14 @@ Die Intuition dahinter ist die folgende. Die Folgen $U$ und $L$ bilden eine Hül
 
 \subsubsection{\(\mathbb{R}^2\)-analog zu LB\_Keogh}\label{subs:lb_keogh_analog}
 
-Es ist möglich für zwei Folgen 
+Seinen nun zwei Folgen
 \begin{align}
   A &= a_1 \dots a_n  & a_i \in \mathbb{R}^2 \\
   B &= b_1 \dots b_n  & b_i \in \mathbb{R}^2
 \end{align}
-auf analoge Weise eine untere Schranke zu definieren. \( \mathcal{W}_r \) sei wieder die Menge der durch \(r\) beschränkten Warping-Pfade. Wir definieren dann eine neue Folge $C$ durch
+gegeben.
+Da der \(\mathbb{R}^2\)
+\( \mathcal{W}_r \) sei wieder die Menge der durch \(r\) beschränkten Warping-Pfade. Wir definieren dann eine neue Folge $C$ durch
 \begin{equation}
   C_i = \operatorname{conv} ~\{ a_{i-r}, \dots, a_{i+r} \}
 \end{equation}
@@ -372,7 +373,7 @@ die konvexe Hülle ist. Die neue Folge $C$ besteht also aus konvexen Polygonen. 
   \begin{cases}
     0 & b_i \in C_i \\
     \delta(b_i, C_i) & \text{sonst}
-  \end{cases}  
+  \end{cases}
   }
 \end{equation}
 und dabei ist natürlich \( \delta(b_i, C_i) = \min\limits_{c \in C_i} \delta(b_i, c) \).
@@ -389,7 +390,6 @@ Es ist möglich DTW mit einem Greedy-Algorithmus zu approximieren.
 
 Grundsätzlich funktioniert eine Greedy-Approximation von DTW bei zwei Folgen $A$ und $B$ mit \(a_i,b_i \in S\) und einem Abstandsmaß \(\delta:S\times S \rightarrow \mathbb{R}_0^+\) folgendermaßen. Beginne mit den Startpunkten $a_1$ und $b_1$ ordne diese einander zu. Ordne dann jeweils die nächsten Punkte so einander zu, dass der Abstand unter \(\delta\) minimal ist (wähle das lokale Optimum). Wiederhole dies, bis in einer der beiden Folgen nur noch ein Punkt übrig ist. Ordne alle restlichen Punkte der anderen Folge diesem zu. Algorithmus \ref{alg:greedy} zeigt eine Implementierung in Pseudocode.
 Wie man sieht hat der Algorithmus einen konstanten Speicherplatzaufwand und eine lineare Laufzeit.
-% hier schon haskell-implementierung erwähnen?
 
 \begin{algorithm}
   \caption{Greedy Matching}
@@ -462,5 +462,3 @@ Da DTW schon häufig Verwendung gefunden hat, gibt es natürlich in der Literatu
 
 \citet{MacLean:2010p9970} verwenden in ihren Greedy-Variante von DTW ein Abstandsmaß, das auch die Steigung der Striche mit einbezieht, wie auch \citet{Tappert:1982p10305} es vorgeschlagen haben.
 \citet{Vuong:2010p10279} Gehen noch einen Schritt weiter und verwenden sogar die Krümmung der Striche.
-
-\TODO Parameterwahlen in Detexify?

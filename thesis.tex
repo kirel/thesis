@@ -6,7 +6,7 @@
 % \usepackage{caption}[2008/08/24] % fuer captions in Figures
 % \usepackage{scrpage2} % fuer Kopf- und Fusszeilenlayout
 % \usepackage{titlesec} % um das Layout von Ueberschriften zu aendern
-  
+
 % \documentclass[a4paper, twoside, headsepline, 11pt, BCOR10mm, DIV10, footinclude, headinclude]{scrbook}
 % BCOR: ``binding correction'' am besten an einem Probedruck ausmessen
 % DIV:  beinflusst, wie ``gross'' der Satzspiegel wird -- s. Koma-Dokumentation
@@ -14,6 +14,7 @@
 %       in den Satzspiegel eingebunden (empfiehlt sich bei lebendenden
 
 \synctex=1
+\usepackage{marvosym}
 \usepackage{amssymb} % Mathe
 \usepackage{amsmath} % Mathe
 \usepackage[usenames,dvipsnames]{color}
@@ -60,9 +61,9 @@ belowskip        = \bigskipamount
 \usepackage{xltxtra}
 \defaultfontfeatures{Mapping=tex-text} % converts LaTeX specials (``quotes'' --- dashes etc.) to unicode
 \setromanfont [Ligatures={Common}, Numbers={OldStyle}]{Adobe Caslon Pro}
-\setmonofont[Scale=0.8]{Monaco} 
-% \setsansfont[Scale=0.9]{Optima Regular} 
-\setsansfont[Scale=0.9]{Myriad Pro} 
+\setmonofont[Scale=0.8]{Monaco}
+% \setsansfont[Scale=0.9]{Optima Regular}
+\setsansfont[Scale=0.9]{Myriad Pro}
 % ---- CUSTOM AMPERSAND
 \newcommand{\amper}{{\fontspec[Scale=.95]{Adobe Caslon Pro}\selectfont\itshape\&}}
 
@@ -70,16 +71,21 @@ belowskip        = \bigskipamount
 \newcommand{\FIXME}{\textsc{\textbf{\textcolor{red}{Fixme\ }}}}
 
 % HEADINGS
-% \usepackage{sectsty} 
-% \usepackage[normalem]{ulem} 
-% \sectionfont{\sffamily\mdseries\large} 
-% \subsectionfont{\rmfamily\mdseries\scshape\normalsize} 
-% \subsubsectionfont{\rmfamily\bfseries\upshape\normalsize} 
+% \usepackage{sectsty}
+% \usepackage[normalem]{ulem}
+% \sectionfont{\sffamily\mdseries\large}
+% \subsectionfont{\rmfamily\mdseries\scshape\normalsize}
+% \subsubsectionfont{\rmfamily\bfseries\upshape\normalsize}
 
 % PDF SETUP
 % ---- FILL IN HERE THE DOC TITLE AND AUTHOR
-\usepackage[xetex, bookmarks, colorlinks, breaklinks, pdftitle={LaTeX-Erkennung},pdfauthor={Daniel Kirsch}]{hyperref}  
-\hypersetup{linkcolor=blue,citecolor=blue,filecolor=black,urlcolor=blue} 
+\usepackage[
+xetex,bookmarks,colorlinks,breaklinks,
+pdftitle={Detexify: Erkennung handgemalter LaTeX-Symbole},
+pdfsubject={LaTeX-Symbolerkennung},
+pdfauthor={Daniel Kirsch}
+]{hyperref}
+\hypersetup{linkcolor=blue,citecolor=blue,filecolor=black,urlcolor=blue}
 
 % Stuff
 \usepackage[ngerman]{babel}
@@ -93,7 +99,7 @@ belowskip        = \bigskipamount
 
 \hyphenation{Mannig-faltig-keit}
 
-\begin{document}  
+\begin{document}
 
 \frontmatter
 
@@ -147,6 +153,7 @@ belowskip        = \bigskipamount
 \input{content/manual}
 \input{content/web}
 \input{content/listings}
+\input{art}
 
 \backmatter
 \input{acknowledgement}

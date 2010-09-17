@@ -39,7 +39,7 @@ Die Webanwendung stellt das Benutzerinterface von Detexify dar. Sie wird über e
 
 Die Symbolsuche ist das Zentrum der Anwendung. Sie ist das Werkzeug, das dem \LaTeX-Author das Leben vereinfachen soll. Abbildung~\ref{fig:symbolsuche} zeigt einen Screenshot eines Browsers mit geöffneter Symbolsuche.
 
-Auf der Seite der Webanwendung ist dafür eine Zeichenfläche implementiert. Auf dieser können mit der Maus (oder einem Grafiktablett) Striche gemalt werden, und nach jedem beendeten Strich wird per AJAX\footnote{Siehe \ref{sec:ajax}} eine Erkennungsanfrage an den Server gesendet. Die Symbole werden dann anhand der vom Server ermittelten Rangfolge aufgelistet wie in Abbildung~\ref{fig:symbolsuche} zu sehen. Die Kommunikation erfolgt wie in \ref{sec:server} beschrieben über das Datenformat \ac{JSON}. Die Interaktionen im Benutzerinterface (Zeichnen usw.) sind mithilfe von Javascript gelöst. Die Zeichenfläche basiert auf der \ac{SVG}-Technologie.
+Auf der Seite der Webanwendung ist dafür eine Zeichenfläche implementiert. Auf dieser können mit der Maus (oder einem Grafiktablett) Striche gemalt werden, und nach jedem beendeten Strich wird per AJAX\footnote{Eine Erläuterung zu AJAX findet sich in \ref{sec:ajax}} eine Erkennungsanfrage an den Server gesendet. Die Symbole werden dann anhand der vom Server ermittelten Rangfolge aufgelistet wie in Abbildung~\ref{fig:symbolsuche} zu sehen. Die Kommunikation erfolgt wie in \ref{sec:server} beschrieben über das Datenformat \ac{JSON}. Die Interaktionen im Benutzerinterface (Zeichnen usw.) sind mithilfe von Javascript gelöst. Die Zeichenfläche basiert auf der \ac{SVG}-Technologie.
 
 \begin{figure}
   \centering \includegraphics[width=\textwidth]{figures/interface-classify.png}
@@ -67,11 +67,9 @@ Einerseits bietet die Symboltabelle einen Überblick über die in Detexify regis
 \section{Server} % (fold)
 \label{sec:server}
 
-Der Server übernimmt die Mustererkennung. An ihn können im wesentlichen zwei verschiedene Anfragen gestellt werden. Die erste davon ist das Training einer Symbolklasse. Die zweite ist die Klassifizierung von unbekannten Daten. Es gibt noch eine dritte Anfrage, die aber lediglich zur Identifizierung und Statusermittlung der Serverimplementierung dient.
+Der Server übernimmt die Aufgabe der Mustererkennung. An ihn können im wesentlichen zwei verschiedene Anfragen gestellt werden. Die erste davon ist das Training einer Symbolklasse. Die zweite ist die Klassifizierung von unbekannten Daten. Es gibt noch eine dritte Anfrage, die aber lediglich zur Identifizierung und Statusermittlung der Serverimplementierung dient.
 
-Da der Server die eigentliche Arbeit verrichtet läuft er auf einem leistungsstarken Rechner.
-
-Das \ac{REST}-Interface\footnote{Genauere Erklärungen zu \ac{REST} findet der Leser in \ref{sec:rest}} sieht folgendermaßen aus:
+Da der Server die eigentliche Arbeit verrichtet läuft er auf einem leistungsstarken Rechner. Wie die eigentliche Symbolerkennung aussieht ist in Kapitel~\ref{cha:erkennung} beschrieben. Hier spezifiziere ich nur das \ac{REST}-Interface\footnote{Genauere Erklärungen zu \ac{REST} findet der Leser in \ref{sec:rest}}. Es sieht folgendermaßen aus:
 
 \subsection{REST-Interface} % (fold)
 \label{sub:rest_interface}
@@ -125,12 +123,12 @@ GET /
 \begin{lstlisting}[caption={Antwort}]
 200 OK
 application/json
-{ 
+{
   "server" : "server string to identify implementation",
   "version" : "version string e.g. 1.0"
 }
 \end{lstlisting}
-  
+
 % subsection rest_interface (end)
 
 % section server (end)
@@ -141,9 +139,14 @@ application/json
 
 Wie in \ref{sub:symboltabelle} erwähnt bietet Detexify den Nutzern ein Interface um das Training durchzuführen. Tatsächlich habe ich nie ein initiales Training vorgenommen. Der Plan war von Anfang an, das Training vollständig den Nutzern zu überlassen. So eine Vorgehensweise nennt man Schwarmauslagerung (Crowdsourcing) \cite{Howe:2006p11814}. Die Überlegung war dabei die Folgende: Wenn die Nutzer von guten Trainingsdaten durch bessere Erkennungsraten profitieren, sind sie auch bereit ein wenig Arbeit zu investieren, damit einige von ihnen ausgewählte Symbole leicht gefunden werden. Durch die Streuung der Auswahl der Nutzer wird eine große Menge an Symbolen in kurzer Zeit auf einen guten Trainingsstand gebracht. Ein Unternehmen, das sicherlich heutzutage jedem bekannt ist, und genau eine solche Strategie verfolgt ist das Online-Lexikon Wikipedia. Wikipedia wird vollständig von seinen Nutzern gepflegt und ist trotzdem, oder eher genau deshalb ,,heute wahrscheinlich die beste Enzyklopädie der Welt: Größer, aktueller und in vielen Fällen umfangreicher als die \emph{Encyclop\ae dia Britannica}'' \citep[S.77-86]{andersen2006long}
 
-Diese Tatik ist voll aufgegangen. Als Detexify am 11. Juli 2009 online ging, war die Idee völlig neu. Eine \LaTeX-Symbolsuche in dieser Form hatte zu diesem Zeitpunkt noch niemand gesehen, daher verbreiteten sich Links zu Detexify in Windeseile über soziale Netze wie \href{http://twitter.com}{Twitter}, \href{http://facebook.com}{Facebook} und \href{http://delicious.com}{Delicious} aber auch über Newsportale wie \href{http://reddit.com}{Reddit} und \href{http://news.ycombinator.com}{Hacker News} und am 14. Juli 2009 erreichte Detexify seinen Spitzenwert von über 10.000 Besuchern an einem Tag. Erst gegen Ende Juli 2009 normalisierten sich die Besucherzahlen. Bis zu diesem Zeitpunkt hatten die Nutzer bereits mehrere Tausend Trainingsbeispiele gespendet. Zur Zeit liegt die Anzahl an Trainingsbeispielen bei über 130.000 für 977 Symbole.
+Diese Tatik ist voll aufgegangen. Als Detexify am 11. Juli 2009 online ging, war die Idee völlig neu. Eine \LaTeX-Symbolsuche in dieser Form hatte zu diesem Zeitpunkt noch niemand gesehen, daher verbreiteten sich Links zu Detexify in Windeseile über soziale Netze wie \href{http://twitter.com}{Twitter}, \href{http://facebook.com}{Facebook} und \href{http://delicious.com}{Delicious} aber auch über Newsportale wie \href{http://reddit.com}{Reddit} und \href{http://news.ycombinator.com}{Hacker News} und am 14. Juli 2009 erreichte Detexify seinen Spitzenwert von über 10.000 Besuchern an einem Tag. Erst gegen Ende Juli 2009 normalisierten sich die Besucherzahlen. Bis zu diesem Zeitpunkt hatten die Nutzer bereits mehrere Tausend Trainingsbeispiele gespendet. Zur Zeit liegt die Anzahl an gespendeten Trainingsbeispielen bei fast 150.000 für 977 Symbole.
 
-\TODO http://delicious.com/popular/latex <- Platz 3 am 25.7.2010 <- kann ich das noch irgendwie unterbringen?
+%\TODO http://delicious.com/popular/latex <- Platz 3 am 25.7.2010 <- kann ich das noch irgendwie unterbringen?
+
+Crowdsourcing hat natürlich auch seine Nachteile. Für die Benchmarks in Kapitel \ref{cha:benchmarks} habe ich einen Spiegel der Datenbank erstellt, der zu diesem Zeitpunkt 147881 Trainingsbeispiele enthielt. Bei der manuellen Inspektion der Daten stellte sich schnell heraus, dass sie für manche Symbole eine katastrophale Qualität hatten. Es besonders krasses Beispiel ist das Symbol \verb!\male! (\Male), % benutze marvosym \Male aber eigentlich ist es wasysym \male
+bei dem ca. 200 der 533 Trainingsbeispiele nicht eben Zeichnungen dieses Symbols sondern von \emph{männlichen Geschlechtsteilen} waren. Insgesamt habe ich bei der manuellen Inspektion aller 147881 Trainingsbeispiele 14419 Zeichnungen, die völlig aus dem Rahmen fielen, aussortiert. Die Benchmarks in Kapitel \ref{cha:benchmarks} basieren auf diesen grob bereinigten Daten.
+
+Die Trainingsbeispiele enthielten aber auch einige künstlerische Perlen, die auch wenn sie zu den Argumenten dieser Arbeit in keiner Weise beitragen, trotzdem in Anhang \ref{cha:kunst} verewigt sind.
 
 % section crowd_sourcing (end)
 
