@@ -2,24 +2,7 @@
 \chapter{Benchmarks} % (fold)
 \label{cha:benchmarks}
 
-\TODO Optimierung von
-
-\begin{description}
-  \item[$n$] - Anzahl der Punkte pro Strich
-  \item[$\delta$] - das verwendete innere Abstandsmaß (siehe \ref{sub:dtw})
-  \item[$C$] - Anzahl der Trainingsmuster pro Klasse
-  \item[$\alpha$] - Grenzwinkel für dominante Punkte
-\end{description}
-
-- sozusagen $k=1$ aber wir ranken ja eh, von daher nicht so relevant
-
-- Folgen erst mal \citet{Golubitsky:2009p1842} mit $n=25$.
-
-- Testen für $\delta$ euklidische Metrik und Manhattan-Metrik ~> Manhattan ist doch tatsächlich besser.
-
-- Finden heraus, dass gdtw nahezu so gut ist wie dtw also schauen verwenden wir cdtw gar nicht da der Performancegewinn ohnehin nicht groß wäre also entfällt Optimierung von $r$
-
-- Beginnen mit $C=50$ - andere Werte dann experimentell
+\TODO Verwendete Technik: Immer einen Parameter optimieren und den Rest fest lassen.
 
 \section{Kleiner Datensatz}
 \label{sec:kleiner_datensatz}
@@ -28,6 +11,8 @@ In diesem Abschnitt werden mithilfe eines Teils der verfügbaren Trainingsdaten 
 Es wurden 75 Muster pro Symbolklassen zufällig ausgewählt wovon 50 für das Training und 50 als Testmuster verwendet wurden. Dies ergibt 2500 Tests.
 
 Folgende Symbole werden verwendet:
+
+\begin{quote}
 $\$$,
 $\{$,
 $\copyright$,
@@ -128,19 +113,14 @@ $[$,
 $/$,
 $\aleph$,
 $\infty$
+\end{quote}
 
 Davon sind manche, wie $\odot$ (\verb!\odot!) und $\bigodot$ (\verb!\bigodot!) oder $\sum$(\verb!\sum!) und $\Sigma$~(\verb!\Sigma!) eigentlich dieselben Symbole. Es wurden aber keine Maßnahmen ergriffen, um solche Zweideutigkeiten aufzuheben, da durch die Interaktivität der Anwendung ohnehin in erste Linie eine hohe Top 5-Erkennungsrate wichtig ist.
 
-\subsection{Gierig oder nicht?}
+\subsection{DTW-Variante}
 \label{sub:gierig_oder_nicht}
 
-\begin{itemize}
-  \item $C=50$
-  \item $\delta\sim\text{Euklid}$
-  \item $n=25$ (optimal nach \citet{Golubitsky:2009p1842})
-\end{itemize}
-
-Striche werden einfach konkateniert. $DTW (DTW euklid) a b$ auch denkbar, ist aber langsamer und schneidet schlechter ab (in kleineren Benchmarks ermittelt). Abbildung \ref{chart:dtw-vs-gdtw} zeigt, dass Greedy kaum schlechter was die Ergebnisse von \citet{MacLean:2010p9970} bestätigt.
+Der erste Benchmark testet DTW in seiner klassischen Form gegen die Greedy-Approximation GDTW. Dabei wurde erst einmal $C=50$, $n=25$ (optimal nach \citet{Golubitsky:2009p1842}) und das Abstandsmaß $\delta$ als die euklidische Metrik festgelegt. Abbildung \ref{chart:dtw-vs-gdtw} illustriert die Ergebnisse. Es zeigt sich, dass GDTW kaum schlechter abschneidet, als DTW und dabei, wie aus Abbildung \ref{chart:dtw-vs-gdtw-ms} ersichtlich ist, wesentlich schneller ist. Dies bestätigt die Ergebnisse von \citet{MacLean:2010p9970}, die ebenfalls eine Greedy-Variante von DTW verwenden.
 
 \begin{figure}[htbp]
   \begin{center}
@@ -158,16 +138,23 @@ Striche werden einfach konkateniert. $DTW (DTW euklid) a b$ auch denkbar, ist ab
   \label{chart:dtw-vs-gdtw-ms}
 \end{figure}
 
+Auf Basis dieser Daten fällt es leicht die Auswahl des Verfahrens für Detexify auf GDTW festzulegen und im Folgenden die Betrachtungen auf dieses zu beschränken.
+
 % chapter benchmarks (end)
 
 \subsection{Inneres Abstandsmaß} % (fold)
 \label{sub:inneres_abstandsmaß}
-Euklid gegen Manhattan $\delta$
-Abbildung \ref{chart:dtw-vs-gdtw} zeigt, dass die günstigere Manhattan-Metrik sogar besser ist.
-% subsection inneres_abstandsmaß (end)
+
+Abbildung \ref{chart:dtw-vs-gdtw} zeigt neben den Erkennungsraten von DTW und GDTW mit euklidischer Metrik als Abstandsmaß auch noch die Erkennungsraten von GDTW mit der Manhattan-Metrik als Abstandsmaß, die als
+
+\[ d(x,y) = \sum_i a_i - b_i \]
+
+definiert ist. Dieses Abstandsmaß ist nicht nur günstiger in der Berechnung, sondern liefert auch noch eine leichte Verbesserung der Top 5-Erkennungsrate um 0,6\%. Die folgenden Benchmarks wurden daher alle mit Manhattan-Metrik als inneres Abstandsmaß $\delta$ durchgeführt.
 
 \subsection{Anzahl Trainingsmuster} % (fold)
 \label{sub:anzahl_trainingsmuster}
+
+Die Anzahl der verwendeten Trainingsmuster $C$ hat natürlich einen Einfluss auf die Erkennungsraten.
 
 \begin{figure}[htbp]
   \begin{center}
@@ -177,12 +164,13 @@ Abbildung \ref{chart:dtw-vs-gdtw} zeigt, dass die günstigere Manhattan-Metrik s
   \label{chart:samples}
 \end{figure}
 
-- Klassifizierungsserver verwirft alte Trainingsmuster, wenn $C$ überschritten
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Abbildung \ref{chart:samples} zeigt, dass, anders als \citet{Golubitsky:2009p1842} für ihre Tests beschreiben, die Erkennungsraten (insb. Top 1) für $C > 25$ noch deutlich steigen. Dies liegt vermutlich an einer höheren Variation in meinen Trainingsdaten, so dass sich eine größere Datenbasis auszahlt. Die Wahl von $C=50$ wurde jedoch aus beibehalten und nicht noch weiter erhöht, denn $C$ wirkt sich linear auf die Laufzeit des Erkennungsvorgangs aus.
 % subsection anzahl_klassen (end)
 
 \subsection{Anzahl Punkte pro Strich} % (fold)
 \label{sub:anzahl_punkte_pro_strich}
+
+Die Anzahl der Punkte pro Strich $n$ hat ebenso sowohl einen Einfluss auf die Erkennungsrate als auch auf die Laufzeit. Abbildung \ref{chart:points} zeigt dass ab $n=10$ gerade die Top 1-Erkennungsrate mit sinkendem $n$ stark abnimmt. Die Top 5-Erkennungsrate bleibt jedoch recht stabil. Für die weiteren Tests wurde $n=10$ als optimal festgelegt, da dies nur geringe Einbußen in der Erkennung bei einer gut Laufzeit liefert.
 
 \begin{figure}[htbp]
   \begin{center}
@@ -192,11 +180,12 @@ Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor 
   \label{chart:points}
 \end{figure}
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 % subsection anzahl_punkte_pro_strich (end)
 
 \subsection{Dominante Punkte} % (fold)
 \label{sub:dominante_punkte}
+
+Alle bisherigen Tests wurden ohne die Filterung von Punkten mit geringer Krümmung vorgenommen. Abbildung \ref{chart:degree} zeigt einerseits, dass ...\TODO
 
 \begin{figure}[htbp]
   \begin{center}
@@ -206,13 +195,52 @@ Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor 
   \label{chart:degree}
 \end{figure}
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 % subsection dominante_punkte (end)
 
 \section{Großer Datensatz}
-\label{sec:kleiner_datensatz}
+\label{sec:grosser_datensatz}
 
+\TODO schreiben
 
 627 Symbole (die mit mind 15 Trainingsmustern) pro Klasse max 100 Trainingsmuster davon ein drittel als Testmuster und der Rest Training
 13411 Testmuster
 27460 Trainingsmuster
+
+\begin{verbatim}
+  Flop 10:
+  \ddag (latex2e, OT1) - 0.0% top 1
+  \dotso (amsmath, OT1) - 0.0% top 1
+  \Updelta (upgreek, OT1) - 0.0% top 1
+  \ldotp (latex2e, OT1) - 0.0% top 1
+  \dotsi (amsmath, OT1) - 0.0% top 1
+  \Rbag (stmaryrd, OT1) - 0.0% top 1
+  \dots (latex2e, OT1) - 0.0% top 1
+  \Uppi (upgreek, OT1) - 0.0% top 1
+  \Gemini (marvosym, OT1) - 0.0% top 1
+  \therefore (amssymb, OT1) - 0.0% top 1
+  Top 10:
+  \cong (latex2e, OT1) - 93.93939393939394% top 1
+  \not\equiv (latex2e, OT1) - 93.93939393939394% top 1
+  \& (latex2e, OT1) - 93.93939393939394% top 1
+  \supset (latex2e, OT1) - 93.93939393939394% top 1
+  \asymp (latex2e, OT1) - 90.9090909090909% top 1
+  \approxeq (amssymb, OT1) - 90.9090909090909% top 1
+  \neq (amssymb, OT1) - 90.9090909090909% top 1
+  \gtrsim (amssymb, OT1) - 90.9090909090909% top 1
+  \rightharpoonup (latex2e, OT1) - 90.9090909090909% top 1
+  \circledR (amssymb, OT1) - 90.9090909090909% top 1
+  Global stats:
+  Top 1: 52.214765100671144%
+  Top 2: 69.9179716629381%
+  Top 3: 77.59880686055183%
+  Top 4: 81.89410887397464%
+  Top 5: 84.53392990305743%
+  Top 6: 86.14466815809098%
+  Top 7: 87.44220730797912%
+  Top 8: 88.25503355704699%
+  Top 9: 88.91126025354214%
+  Top 10: 89.63460104399702%
+  Overall 13410 Tests for 627 Symbols in 11654.247962 secs needing 0.8690066335098053 secs per test.
+\end{verbatim}
+
+\TODO Darauf eingegen, dass gerade die schlecht erkannten Symbole sehr ähnlich zu anderen die häufiger trainiert wurden sind z.B. \verb!\Rbag! ($\Rbag$) und \verb!\int! ($\int$)...

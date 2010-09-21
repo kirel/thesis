@@ -24,13 +24,11 @@ Der Zustand der Stiftspitze besteht in Online-Systemen in der Regel aus den Koor
 
 Aus den Daten werden dann häufig Merkmale abgeleitet, sog. \emph{Features}. Man unterscheidet zwischen \emph{globalen} und \emph{lokalen} Features \cite{Tapia:2007p9160}. Lokale Features sind solche, die von einzelnen Punkten auf einem Strich und dessen benachbarten Punkten abgeleitet werden. Globale Features werden hingegen von der Menge der Striche als Ganzes abgeleitet.
 
-\TODO Typ 1,2,3 Klassifizierer
-
 \section[Herausforderungen]{Herausforderungen der Erkennung von \LaTeX-Symbolen}\label{sec:herausforderungen} Die Erkennung von handgemalten \LaTeX-Symbolen ist allein durch die enorme Anzahl der Symbole eine große Herausforderung \cite{Koerich:2003p1562}. Hinzu kommt, dass die Symbole aus sehr unterschiedlichen Alphabeten kommen. Es kommen lateinische, griechische, mathematische und weitere Symbole vor. Im Gegensatz zu asiatischen Sprachen, die ebenfalls sehr große Alphabete aufweisen\footnote{In Japan werden heute 6000-7000 Buchstaben verwendet. In China ist die Anzahl der im täglichen Leben verwendeten Buchstaben bei etwa 5000 \cite{Jaeger:2003p1097}}, ist jedoch die Anzahl und Reihenfolge der Striche nicht vorgegeben, was die Erkennung zusätzlich verkompliziert \cite{Watt:2005p1816}. Außerdem gibt es sehr viele sehr ähnliche Symbole wie $\rightarrow,\mapsto,\leadsto,\rightharpoonup,\hookrightarrow,\rightarrowtail$. Dazu kommen noch die Probleme vor der jede Handschrifterkennung steht, wie unterschiedliche Schreibstile sowohl von unterschiedlichen Schreibern als auch natürliche Variationen in der Schreibweise eines Einzelnen.
 
 In Detexify wird diese Variation noch zusätzlich erhöht, da in den meisten Fällen eine herkömmliche Computermaus zum zeichnen der Symbole Verwendung findet, statt ein Grafiktablett, das eine gewohnte Stiftführung ermöglicht.
 
-Ein guter Klassifizierer muss also einiges leisten um der Situation gerecht zu werden.
+Ein guter Klassifizierungsalgorithmus muss also einiges leisten um der Situation gerecht zu werden.
 
 \section{Eingabe} \label{sec:input}
 
@@ -41,16 +39,14 @@ Die Eingabe erfolgt für Handschrifterkennungssysteme häufig durch ein Grafikta
 \section{Vorverarbeitung und Normalisierung I}
 \label{sec:vorverarbeitung}
 
-Eine Vorverarbeitung (Preprocessing) der Daten bevor sie an die Erkennungsalgorithmen ausgeliefert werden, ist eine wirksame Methode um Rauschen, das z.B. durch Ungenauigkeiten der Eingabegeräte oder Unachtsamkeit des Schreibers, entstehen kann, zu relativieren. Vorverarbeitung kann aber auch überflüssige Informationen entfernen, die vom verwendeten Erkennungsalgorithmus nicht verwendet werden. Zudem kann durch Normalisierung der Daten ungewollte Variation reduziert werden. Es gibt kaum ein System zu Handschrifterkennung, das keine Vorverarbeitung durchführt \cite{Jaeger:2003p1097,Plamondon:2000p10303,Tappert:1990p10302}.
+Eine Vorverarbeitung (Preprocessing) der Daten bevor sie an die Erkennungsalgorithmen ausgeliefert werden, ist eine wirksame Methode um Rauschen, das z.B. durch Ungenauigkeiten der Eingabegeräte oder Unachtsamkeit des Schreibers, entstehen kann, zu relativieren. Vorverarbeitung kann aber auch überflüssige Informationen entfernen, die vom Erkennungsalgorithmus nicht verwendet werden. Zudem kann durch Normalisierung der Daten ungewollte Variation reduziert werden. Es gibt kaum ein System zu Handschrifterkennung, das keine Vorverarbeitung durchführt \cite{Jaeger:2003p1097,Plamondon:2000p10303,Tappert:1990p10302}.
 
-Die Auswahl der Maßnahmen hängt natürlich auch vom verwendeten Erkennungsalgorithmus ab und aus diesem Grund werden die in Detexify angewandten Maßnahmen auch hier noch nicht erläutert, sondern erst in \ref{sec:vorverarbeitung2}, nach der der Analyse der Erkennungsalgorithmen. Da aber die Vorverarbeitung der ein wichtiger Schritt ist, der schon vor der Klassifikation stattfindet, möchte ich hier bereits darauf hinweisen.
+Die Auswahl der Maßnahmen hängt natürlich auch vom ausgewählten Erkennungsalgorithmus ab und aus diesem Grund werden die in Detexify angewandten Maßnahmen auch hier noch nicht erläutert, sondern erst in \ref{sec:vorverarbeitung2}, nach der der Analyse der Erkennungsalgorithmen. Da aber die Vorverarbeitung ein wichtiger Schritt ist, der schon vor der Klassifikation stattfindet, möchte ich hier bereits darauf hinweisen.
 
 % section preprocessing_und_normalisierung (end)
 \section{Merkmale} \label{sec:merkmale}
 
-\TODO das in Detexify verwendete Verfahren erfordert keine Merkmalsextraktion.
-\citet{Xie:2007p11427} sagt man wisse noch nicht recht welche Merkmale für Handschrifterkennung optimal seinen.
-
+Merkmale sind (häufig numerische) Werte, die aus den Mustern extrahiert werden, die in der Regel in einem Vektor, dem Merkmalsvektor, zusammengefasst werden. Der Vektorraum in dem diese Vektoren liegen heißt dann der Merkmalsraum. Das in Detexify verwendete Verfahren erfordert keine Merkmalsextraktion. Der Merkmalsraum ist direkt der Raum der Pinselstriche.
 
 \section{Klassifizierung}
 
@@ -74,7 +70,7 @@ Ein besonderes Interesse galt in meinem Fall natürlichen den Verfahren, die fü
 
 \subsection{Strukturelle Methoden} \label{sub:strukturelle_methoden}
 
-Strukturelle Methoden basieren auf der Annahme, dass Handschrift aus elementaren Formen, auch Allographen genannt, besteht. Die Darstellung einer Klasse erfolgt dann als strukturelle Repräsentation (z.B. als Baum oder Graph) bestehend aus diesen Allomorphen. Die Vorgehensweise lässt sich am besten an einem Beispiel illustrieren. \citet{Fitzgerald:2004p10858} stellen mathematische Symbole als eine Kombination von Merkmalen der Typen \emph{Linie}, \emph{C-Form} oder \emph{O-Form} dar. Diese Merkmale werden mithilfe von Fuzzylogik aus den Strichen extrahiert und zur Zuordnung des richtigen Labels kommt wieder Fuzzylogik zum Einsatz. Dabei haben sie für jede Symbolklasse, die sie verwenden eine eigene Fuzzy-Regel erstellt. Im zitierten Artikel waren das Regeln für die Zahlen 1-9 und kleingeschriebene lateinische Buchstaben. Es ist offensichtlich, dass ein solches Vorgehen für Detexify mit nahezu 1000 Symbolklassen nicht in Frage kommen kann. Zum Problem für jede Klasse ein Modell zu definieren kommt hinzu, dass das System nicht \emph{adaptionsfähig} im in \ref{desc:anforderungen} definierten Sinne ist, da jedes neue Symbol ein neues Modell braucht. Ohnehin ist es schwierig bei einer so großen Anzahl von Symbolklassen eine gemeinsame Struktur zu finden, die einen Strukturellen Ansatz praktikabel macht. Aus den genannten Gründen habe ich Strukturelle Methoden als ungeeignet für Detexify verworfen.
+Strukturelle Methoden basieren auf der Annahme, dass Handschrift aus elementaren Formen, auch Allographen genannt, besteht. Die Darstellung einer Klasse erfolgt dann als strukturelle Repräsentation (z.B. als Baum oder Graph) bestehend aus diesen Allomorphen. Die Vorgehensweise lässt sich am besten an einem Beispiel illustrieren. \citet{Fitzgerald:2004p10858} stellen mathematische Symbole als eine Kombination von Merkmalen der Typen \emph{Linie}, \emph{C-Form} oder \emph{O-Form} dar. Diese Merkmale werden mithilfe von Fuzzylogik aus den Strichen extrahiert und zur Zuordnung des richtigen Labels kommt wieder Fuzzylogik zum Einsatz. Dabei haben sie für jede Symbolklasse, die sie verwenden, eine eigene Fuzzy-Regel erstellt. Im zitierten Artikel waren das Regeln für die Zahlen 1-9 und kleingeschriebene lateinische Buchstaben. Es ist offensichtlich, dass ein solches Vorgehen für Detexify mit nahezu 1000 Symbolklassen nicht in Frage kommen kann. Zum Problem für jede Klasse ein Modell zu definieren kommt hinzu, dass das System nicht \emph{adaptionsfähig} im in \ref{desc:anforderungen} definierten Sinne ist, da jedes neue Symbol ein neues Modell braucht. Ohnehin ist es schwierig bei einer so großen Anzahl von Symbolklassen eine gemeinsame Struktur zu finden, die einen Strukturellen Ansatz praktikabel macht. Aus den genannten Gründen habe ich Strukturelle Methoden als ungeeignet für Detexify verworfen.
 
 \subsection{Künstliche Neuronale Netze} \label{sub:kuenstliche_neuronale_netze}
 
@@ -82,11 +78,9 @@ Neuronale Netze haben bekanntlich Schwierigkeiten, wenn die Anzahl der Klassen g
 
 \subsection[SVM]{SVM - Support Vector Machines} \label{sub:svm}
 
-\ac{SVM}s haben sich zu einem beliebten Klassifikationsverfahren für bestimmte Problemklassen entwickelt. Bei dem Verfahren betrachtet man eine Menge von (Trainings-)Objekten in einem Verktorraum (dem Merkmalsraum). Jedes Objekt gehört einer Klasse an und nun legt man eine Hyperebene so durch den Raum, dass die Klassen getrennt und der Rand zu beiden Seiten der Hyperebene maximal wird. Das Verfahren ist natürlich nur sinnvoll, wenn sich die Klassen linear trennen lassen. Ist dies nicht der Fall, kann man sich des Kernel-Tricks bedienen und den Merkmalsraum auf einen höherdimensionalen Verktorraum abbilden, in dem die Klassen linear trennbar sind.
+\ac{SVM}s \cite{kernels} haben sich zu einem beliebten Klassifikationsverfahren für bestimmte Problemklassen entwickelt. Bei dem Verfahren betrachtet man eine Menge von (Trainings-)Objekten in einem Verktorraum (dem Merkmalsraum). Jedes Objekt gehört einer Klasse an und nun legt man eine Hyperebene so durch den Raum, dass die Klassen getrennt und der Rand zu beiden Seiten der Hyperebene maximal wird. Das Verfahren ist natürlich nur sinnvoll, wenn sich die Klassen linear trennen lassen. Ist dies nicht der Fall, bedient man sich des Kernel-Tricks \cite[S.15]{kernels} um den Merkmalsraum auf einen höherdimensionalen Verktorraum abbilden, in dem die Klassen linear trennbar sind.
 
 \ac{SVM}s sind binäre Klassifizierer. Um sie also bei $N>2$ Klassen verwenden zu können gibt es unterschiedliche Strategien. Zum einen gibt es die \ac{WTA}-Strategie bei der $N$ binäre Klassifizierer konstruiert werden, wobei der $i$-te Klassifizierer $\rho_i$ die Klasse $C_i$ und $C_i^{\complement}$ (also alle anderen Klassen) unterscheidet. Einem unbekannten Objekt $x$ wird dann die Klasse zugeordnet, deren SVM $\rho_i$ das beste Ergebnis zurückliefert\footnote{Eine SVM ist als Funktion realisiert, die die Lage eines Eingabevektors zur Hyperebene zurückgibt. Das Ergebnis ist besser wenn der Eingabevektor weit auf der richtigen Seite liegt, also der Abstand zur Ebene größer ist.}. Zum anderen gibt es die \ac{MWV}-Strategie bei der für jedes Paar von Klassen $C_i$ und $C_j$ ein Klassifizierer $\rho_{ij}$ mit den Objekten aus $C_i$ gegen die Objekte aus $C_j$ trainiert wird. Für ein unbekanntes Objekt $x$ werden nun alle $N(N-1)/2$ Klassifizierer nach ihrer Stimme gefragt und die Klasse mit den meisten Stimmen gewinnt. Weitere Kombinationsstrategien finden sich in \cite{Duan:2005p11426} und \cite{Platt:2000p11488}.
-
-\TODO SVM in Literatur, insb. Kernel-Trick Bernhard Schölkopf, Alex Smola: Learning with Kernels: Support Vector Machines, Regularization, Optimization, and Beyond (Adaptive Computation and Machine Learning), MIT Press, Cambridge, MA, 2002, ISBN 0-262-19475-9. Ingo Steinwart, Andreas Christmann: Support Vector Machines, Springer, New York, 2008. ISBN 978-0-387-77241-7. 602 pp.
 
 \citet{Tapia:2003p11202,Tapia:2005p11236} verwenden \ac{DAGSVM}s \cite{Platt:2000p11488} zur Symbolerkennung in einem System, dass u.a. mathematische Formeln auf einer Elektronischen Tafel erkennt.
 \citet{Golubitsky:2009p2456,Keshari:2008p528,Golubitsky:2009p2321} stellen Mathematische Symbole als Merkmalsvektor bestehend aus der Koeffizienten einer Funktionalapproximation der Striche dar und trainieren damit \ac{SVM}s, die sie mit \ac{MWV} kombinieren. Die genannten Autoren berichten auch von guten Ergebnissen — jedoch hätten \ac{SVM}s für Detexify einen entscheidenden Nachteil.
@@ -104,7 +98,7 @@ Dabei beschreibt ein HMM einen diskreten Markovprozess $q=(q_t)_{t=0,1.\dots}$ d
   \label{fig:hmm}
 \end{figure}
 
-Man verwendet eine HMM dann folgendermaßen: Jede Klasse $C_i$ bekommt eine HMM $\lambda_i$ deren Parameter anhand einer Stichprobe trainiert werden. Einem unbekannten Objekt, das als Folge $\mathbf{O}$ von Merkmalsvektoren beobachtet wird, wird dann die Klasse zugeordnet, für die die Wahrscheinlichkeit $P(\mathbf{O}|\lambda_i)$ (\TODO ich würde das $P_{\lambda_i}(\mathbf{O})$ schreiben...), dass die Folge von der zugehörigen HMM erzeugt wurde, maximiert wird.
+Man verwendet eine HMM dann folgendermaßen: Jede Klasse $C_i$ bekommt eine HMM $\lambda_i$ deren Parameter anhand einer Stichprobe trainiert werden. Einem unbekannten Objekt, das als Folge $\mathbf{O}$ von Merkmalsvektoren beobachtet wird, wird dann die Klasse zugeordnet, für die die Wahrscheinlichkeit $P_{\lambda_i}(\mathbf{O})$, dass die Folge von der zugehörigen HMM erzeugt wurde, maximiert wird.
 
 \citet{Xie:2007p11427} beschreibt ein System zur Erkennung mathematischer Symbole, das auf HMM basiert. In derselben Arbeit wird auch ein Klassifizierer, der auf DTW basiert vorgestellt, und für diesen werden beeindruckende Erkennungsraten von im besten Fall 94.8 \% angeben. Obwohl sich ein Vergleich angeboten hätte werden jedoch für das HMM-basierte System keine absoluten Erkennungsraten vorgestellt, sondern lediglich relative Veränderungen, wenn mit den Parametern der HMM gespielt wird. Das stimmt etwas nachdenklich.
 
@@ -114,11 +108,10 @@ Von der Leistungsfähigkeit her scheinen HMMs also durchaus eine Option für Det
 
 \subsection{Nächste-Nachbarn-Klassifikation} \label{sub:knn}
 
-Der $k$-nächste-Nachbarn-Algorithmus ist eines der einfachsten Verfahren um einem unbekannten Muster eine Klasse zuzuweisen. Dazu werden als Training einfach Vertreter der Klassen in einem Merkmalsraum gespeichert. Dem unbekannten Muster wird dann durch ein Mehrheitsvotum der $k$ nächsten Nachbarn eine Klasse zugeordnet. Darum wird diese Art der Klassifikation auch häufig \emph{template matching} genannt. Eine zentrale Rolle nimmt dabei das Abstandsmaß, das die Nachbarschaft bestimmt, ein \cite{Jaeger:2003p1097}. Es beeinflusst die Güte der Klassifikation, aber auch durch seine Laufzeitkomplexität den zeitlichen Aufwand des Vorgangs.
-\TODO Literatur - Bücher?
+Der $k$-nächste-Nachbarn-Algorithmus \cite[S.18]{eva:pattern} ist eines der einfachsten Verfahren um einem unbekannten Muster eine Klasse zuzuweisen. Dazu werden als Training einfach Vertreter der Klassen in einem Merkmalsraum gespeichert. Einem unbekannten Muster wird dann durch ein Mehrheitsvotum der $k$ nächsten Nachbarn eine Klasse zugeordnet. Darum wird diese Art der Klassifikation auch häufig \emph{template matching} genannt. Eine zentrale Rolle nimmt dabei das Abstandsmaß, das die Nachbarschaft bestimmt, ein \cite{Jaeger:2003p1097}. Es beeinflusst die Güte der Klassifikation, aber auch durch seine Laufzeitkomplexität den zeitlichen Aufwand des Vorgangs.
 
 Dabei ist Nächste-Nachbarn-Klassifikation besonders bei Problemen beliebt, in denen die Anzahl an Klassen sehr hoch ist, wie beispielsweise bei japanischen Schriftzeichen \cite{Jaeger:2003p1097}. Eine Analyse zur Eignung für Detexify scheint also angebracht.
-\TODO Laut Jiang Script Kapitel 4 ist KNN mit vielen Trainingsdaten nahezu so gut wie Bayes (optimal)
+% Laut Jiang Script Kapitel 4 ist KNN mit vielen Trainingsdaten nahezu so gut wie Bayes (optimal)
 % \citet{Tappert:1990p10302} sagt bei Online-Erkennung reichen wegen der Interaktivität einfachere Methoden, was bei mir ja voll zutrifft.
 
 Die Bedingung der \emph{Adaptionsfähigkeit}, die ich in \ref{sec:klassifizierung} gefordert hatte, die bei den bisher vorgestellten Verfahren schwierig umzusetzen war, ist dabei bei der Nächste-Nachbarn-Klassifikation auf natürliche Weise dadurch gegeben, dass neue Trainingsmuster einfach nur gespeichert werden müssen. \emph{Interaktivität} kann leicht realisiert werden, indem jeder Klasse ein auf dem Abstandsmaß basierender Wert zugewiesen wird. So erhält man für ein unbekanntes Muster eine Rangfolge der Klassen.
@@ -147,18 +140,14 @@ Mit der Festlegung auf Nächste-Nachbarn-Klassifikation mit DTW als Abstandsmaß
 \begin{description}
   \item[Normalisierung der Größe und Position]
   Die ankommenden Striche werden verschoben und skaliert, so dass sie unter Beibehaltung ihres Seitenverhältnisses\footnote{Der Erhaltung des Seitenverhältnisses ist sehr wichtig. Dies musste ich feststellen, als mir in der Haskell-Implementierung etwa 4-5\% Erkennungsrate fehlte, obwohl ich dachte, ich hätte alles eins zu eins von Ruby portiert.} zentriert und maximal im Quadrat \([0,1]\times[0,1]\) liegen. Dieser Schritt ist notwendig um zwei Muster überhaupt sinnvoll mit DTW vergleichen zu können.
-  % \item[Entfernung von Haken]
-  % \TODO An den Enden von Strichen kann es zu Haken kommen, die beim Aufsetzen entstehen\dots Ich mache noch gar kein De-Hooking. Sollte ich?
   \item[Glättung]
   Jeder Punkt eines Striches wird durch das arithmetische Mittel des Punktes und seiner beiden Nachbarpunkte ersetzt.
   \item[Äquidistante Verteilung] Da die Zeichenfläche im Browser in Detexify eine gewisse Abtastrate hat, die erstens Herstellerabhängig sein kann, und zweitens zeitabhängig ist, kann die Verteilung der Punkte auf den Strichen sehr ungleich sein. Daher werden die Punkte neu verteilt, so dass die Entfernung zwischen zwei je Punkten gleichmäßig groß ist. Die Anfangs- und Endpunkte von Strichen werden dabei erhalten. \citet{Golubitsky:2009p1842} geben an, dass eine Äquidistante Verteilung der Punkte bei Verwendung von DTW sogar die beste Wahl ist.
-  \item[Dominante Punkte] \TODO $\alpha$ Grenzwinkel
+  \item[Dominante Punkte] Punkte mit geringer Krümmung tragen zur Charakteristik eines Striches nicht viel bei, daher werden sie herausgefiltert. Es wird ein Grenzwinkel $\alpha$ definiert und es bleiben die Punkte erhalten, an denen sich die Richtung des Striches um mehr als $\alpha$ ändert. Durch diese Reduktion in der Anzahl der Punkte wird außerdem DTW geringfügig beschleunigt.
   \item[Verkettung] Da \ac{DTW} zwei Zeitreihen vergleicht, werden die Striche miteinander verkettet, so dass das Abstandsmaß direkt angewendet werden kann.\footnote{Dies hört sich im ersten Moment naiv an, aber alle versuchten Alternativen haben bei der Erkennung schlechtere Ergebnisse, als diese einfache Methode geliefert.}
 \end{description}
 
-\TODO verwerfen von Strichen wenn mehr als 10...
-
-\TODO Andere blasen sich hier mächtig auf und beschreiben alles haar-klein mit vorher/nachher Schaubildern. Will ich das auch?
+% Verwerfen von Strichen wenn mehr als 10 verschweige ich.
 
 Es gibt noch zwei Maßnahmen, die in der Literatur auftauchen, aber in Detexify keine Verwendung finden:
 
@@ -169,11 +158,9 @@ Es gibt noch zwei Maßnahmen, die in der Literatur auftauchen, aber in Detexify 
 
 Die Alternative zu den oben genannten Verfahren ist, für jede mögliche Zeichenreihenfolge und -richtung, ein eigenes Modell anzulegen. Es ist klar, dass das bei Symbolen mit vielen Strichen zu sehr vielen Modellen führen würde. Da das Training in Detexify aber ohnehin durch die Nutzer durchgeführt wird, habe ich mich bei Detexify für den folgenden Weg entschieden.
 
-Es wird keine Umsortierung oder Richtungsänderung vorgenommen. Stattdessen wird die Eigenschaft der Nächste-Nachbarn-Klassifikation ausgenutzt, dass die Muster ohnehin direkt gespeichert werden. Variationen in der Anzahl, Sortierung und Richtung der Striche werden bewusst in Kauf genommen. Bei der Suche nach der richtigen Klasse werden also automatisch verschiedene Variationen, eben die, die von vorherigen Benutzern eintrainiert wurden, durchsucht.
+Es wird keine Umsortierung oder Richtungsänderung vorgenommen. Stattdessen wird die Eigenschaft der Nächste-Nachbarn-Klassifikation ausgenutzt, dass die Muster ohnehin direkt gespeichert werden. Variationen in der Anzahl, Sortierung und Richtung der Striche werden bewusst in Kauf genommen. Bei der Suche nach der richtigen Klasse werden also automatisch verschiedene Variationen, eben die, die von vorherigen Benutzern eintrainiert wurden, durchsucht.\footnote{Tatsächlich haben einige Benchmarks, die ich in Kapitel \ref{cha:benchmarks} aber nicht aufführe, gezeigt, dass eine Sortierung der Striche tatsächlich nicht hilft. Sowohl eine Sortierung wie \citet{Matasakis:1999p9465} sie vorschlägt als auch nach anderen Kriterien haben der Erkennungsraten entweder nicht verändert oder leicht verschlechtert.}
 
 Durch Umsortierung oder Richtungsänderung kann man nämlich auch genau die Probleme schaffen, die man eigentlich unterbinden wollte \cite{Matasakis:1999p9465}. Man schafft außerdem neue Parameter, die wieder optimiert werden müssen.
-
-\TODO Meine Benchmarks zeigen, dass es Umsortierung tatsächlich nicht bringt! Sowohl \cite{Matasakis:1999p9465} Umsortierung als auch Umsortierung nach Koordinaten verschlechtern die Erkennung sogar etwas.
 
 \section{DTW} % (fold)
 \label{sec:dtw}
@@ -232,7 +219,8 @@ Diese abstrakte Definition bedeutet anschaulich, dass die Punkte in den zwei Fol
   \label{fig:dtw}
 \end{figure}
 
-Das gesuchte Minimum kann mithilfe von Dynamischer Programmierung gefunden werden. Gegeben die Rekurrenz
+Das gesuchte Minimum kann mithilfe von Dynamischer Programmierung \cite[S.323ff.]{algorithms} gefunden werden und zwar mithilfe der folgenden Rekurrenz:
+
 \begin{equation}
   \label{eqn:dp}
   \gamma(i,j) =
@@ -243,13 +231,11 @@ Das gesuchte Minimum kann mithilfe von Dynamischer Programmierung gefunden werde
   \end{cases}
 \end{equation}
 
-dann ist
-\begin{equation}
-  \label{eqn:dpdtw}
-  DTW(A,B) = \frac{\gamma(n,m)}{K}
-\end{equation}. \TODO Wo kommt das K her?
-
-\TODO Dynamische Programmierung in der Literatur? z.B. Algorithmik - U Schöning - 2001
+% dann ist
+% \begin{equation}
+%   \label{eqn:dpdtw}
+%   DTW(A,B) = \frac{\gamma(n,m)}{K}
+% \end{equation}.
 
 In dieser Form hat DTW die Laufzeit- und Speicherplatzkomplexität \(\mathcal{O}(nm)\). Darum wundert es nicht, dass bereits einige Wissenschaftler versucht haben, den Algorithmus zu optimieren. Auch für Detexify ist dieses Laufzeitverhalten nicht ausreichend um eine Erkennung in Echtzeit zu ermöglichen.
 
@@ -302,7 +288,7 @@ Gegeben ein Abstandsmaß \( \delta : S\times S \rightarrow \mathbb{R}_0^+ \) und
 
 Für DTW für Folgen derselben Länge $n$ mit reellen Messpunkten mit einer Beschränkung des Warping-Pfades der Form \ref{eq:constraints} haben \citet{Keogh:2005p7751} eine scharfe untere Schranke angegeben. Zudem haben \citet{Ratanamahatana:2004p7522} die Kritik entkräftet, dass vor der Verwendung einer solchen Optimierung eine lineare Interpolation der Folgen nötig ist, um sie auf dieselbe Länge zu bringen, und damit der Vorteil Folgen unterschiedlicher Länge vergleichen zu können verlogen ginge. Eine untere Schranke scheint also eine reizvolle Möglichkeit zu sein DTW zu beschleunigen.
 
-\TODO wer hat vor \citet{Keogh:2005p7751} untere Schranken angegeben? Muss ich das erwähnen?
+%TODO wer hat vor \citet{Keogh:2005p7751} untere Schranken angegeben? Muss ich das erwähnen?
 
 In Fall von Detexify sind die einzelnen Punkte der Folgen aber Punkte im \( \mathbb{R}^2 \) (siehe \ref{sec:vorverarbeitung}) und es ist intuitiv einzusehen, dass eine Reduktion auf eine Dimension einen zu hohen Informationsverlust nach sich ziehen würde. Es ist leider nicht leicht auf zu \cite{Keogh:2005p7751} analoge Weise eine untere Schranke zu definieren, die sinnvoll einsetzbar ist.
 
@@ -386,8 +372,7 @@ Das Problem besteht nun aber darin, dass diese untere Schranke nur dann effizien
 \subsection{Greedy Matching} % (fold)
 \label{sec:greedy}
 
-Es ist möglich DTW mit einem Greedy-Algorithmus zu approximieren.
-\TODO Allgemeines zu Greedy-Algorithmen (unterschiede zu Dynamischer Programmierung (nicht-erschöpfend)) z.B. Algorithmik - U Schöning - 2001
+Es ist möglich DTW mit einem Greedy-Algorithmus \cite[S.370ff.]{algorithms} zu approximieren.
 
 Grundsätzlich funktioniert eine Greedy-Approximation von DTW bei zwei Folgen $A$ und $B$ mit \(a_i,b_i \in S\) und einem Abstandsmaß \(\delta:S\times S \rightarrow \mathbb{R}_0^+\) folgendermaßen. Beginne mit den Startpunkten $a_1$ und $b_1$ ordne diese einander zu. Ordne dann jeweils die nächsten Punkte so einander zu, dass der Abstand unter \(\delta\) minimal ist (wähle das lokale Optimum). Wiederhole dies, bis in einer der beiden Folgen nur noch ein Punkt übrig ist. Ordne alle restlichen Punkte der anderen Folge diesem zu. Algorithmus \ref{alg:greedy} zeigt eine Implementierung in Pseudocode.
 Wie man sieht hat der Algorithmus einen konstanten Speicherplatzaufwand und eine lineare Laufzeit.
@@ -438,9 +423,9 @@ Welche Vorteile das gegenüber einer einseitigen Strategie bringt, erklären sie
 \label{sec:elimnimation}
 
 Eine weitere Optimierungsmöglichkeit besteht darin irrelevante Trainingsmuster im Suchraum zu eliminieren um für diese einen teuren DTW-Vergleich gar nicht mehr durchführen zu müssen. \citet{Watt:2005p1816} schlagen Elimination durch klassische Merkmale vor, d.h. es wird ein Merkmalsvektor gebildet und es wird nur noch für die besten $N$ Trainingsmuster die DTW-Entfernung ausgerechnet. \citet{Watt:2005p1816} verlieren durch ein solches Verfahren 3\% an Erkennungsgenauigkeit aber vermeiden für fast 90\% des Suchraumes das teurere Abstandsmaß.
-Ist das verwendete Abstandsmaß eine Metrik, so gibt es sogar exakte Eliminationsverfahren für die Nächste-Nachbarn-Klassifikation wie den Voronoi-Trick (\TODO Literatur), die ohne Genauigkeitsverlust auskommen. DTW ist leider keine Metrik, darum bleiben mir solche Mittel verschlossen.
+Ist das verwendete Abstandsmaß eine Metrik, so gibt es sogar exakte Eliminationsverfahren für die Nächste-Nachbarn-Klassifikation z.B. im $\mathcal{R}^2$ mithilfe von Voronoi-Diagrammen, die ohne Genauigkeitsverlust auskommen. DTW ist leider keine Metrik, darum bleiben mir solche Mittel verschlossen.
 Aus diesem Grund werden Eliminationsverfahren in Detexify nicht zur Anwendung gebracht.
-\TODO Vielleicht trotzdem mal Greedy-Algorithmus nach Hart (siehe Jiang-Script) testen?
+%TODO Vielleicht trotzdem mal Greedy-Algorithmus nach Hart (siehe Jiang-Script) testen?
 
 \subsection{Parameter}
 \label{sec:parameter}
