@@ -98,7 +98,7 @@ Das Hauptproblem besteht darin, dass SVMs schlecht nachtrainiert werden können.
 \ac{HMM} sind ein statistisches Mustererkennungsverfahren, das schon seit langem in der Spracherkennung eingesetzt wird \cite{Rabiner:1989p11574}. Das liegt daran, dass es besonders geeignet ist zeitliche Muster zu modellieren und außerdem Segmentierung und Klassifizierung integriert \cite{Kosmala:1998p11691}. Der Merkmalsvektor darf dabei von Muster zu Muster in der Länge variieren.
 Dabei beschreibt ein HMM einen diskreten Markovprozess $q=(q_t)_{t=0,1.\dots}$ dessen Zustandsfolge aber nicht sichtbar (also verborgen, daher der Name) ist. Stattdessen sieht der Beobachter eine Symbolfolge $\mathbf{O}=O_1\dots O_T, O_t\in V$ aus einem endlichen Alphabet $V=\{v_i\}_{i=1\dots K}$ wobei zu jedem Zeitpunkt $t$ jeweils $O_t$ nur vom verborgenen Zustand $q_t$ der diskreten Markovkette abhängt. Abb.~\ref{fig:hmm} illustriert das Modell. Eine ausführliche Einführung zu HMMs inklusive Erklärung von diskreten Markovprozessen findet sich bei \citet{Rabiner:1989p11574}.
 
-\begin{figure}
+\begin{figure}[htbp]
   \centering \includegraphics[width=\textwidth]{figures/hmm.png}
   \caption{HMM}
   \label{fig:hmm}
@@ -146,14 +146,17 @@ Mit der Festlegung auf Nächste-Nachbarn-Klassifikation mit DTW als Abstandsmaß
 
 \begin{description}
   \item[Normalisierung der Größe und Position]
-  Die ankommenden Striche werden verschoben und skaliert, so dass sie unter Beibehaltung ihres Seitenverhältnisses zentriert und maximal im Quadrat \([0,1]\times[0,1]\) liegen. Dieser Schritt ist notwendig um zwei Muster überhaupt sinnvoll mit DTW vergleichen zu können.
-  \item[Entfernung von Haken]
-  \TODO An den Enden von Strichen kann es zu Haken kommen, die beim Aufsetzen entstehen\dots Ich mache noch gar kein De-Hooking. Sollte ich?
+  Die ankommenden Striche werden verschoben und skaliert, so dass sie unter Beibehaltung ihres Seitenverhältnisses\footnote{Der Erhaltung des Seitenverhältnisses ist sehr wichtig. Dies musste ich feststellen, als mir in der Haskell-Implementierung etwa 4-5\% Erkennungsrate fehlte, obwohl ich dachte, ich hätte alles eins zu eins von Ruby portiert.} zentriert und maximal im Quadrat \([0,1]\times[0,1]\) liegen. Dieser Schritt ist notwendig um zwei Muster überhaupt sinnvoll mit DTW vergleichen zu können.
+  % \item[Entfernung von Haken]
+  % \TODO An den Enden von Strichen kann es zu Haken kommen, die beim Aufsetzen entstehen\dots Ich mache noch gar kein De-Hooking. Sollte ich?
   \item[Glättung]
   Jeder Punkt eines Striches wird durch das arithmetische Mittel des Punktes und seiner beiden Nachbarpunkte ersetzt.
   \item[Äquidistante Verteilung] Da die Zeichenfläche im Browser in Detexify eine gewisse Abtastrate hat, die erstens Herstellerabhängig sein kann, und zweitens zeitabhängig ist, kann die Verteilung der Punkte auf den Strichen sehr ungleich sein. Daher werden die Punkte neu verteilt, so dass die Entfernung zwischen zwei je Punkten gleichmäßig groß ist. Die Anfangs- und Endpunkte von Strichen werden dabei erhalten. \citet{Golubitsky:2009p1842} geben an, dass eine Äquidistante Verteilung der Punkte bei Verwendung von DTW sogar die beste Wahl ist.
-  % \item[Verkettung] Da \ac{DTW} zwei Zeitreihen vergleicht, werden die Striche miteinander verkettet, so dass das Abstandsmaß direkt angewendet werden kann. \TODO das ist doch Mist! Das muss ich begründen. Verschlechtert ja die Erkennung total. Aber: Stroke joining macht manchmal Sinn... wenn Ende und Anfang nah beieinander liegen...
+  \item[Dominante Punkte] \TODO $\alpha$ Grenzwinkel
+  \item[Verkettung] Da \ac{DTW} zwei Zeitreihen vergleicht, werden die Striche miteinander verkettet, so dass das Abstandsmaß direkt angewendet werden kann.\footnote{Dies hört sich im ersten Moment naiv an, aber alle versuchten Alternativen haben bei der Erkennung schlechtere Ergebnisse, als diese einfache Methode geliefert.}
 \end{description}
+
+\TODO verwerfen von Strichen wenn mehr als 10...
 
 \TODO Andere blasen sich hier mächtig auf und beschreiben alles haar-klein mit vorher/nachher Schaubildern. Will ich das auch?
 
@@ -170,7 +173,7 @@ Es wird keine Umsortierung oder Richtungsänderung vorgenommen. Stattdessen wird
 
 Durch Umsortierung oder Richtungsänderung kann man nämlich auch genau die Probleme schaffen, die man eigentlich unterbinden wollte \cite{Matasakis:1999p9465}. Man schafft außerdem neue Parameter, die wieder optimiert werden müssen.
 
-\TODO Benchmarken, ob es eine Richtungskorrektur und Umsortierung doch bringt und gegebenenfalls umstellen!
+\TODO Meine Benchmarks zeigen, dass es Umsortierung tatsächlich nicht bringt! Sowohl \cite{Matasakis:1999p9465} Umsortierung als auch Umsortierung nach Koordinaten verschlechtern die Erkennung sogar etwas.
 
 \section{DTW} % (fold)
 \label{sec:dtw}
@@ -301,7 +304,7 @@ Für DTW für Folgen derselben Länge $n$ mit reellen Messpunkten mit einer Besc
 
 \TODO wer hat vor \citet{Keogh:2005p7751} untere Schranken angegeben? Muss ich das erwähnen?
 
-In Fall von Detexify sind die einzelnen Punkte der Folgen aber Punkte im \( \mathbb{R}^2 \) (siehe \ref{sec:vorverarbeitung}) und es ist intuitiv einzusehen, dass eine Reduktion auf eine Dimension einen zu hohen Informationsverlust nach sich ziehen würde. Es ist leider nicht leicht auf zu \cite{Keogh:2005p7751} analoge Weise eine untere Schranke zu definieren.
+In Fall von Detexify sind die einzelnen Punkte der Folgen aber Punkte im \( \mathbb{R}^2 \) (siehe \ref{sec:vorverarbeitung}) und es ist intuitiv einzusehen, dass eine Reduktion auf eine Dimension einen zu hohen Informationsverlust nach sich ziehen würde. Es ist leider nicht leicht auf zu \cite{Keogh:2005p7751} analoge Weise eine untere Schranke zu definieren, die sinnvoll einsetzbar ist.
 
 \subsection{Eine untere Schranke für DTW für Folgen im \( \mathbb{R}^2 \)?}
 
@@ -357,7 +360,6 @@ Seinen nun zwei Folgen
   B &= b_1 \dots b_n  & b_i \in \mathbb{R}^2
 \end{align}
 gegeben.
-Da der \(\mathbb{R}^2\)
 \( \mathcal{W}_r \) sei wieder die Menge der durch \(r\) beschränkten Warping-Pfade. Wir definieren dann eine neue Folge $C$ durch
 \begin{equation}
   C_i = \operatorname{conv} ~\{ a_{i-r}, \dots, a_{i+r} \}
@@ -378,8 +380,7 @@ die konvexe Hülle ist. Die neue Folge $C$ besteht also aus konvexen Polygonen. 
 \end{equation}
 und dabei ist natürlich \( \delta(b_i, C_i) = \min\limits_{c \in C_i} \delta(b_i, c) \).
 
-\FIXME Ich habe gerade den Verdacht, dass das gar nicht stimmt... ich darf bloß den Abstand zu den Ecken nehmen. Die Anzahl der Ecken ist kleiner gleich $r$ aber ich brauche immer noch im worst case $r$ Vergleiche womit LB also \( \mathcal{O}(rn) \) ist, also nicht schneller als der ursprüngliche Algorithmus. Passt auch mit dem zusammen, was ich hier sagen will, aber ich muss wohl anders argumentieren...
-
+Das Problem besteht nun aber darin, dass diese untere Schranke nur dann effizient zu berechnen wäre, wenn beim Bilden der konvexen Hülle viele Punkte im inneren derselben liegen würden, denn die Komplexität der Berechnung des Abstandes zur konvexen Hülle ist proportional zur Anzahl der Ecken $v$. Es gilt zwar $v \leq r$ es ist völlig unklar wie stark $v$ typischerweise unter $r$ liegt. Geht man vor einer Gleichverteilung zwischen $2$ und $r$ aus so bleibt damit die Komplexität dieser unteren Schranke bei \( \mathcal{O}(rn) \) was der des ursprünglichen Algorithmus entspricht. Dadurch ist also nichts gewonnen. Aus diesem Grund entfällt auch der formale Beweis, dass es sich um eine untere Schranke handelt und es muss weiter nach praktikablen Optimierungen gesucht werden.
 % subsubsection lower_bounding (end)
 
 \subsection{Greedy Matching} % (fold)

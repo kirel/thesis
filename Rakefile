@@ -12,3 +12,14 @@ task :todo do
   puts "LaTeX files containing TODO"
   system 'ack -l TODO **/*.tex'
 end
+
+desc "generate art file"
+task :art do
+  File.open 'art.tex', 'w+' do |f|
+    f.puts "\\input{art-pre}\n\n"
+    Dir['art/*.png'].each do |fn|
+      mv fn, fn.gsub(' ', '_') if fn =~ / /
+      f.puts '\includegraphics[width=0.2\textwidth]{%s}' % fn.gsub(' ', '_')
+    end    
+  end
+end

@@ -2,28 +2,217 @@
 \chapter{Benchmarks} % (fold)
 \label{cha:benchmarks}
 
-\TODO Benchmarks durchführen
+\TODO Optimierung von
+
+\begin{description}
+  \item[$n$] - Anzahl der Punkte pro Strich
+  \item[$\delta$] - das verwendete innere Abstandsmaß (siehe \ref{sub:dtw})
+  \item[$C$] - Anzahl der Trainingsmuster pro Klasse
+  \item[$\alpha$] - Grenzwinkel für dominante Punkte
+\end{description}
+
+- sozusagen $k=1$ aber wir ranken ja eh, von daher nicht so relevant
+
+- Folgen erst mal \citet{Golubitsky:2009p1842} mit $n=25$.
+
+- Testen für $\delta$ euklidische Metrik und Manhattan-Metrik ~> Manhattan ist doch tatsächlich besser.
+
+- Finden heraus, dass gdtw nahezu so gut ist wie dtw also schauen verwenden wir cdtw gar nicht da der Performancegewinn ohnehin nicht groß wäre also entfällt Optimierung von $r$
+
+- Beginnen mit $C=50$ - andere Werte dann experimentell
+
+\section{Kleiner Datensatz}
+\label{sec:kleiner_datensatz}
+
+In diesem Abschnitt werden mithilfe eines Teils der verfügbaren Trainingsdaten die Verfahren auf ihre Güte überprüft und die Parameter optimiert. Der kleine Datensatz besteht aus 100 zufällig aus der Datenbank ausgewählten Symbolen.
+Es wurden 75 Muster pro Symbolklassen zufällig ausgewählt wovon 50 für das Training und 50 als Testmuster verwendet wurden. Dies ergibt 2500 Tests.
+
+Folgende Symbole werden verwendet:
+$\$$,
+$\{$,
+$\copyright$,
+$\}$,
+$\S$,
+$\&$,
+$\#$,
+$\%$,
+$\checkmark$,
+\aa,
+\AA,
+\ae,
+\DH,
+\DJ,
+$\EUR$,
+$\cup$,
+$\oplus$,
+$\times$,
+$\ast$,
+$\otimes$,
+$\pm$,
+$\cap$,
+$\vee$,
+$\cdot$,
+$\odot$,
+$\wedge$,
+$\circ$,
+$\bigotimes$,
+$\prod$,
+$\sum$,
+$\bigodot$,
+$\int$,
+$\oint$,
+$\approx$,
+$\equiv$,
+$\perp$,
+$\cong$,
+$\propto$,
+$\vdash$,
+$\sim$,
+$\simeq$,
+$\therefore$,
+$\because$,
+$\subseteq$,
+$\geq$,
+$\leq$,
+$\ll$,
+$\neq$,
+$\lesssim$,
+$\gtrsim$,
+$\triangleq$,
+$\Rightarrow$,
+$\rightarrow$,
+$\Leftrightarrow$,
+$\mapsto$,
+$\alpha$,
+$\theta$,
+$\tau$,
+$\beta$,
+$\vartheta$,
+$\pi$,
+$\gamma$,
+$\phi$,
+$\delta$,
+$\rho$,
+$\varphi$,
+$\epsilon$,
+$\lambda$,
+$\chi$,
+$\varepsilon$,
+$\mu$,
+$\sigma$,
+$\psi$,
+$\zeta$,
+$\nu$,
+$\omega$,
+$\eta$,
+$\xi$,
+$\Gamma$,
+$\Lambda$,
+$\Sigma$,
+$\Psi$,
+$\Delta$,
+$\Xi$,
+$\Omega$,
+$\Theta$,
+$\Pi$,
+$\Phi$,
+$\bot$,
+$\forall$,
+$\ell$,
+$\hbar$,
+$\in$,
+$\not\in$,
+$\partial$,
+$\exists$,
+$[$,
+$/$,
+$\aleph$,
+$\infty$
+
+Davon sind manche, wie $\odot$ (\verb!\odot!) und $\bigodot$ (\verb!\bigodot!) oder $\sum$(\verb!\sum!) und $\Sigma$~(\verb!\Sigma!) eigentlich dieselben Symbole. Es wurden aber keine Maßnahmen ergriffen, um solche Zweideutigkeiten aufzuheben, da durch die Interaktivität der Anwendung ohnehin in erste Linie eine hohe Top 5-Erkennungsrate wichtig ist.
+
+\subsection{Gierig oder nicht?}
+\label{sub:gierig_oder_nicht}
 
 \begin{itemize}
-  \item verschiedene Parameter
-  \item verschiedene DTW-Varianten
-  \item verschiedene innere Abstandsfunktionen
-  \item mit Histogramm-Features vergleichen?
+  \item $C=50$
+  \item $\delta\sim\text{Euklid}$
+  \item $n=25$ (optimal nach \citet{Golubitsky:2009p1842})
 \end{itemize}
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Striche werden einfach konkateniert. $DTW (DTW euklid) a b$ auch denkbar, ist aber langsamer und schneidet schlechter ab (in kleineren Benchmarks ermittelt). Abbildung \ref{chart:dtw-vs-gdtw} zeigt, dass Greedy kaum schlechter was die Ergebnisse von \citet{MacLean:2010p9970} bestätigt.
 
-\begin{table}
-  \centering
-  \begin{tabular}{|ccc|}
-    \hline
-    1 & 2 & 3 \\ \hline
-    1 & 2 & 3 \\
-    1 & 2 & 3 \\
-    1 & 2 & 3 \\
-    \hline
-  \end{tabular}
-  \caption{Bogus Tabelle}
-\end{table}
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[width=\textwidth]{charts/dtw-vs-gdtw.pdf}
+  \end{center}
+  \caption{Greedy DTW gegen klassisches DTW}
+  \label{chart:dtw-vs-gdtw}
+\end{figure}
+
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[width=.75\textwidth]{charts/dtw-vs-gdtw-ms.pdf}
+  \end{center}
+  \caption{Greedy DTW gegen klassisches DTW - Laufzeit}
+  \label{chart:dtw-vs-gdtw-ms}
+\end{figure}
 
 % chapter benchmarks (end)
+
+\subsection{Inneres Abstandsmaß} % (fold)
+\label{sub:inneres_abstandsmaß}
+Euklid gegen Manhattan $\delta$
+Abbildung \ref{chart:dtw-vs-gdtw} zeigt, dass die günstigere Manhattan-Metrik sogar besser ist.
+% subsection inneres_abstandsmaß (end)
+
+\subsection{Anzahl Trainingsmuster} % (fold)
+\label{sub:anzahl_trainingsmuster}
+
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[width=.75\textwidth]{charts/samples.pdf}
+  \end{center}
+  \caption{Einfluss der Anzahl der Trainingsmuster $C$}
+  \label{chart:samples}
+\end{figure}
+
+- Klassifizierungsserver verwirft alte Trainingsmuster, wenn $C$ überschritten
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+% subsection anzahl_klassen (end)
+
+\subsection{Anzahl Punkte pro Strich} % (fold)
+\label{sub:anzahl_punkte_pro_strich}
+
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[width=.75\textwidth]{charts/points.pdf}
+  \end{center}
+  \caption{Einfluss der Anzahl der Punkte pro Strich $n$}
+  \label{chart:points}
+\end{figure}
+
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+% subsection anzahl_punkte_pro_strich (end)
+
+\subsection{Dominante Punkte} % (fold)
+\label{sub:dominante_punkte}
+
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[width=.75\textwidth]{charts/degree.pdf}
+  \end{center}
+  \caption{Einfluss des Winkels $\alpha$}
+  \label{chart:degree}
+\end{figure}
+
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+% subsection dominante_punkte (end)
+
+\section{Großer Datensatz}
+\label{sec:kleiner_datensatz}
+
+
+627 Symbole (die mit mind 15 Trainingsmustern) pro Klasse max 100 Trainingsmuster davon ein drittel als Testmuster und der Rest Training
+13411 Testmuster
+27460 Trainingsmuster

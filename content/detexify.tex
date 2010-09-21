@@ -21,7 +21,7 @@ Detexify wurde als Webanwendung implementiert. Dies hat die folgenden Vorteile:
 
 Dabei besteht Detexify aus zwei lose gekoppelten Komponenten und zwar der Webanwendung und dem Klassifizierungsserver (Server). Lose Kopplung heisst dabei, dass lediglich ein Interface definiert ist, wie die Webanwendung mit dem Server zu kommunizieren hat \cite{Tilkov:2005p11813}. Das Interface ist als \ac{REST}-Interface spezifiziert. Die beiden Komponenten kommunizieren also über \ac{HTTP}. Abbildung~\ref{fig:architecture} zeigt die Architektur schematisch.
 
-\begin{figure}
+\begin{figure}[htbp]
   \centering \includegraphics{figures/architecture.pdf}
   \caption{Detexify Architektur}
   \label{fig:architecture}
@@ -41,7 +41,7 @@ Die Symbolsuche ist das Zentrum der Anwendung. Sie ist das Werkzeug, das dem \La
 
 Auf der Seite der Webanwendung ist dafür eine Zeichenfläche implementiert. Auf dieser können mit der Maus (oder einem Grafiktablett) Striche gemalt werden, und nach jedem beendeten Strich wird per AJAX\footnote{Eine Erläuterung zu AJAX findet sich in \ref{sec:ajax}} eine Erkennungsanfrage an den Server gesendet. Die Symbole werden dann anhand der vom Server ermittelten Rangfolge aufgelistet wie in Abbildung~\ref{fig:symbolsuche} zu sehen. Die Kommunikation erfolgt wie in \ref{sec:server} beschrieben über das Datenformat \ac{JSON}. Die Interaktionen im Benutzerinterface (Zeichnen usw.) sind mithilfe von Javascript gelöst. Die Zeichenfläche basiert auf der \ac{SVG}-Technologie.
 
-\begin{figure}
+\begin{figure}[htbp]
   \centering \includegraphics[width=\textwidth]{figures/interface-classify.png}
   \caption{Symbolsuche}
   \label{fig:symbolsuche}
@@ -55,7 +55,7 @@ Auf der Seite der Webanwendung ist dafür eine Zeichenfläche implementiert. Auf
 Einerseits bietet die Symboltabelle einen Überblick über die in Detexify registrierten und damit über die Symbolsuche auffindbaren Symbole. Andererseits bietet sie durch ihre Sortierungs- und Filtermöglichkeiten von sich aus gute Möglichkeiten zur Symbolsuche, sollte die eigentliche Symbolsuche aus irgendwelchen Gründen versagen. Außerdem können in der Symboltabelle geziehlt einzelne Symbole trainiert werden. Die Funktionalität der Symboltabelle ist im Detail in \ref{man:symboltabelle} beschrieben. Die verwendeten Technologien sind sind identisch mit den bei der Symbolsuche verwendeten.
  Abbildung~\ref{fig:symboltabelle} zeigt einen Screenshot eines Browsers mit geöffneter Symboltabelle.
 
-\begin{figure}
+\begin{figure}[htbp]
   \centering \includegraphics[width=\textwidth]{figures/interface-symbol-table.png}
   \caption{Symboltabelle}
   \label{fig:symboltabelle}

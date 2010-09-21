@@ -23,7 +23,7 @@ Alleine der Bereich der mathematischen Formelerkennung ist noch nicht auf einem 
 
 \citet{Smithies:1999p11806} beschreiben ein weiteres System, mit dem Handgeschriebene Formeln in \LaTeX, Mathematica, oder eine LISP-artige Notation überführt werden können. Das System wird als Prototyp beschrieben. Leider habe ich das Projekt, dessen Quellcode frei verfügbar ist, nicht mehr zum Laufen bringen können und mir somit keinen eigenen Eindruck verschaffen können. Die Autoren gehen in ihrem Artikel die Problematik von Erkennungsfehlern unterschiedlicher Art ein und geben an, wie sie diese behandeln. Zum Beispiel stellen sie Gesten bereit, mit denen eine falsche Gruppierung von Strichen korrigiert werden kann. Symbolerkennungsfehler können mit Hilfe eines Kontextmenüs, das die wahrscheinlichsten $x$ Symbole anzeigt, korrigiert werden. Das größte Problem stellen den Autoren nach Fehler beim Parsen der Formel aufgrund von geringfügig deplatzierten Strichen dar, die durch manuelles Verschieben von Strichen korrigiert werden können. Hier besteht die Gefahr in eine frustrierende Formel-Debugging-Schleife zu geraten, da es häufig unklar ist, an welchem Strich der Algorithmus genau scheitert. Abbildung \ref{fig:ffes} zeigt das Benuzterinterface von FFES. Es ist der Internetseite \cite{ffes} entnommen, wo auch Quellcode erhältlich ist.
 
-\begin{figure}
+\begin{figure}[htbp]
   \begin{center}
     \includegraphics[width=.5\textwidth]{figures/ffes.png}
   \end{center}
@@ -38,7 +38,7 @@ Die Autoren bemerken zudem, dass ihr System insbesondere für Experten nicht sch
 
 Natural Log ist von seinen Zielen her ähnlich wie FFES einzustufen. Das als Java-Applet implementierte Programm wandelt handgeschriebene Formeln und \LaTeX oder MathML um. Es kann unter \cite{natural-log} getestet werden. Als einzige Korrekturmöglichkeit bietet es die Möglichkeit Striche durch eine Geste wieder zu löschen. Leider ist Natural Log durch die fehlenden Korrekturmöglichkeiten überhaupt nicht zu gebrauchen. Die Verwendung ist eine Qual. Dem Autor \citet{Matasakis:1999p9465} ist dennoch Respekt geschuldet. Er hat sich nicht das leichteste Problem ausgesucht. Abbildung \ref{fig:natural-log} zeigt das Interface von Natural Log.
 
-\begin{figure}
+\begin{figure}[htbp]
   \begin{center}
     \includegraphics[width=.8\textwidth]{figures/natural-log.png}
   \end{center}
@@ -52,7 +52,7 @@ JMathNotes ist ein weiteres Programm zur Konvertierung von handgeschriebenen For
 Im wesentlichen ist das JMathNotes von denselben Problemen geplagt, wie FFES obwohl es fünf Jahre später veröffentlicht wurde (FFES ist aus \citeyear{Matasakis:1999p9465} und JMathNotes aus \citeyear{jmathnotes}). Abbildung \ref{fig:jmathnotes} zeigt das Interface von JMathNotes.
 %\cite{Tapia:2004p2713}
 
-\begin{figure}
+\begin{figure}[htbp]
   \begin{center}
     \includegraphics[width=\textwidth]{figures/jmathnotes.png}
   \end{center}
@@ -66,7 +66,7 @@ Ein weiteres Beispiel für einen Editor, der beim Textsatz helfen soll ist die k
 
 InftyEditor hat außerdem eine Funktion handgeschriebene Formeln zu erkennen. Dazu öffnet man das InftyHandWriting Input Pad und fängt an zu zeichnen. Die Erkennung erfolgt inkrementell also immer nach einem kurzen Zeitintervall nachdem der letzte Strich gezeichnet wurde. Die Korrekturmöglichkeiten beschränken sich darauf durch einen Klick auf Striche einige Möglichkeiten, wie diese zu interpretieren sind, durchzugehen. Einfache Formeln werden damit auch noch einigermaßen sicher erkannt, aber sobald die Komplexität der Formel steigt und vor allem sobald man Symbole braucht, die die Software gar nicht kennt, wird die Benutzung zum Frusterlebnis. Abb.~\ref{fig:inftyeditor} zeigt das InftyHandwriting Input Pad.
 
-\begin{figure}
+\begin{figure}[htbp]
   \begin{center}
     \includegraphics[width=.5\textwidth]{figures/inftyeditor-autocomplete.png}
   \end{center}
@@ -74,7 +74,7 @@ InftyEditor hat außerdem eine Funktion handgeschriebene Formeln zu erkennen. Da
   \label{fig:inftyeditor-autocomplete}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[htbp]
   \begin{center}
     \includegraphics[width=.8\textwidth]{figures/inftyeditor.png}
   \end{center}
@@ -88,7 +88,7 @@ Microsoft Math ist ein kommerzielles Produkt, das aber nicht für den Textsatz g
 
 Ist die Formel dann auf welche Weise auch immer eingegeben, so kann dann damit einiges angestellt werden, was aber nicht im Interesse dieser Arbeit liegt und darum auch nicht näher beschrieben wird.
 
-\begin{figure}
+\begin{figure}[htbp]
   \begin{center}
     \includegraphics[width=.8\textwidth]{figures/ms-math-keyboard.png}
   \end{center}
@@ -96,7 +96,7 @@ Ist die Formel dann auf welche Weise auch immer eingegeben, so kann dann damit e
   \label{fig:ms-math-keyboard}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[htbp]
   \begin{center}
     \includegraphics[width=.8\textwidth]{figures/ms-math-ink.png}
   \end{center}
@@ -109,7 +109,7 @@ Ist die Formel dann auf welche Weise auch immer eingegeben, so kann dann damit e
 
 \citet{mathjournal} vertreibt eine weitere kommerzielle Software namens MathJournal. Sie ist an Mathematiker und Ingenieure gerichtet und hat das Ziel das Lösen von mathematischen Problemen auf einem Tabletcomputer zu erleichtern. Es gibt leider keine Evaluations-Version, daher konnte ich mich nicht von der Leistungsfähigkeit überzeugen. \citet{Tapia:2007p9160} schreiben aber, dass MathJournal die Microsoft API zur Erkennung von Symbolen verwendet. Die Leistungsfähigkeit wird also ähnlich sein, wie die von Microsoft Math. Der Knackpunkt wird also wieder die Qualität der Werkzeuge zur Fehlerkorrektor sein. Die Abbildung \ref{fig:mathjournal} gibt einen Eindruck von Mathjournal.
 
-\begin{figure}
+\begin{figure}[htbp]
   \begin{center}
     \includegraphics[width=.9\textwidth]{figures/mathjournal.png}
   \end{center}
@@ -136,7 +136,7 @@ Das Problem ist also sehr komplex. Entsprechend treten ständig Erkennungsfehler
 
 Die optimale Eingabemethode ist also (noch) nicht praktikabel. Um ganze Formeln zuverlässig zu erkennen haben wir noch nicht die optimalen Erkennungsalgorithmen und das optimale Benuzterinterface um mit Fehlern umzugehen gefunden. Eine Alternative ist, dem Computer nur einen Teil der Erkennung zu übertragen. Ein Beispiel hierfür ist JEquation \cite{jequation}. In diesem Programm wird dem Benutzer vorgegeben, wo der zu malen hat, damit die Struktur der Formel richtig erkannt wird. Es bleibt also die Aufgabe die einzelnen Symbole zu erkennen. Abbildung \ref{fig:jequation} zeigt dieses Benutzerinterface.
 
-\begin{figure}
+\begin{figure}[htbp]
   \begin{center}
     \includegraphics[width=.8\textwidth]{figures/jequation.png}
   \end{center}
