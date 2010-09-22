@@ -3,12 +3,13 @@
 \label{cha:benchmarks}
 
 \TODO Verwendete Technik: Immer einen Parameter optimieren und den Rest fest lassen.
+\TODO In jedem Abschnitt die Paramater kurz zusammenfassen?
 
 \section{Kleiner Datensatz}
 \label{sec:kleiner_datensatz}
 
-In diesem Abschnitt werden mithilfe eines Teils der verfügbaren Trainingsdaten die Verfahren auf ihre Güte überprüft und die Parameter optimiert. Der kleine Datensatz besteht aus 100 zufällig aus der Datenbank ausgewählten Symbolen.
-Es wurden 75 Muster pro Symbolklassen zufällig ausgewählt wovon 50 für das Training und 50 als Testmuster verwendet wurden. Dies ergibt 2500 Tests.
+In diesem Abschnitt werden mithilfe eines Teils der verfügbaren Trainingsdaten die DTW-Varianten auf ihre Güte überprüft und die Parameter optimiert. Der kleine Datensatz besteht aus 100 zufällig aus der Datenbank ausgewählten Symbolen.
+Es wurden 75 Muster pro Symbolklassen zufällig ausgewählt wovon 50 für das Training und 25 als Testmuster verwendet wurden. Dies ergibt 2500 Tests.
 
 Folgende Symbole werden verwendet:
 
@@ -27,7 +28,7 @@ $\checkmark$,
 \ae,
 \DH,
 \DJ,
-$\EUR$,
+\EUR,
 $\cup$,
 $\oplus$,
 $\times$,
@@ -149,7 +150,7 @@ Abbildung \ref{chart:dtw-vs-gdtw} zeigt neben den Erkennungsraten von DTW und GD
 
 \[ d(x,y) = \sum_i a_i - b_i \]
 
-definiert ist. Dieses Abstandsmaß ist nicht nur günstiger in der Berechnung, sondern liefert auch noch eine leichte Verbesserung der Top 5-Erkennungsrate um 0,6\%. Die folgenden Benchmarks wurden daher alle mit Manhattan-Metrik als inneres Abstandsmaß $\delta$ durchgeführt.
+definiert ist. Dieses Abstandsmaß ist nicht nur günstiger in der Berechnung, sondern liefert auch noch eine leichte Verbesserung der Top 5-Erkennungsrate um 0,6\%. Die folgenden Benchmarks wurden daher alle mit Manhattan-Metrik als innerem Abstandsmaß $\delta$ durchgeführt.
 
 \subsection{Anzahl Trainingsmuster} % (fold)
 \label{sub:anzahl_trainingsmuster}
@@ -164,7 +165,7 @@ Die Anzahl der verwendeten Trainingsmuster $C$ hat natürlich einen Einfluss auf
   \label{chart:samples}
 \end{figure}
 
-Abbildung \ref{chart:samples} zeigt, dass, anders als \citet{Golubitsky:2009p1842} für ihre Tests beschreiben, die Erkennungsraten (insb. Top 1) für $C > 25$ noch deutlich steigen. Dies liegt vermutlich an einer höheren Variation in meinen Trainingsdaten, so dass sich eine größere Datenbasis auszahlt. Die Wahl von $C=50$ wurde jedoch aus beibehalten und nicht noch weiter erhöht, denn $C$ wirkt sich linear auf die Laufzeit des Erkennungsvorgangs aus.
+Abbildung \ref{chart:samples} zeigt, dass, anders als \citet{Golubitsky:2009p1842} für ihre Tests beschreiben, die Erkennungsraten (insb. Top 1) für $C > 25$ noch deutlich steigen. Dies liegt vermutlich an einer höheren Variation in meinen Trainingsdaten, so dass sich eine größere Datenbasis auszahlt. Die Wahl von $C=50$ wurde jedoch beibehalten und nicht noch weiter erhöht, denn $C$ wirkt sich linear auf die Laufzeit des Erkennungsvorgangs aus.
 % subsection anzahl_klassen (end)
 
 \subsection{Anzahl Punkte pro Strich} % (fold)

@@ -158,7 +158,7 @@ Es gibt noch zwei Maßnahmen, die in der Literatur auftauchen, aber in Detexify 
 
 Die Alternative zu den oben genannten Verfahren ist, für jede mögliche Zeichenreihenfolge und -richtung, ein eigenes Modell anzulegen. Es ist klar, dass das bei Symbolen mit vielen Strichen zu sehr vielen Modellen führen würde. Da das Training in Detexify aber ohnehin durch die Nutzer durchgeführt wird, habe ich mich bei Detexify für den folgenden Weg entschieden.
 
-Es wird keine Umsortierung oder Richtungsänderung vorgenommen. Stattdessen wird die Eigenschaft der Nächste-Nachbarn-Klassifikation ausgenutzt, dass die Muster ohnehin direkt gespeichert werden. Variationen in der Anzahl, Sortierung und Richtung der Striche werden bewusst in Kauf genommen. Bei der Suche nach der richtigen Klasse werden also automatisch verschiedene Variationen, eben die, die von vorherigen Benutzern eintrainiert wurden, durchsucht.\footnote{Tatsächlich haben einige Benchmarks, die ich in Kapitel \ref{cha:benchmarks} aber nicht aufführe, gezeigt, dass eine Sortierung der Striche tatsächlich nicht hilft. Sowohl eine Sortierung wie \citet{Matasakis:1999p9465} sie vorschlägt als auch nach anderen Kriterien haben der Erkennungsraten entweder nicht verändert oder leicht verschlechtert.}
+Es wird keine Umsortierung oder Richtungsänderung vorgenommen. Stattdessen wird die Eigenschaft der Nächste-Nachbarn-Klassifikation ausgenutzt, dass die Muster ohnehin direkt gespeichert werden. Variationen in der Anzahl, Sortierung und Richtung der Striche werden bewusst in Kauf genommen. Bei der Suche nach der richtigen Klasse werden also automatisch verschiedene Variationen, eben die, die von vorherigen Benutzern eintrainiert wurden, durchsucht.\footnote{Tatsächlich haben einige Benchmarks, die ich in Kapitel \ref{cha:benchmarks} aber nicht aufführe, gezeigt, dass eine Sortierung der Striche nicht hilft. Sowohl eine Sortierung wie \citet{Matasakis:1999p9465} sie vorschlägt als auch nach anderen Kriterien haben der Erkennungsraten entweder nicht verändert oder leicht verschlechtert.}
 
 Durch Umsortierung oder Richtungsänderung kann man nämlich auch genau die Probleme schaffen, die man eigentlich unterbinden wollte \cite{Matasakis:1999p9465}. Man schafft außerdem neue Parameter, die wieder optimiert werden müssen.
 
@@ -258,7 +258,7 @@ Es ist möglich DTW dadurch zu beschleunigen, dass bei der Suche nach dem optima
 Wenn beide Folgen die gleiche Länge $n$ haben, ist eine Möglichkeit den Warping-Pfad zu beschränken, einen Korridor um die Diagonale der Matrix festzulegen, aus dem nicht ausgebrochen werden darf. Beschrieben werden kann dies durch eine Beschränkung der Indizes des Warping-Pfades \( w_k = (i,j)_k \) und zwar gilt dann
 \begin{equation}
   \label{eq:constraints}
-  j−r(i) \leq i \leq j+r(i)
+  j - r(i) \leq i \leq j + r(i)
 \end{equation}
 , wobei $r(i)$ den erlaubten Korridor beschreibt.
 
@@ -290,7 +290,7 @@ Für DTW für Folgen derselben Länge $n$ mit reellen Messpunkten mit einer Besc
 
 %TODO wer hat vor \citet{Keogh:2005p7751} untere Schranken angegeben? Muss ich das erwähnen?
 
-In Fall von Detexify sind die einzelnen Punkte der Folgen aber Punkte im \( \mathbb{R}^2 \) (siehe \ref{sec:vorverarbeitung}) und es ist intuitiv einzusehen, dass eine Reduktion auf eine Dimension einen zu hohen Informationsverlust nach sich ziehen würde. Es ist leider nicht leicht auf zu \cite{Keogh:2005p7751} analoge Weise eine untere Schranke zu definieren, die sinnvoll einsetzbar ist.
+In Fall von Detexify sind die einzelnen Punkte der Folgen aber Punkte im \( \mathbb{R}^2 \) (siehe \ref{sec:vorverarbeitung}) und es ist intuitiv einzusehen, dass eine Reduktion auf eine Dimension einen zu hohen Informationsverlust nach sich ziehen würde. Es ist leider nicht leicht im  \( \mathbb{R}^2 \) auf eine zu \cite{Keogh:2005p7751} analoge Weise eine untere Schranke zu definieren, die sinnvoll einsetzbar ist.
 
 \subsection{Eine untere Schranke für DTW für Folgen im \( \mathbb{R}^2 \)?}
 
@@ -422,8 +422,8 @@ Welche Vorteile das gegenüber einer einseitigen Strategie bringt, erklären sie
 \subsection{Elimination}
 \label{sec:elimnimation}
 
-Eine weitere Optimierungsmöglichkeit besteht darin irrelevante Trainingsmuster im Suchraum zu eliminieren um für diese einen teuren DTW-Vergleich gar nicht mehr durchführen zu müssen. \citet{Watt:2005p1816} schlagen Elimination durch klassische Merkmale vor, d.h. es wird ein Merkmalsvektor gebildet und es wird nur noch für die besten $N$ Trainingsmuster die DTW-Entfernung ausgerechnet. \citet{Watt:2005p1816} verlieren durch ein solches Verfahren 3\% an Erkennungsgenauigkeit aber vermeiden für fast 90\% des Suchraumes das teurere Abstandsmaß.
-Ist das verwendete Abstandsmaß eine Metrik, so gibt es sogar exakte Eliminationsverfahren für die Nächste-Nachbarn-Klassifikation z.B. im $\mathcal{R}^2$ mithilfe von Voronoi-Diagrammen, die ohne Genauigkeitsverlust auskommen. DTW ist leider keine Metrik, darum bleiben mir solche Mittel verschlossen.
+Eine weitere Optimierungsmöglichkeit besteht darin irrelevante Trainingsmuster im Suchraum zu eliminieren um für diese einen teuren DTW-Vergleich gar nicht mehr durchführen zu müssen. \citet{Watt:2005p1816} schlagen Elimination durch klassische Merkmale vor, d.h. es wird ein Merkmalsvektor gebildet und es wird nur noch für die besten $N$ Trainingsmuster, die auf Basis eines günstigen Abstandsmaßes gefunden werden, die DTW-Entfernung ausgerechnet. \citet{Watt:2005p1816} verlieren durch ein solches Verfahren 3\% an Erkennungsgenauigkeit aber vermeiden für fast 90\% des Suchraumes das teurere Abstandsmaß.
+Ist das verwendete Abstandsmaß eine Metrik, so gibt es sogar exakte Eliminationsverfahren für die Nächste-Nachbarn-Klassifikation, die ohne Genauigkeitsverlust auskommen z.B. im $\mathcal{R}^2$ mithilfe von Voronoi-Diagrammen. DTW ist leider keine Metrik, darum bleiben mir solche Mittel verschlossen.
 Aus diesem Grund werden Eliminationsverfahren in Detexify nicht zur Anwendung gebracht.
 %TODO Vielleicht trotzdem mal Greedy-Algorithmus nach Hart (siehe Jiang-Script) testen?
 
@@ -446,5 +446,5 @@ Da DTW schon häufig Verwendung gefunden hat, gibt es natürlich in der Literatu
 
 \citet{Golubitsky:2009p2433} geben für $k=1$ und beschränkte Warping-Pfade die optimalen Parameter mit $n = 30$ und $r = 2$ an. Sie verwenden dabei quadratischen euklidischen Abstand als inneres Abstandsmaß $\delta$.
 
-\citet{MacLean:2010p9970} verwenden in ihren Greedy-Variante von DTW ein Abstandsmaß, das auch die Steigung der Striche mit einbezieht, wie auch \citet{Tappert:1982p10305} es vorgeschlagen haben.
+\citet{MacLean:2010p9970} verwenden in ihren Greedy-Variante von DTW ein Abstandsmaß, das auch die Steigung der Striche mit einbezieht, wie auch \citet{Tappert:1982p10305} es vorgeschlagen hat.
 \citet{Vuong:2010p10279} Gehen noch einen Schritt weiter und verwenden sogar die Krümmung der Striche.
