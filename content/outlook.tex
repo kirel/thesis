@@ -4,19 +4,20 @@
 
 \section{Zusammenfassung}
 
-\TODO Welche Verfahren werden denn nun eingesetzt? Parameterwahlen? Das müssen die Benchmarks zeigen\dots
+In dieser Arbeit habe ich \emph{Detexify}, ein Werkzeug zur Erkennung handgeschriebener \LaTeX-Symbole, motiviert und beschrieben. Ich habe das Benutzerinterface und die Architektur erklärt. Ich habe mögliche Erkennungsalgorithmen erläutert und auf ihre Tauglichkeit für die Symbolerkennung in Detexify untersucht. Ich habe \emph{template matching} mit \emph{dynamic time warping} als ideales Verfahren für die Klassifizierung identifiziert und verschiedene Varianten und Optimierungen erläutert. Diese habe ich auf der Grundlage von Benchmarks, die auf den Daten des laufenden Systems basieren, verglichen und und ihre Parameter optimiert.
 
-Nutze GDTW mit $\delta=Euklid$, $C=50$, $n=10$ und $\alpha=15\degree$
+Das Ergebnis ist ein jedem durch einen Webbrowser zugängliches Werkzeug, dass den Nutzer bei der Suche nach \LaTeX-Symbolen unterstützt und nicht in der Wahl des Editors einschränkt. Es steht seit nun schon einem Jahr unter der Internetadresse \url{http://detexify.kirelabs.org} kostenfrei zur Verfügung und wird aktiv genutzt (siehe auch Anhang \ref{cha:nutzungsstatistiken}). Die Erfolgsraten bei der Suche sind subjektiv gut, es ist aber auf dem Papier noch reichlich Luft nach oben.
 
 \section{Ausblick}
 
-\TODO Wie geht es weiter?
+Die Benchmarks haben gezeigt, dass die Erkennungsraten gerade bei vielen Symbolklassen (>600) noch nicht ideal sind. Ein großer Teil des Problems sind aber schlechte Trainingsdaten, denn hier hat sich das crowd-sourcing des Trainings (siehe \ref{sec:crowdsourcing}) sowohl als Segen als auch als Fluch herausgestellt. Einerseits habe ich eine riesige Datenbank an Trainingsmustern, andererseits sind diese teilweise von zweifelhaftem Nutzen (siehe auch Anhang \ref{cha:kunst}). Hier wäre ein Bewertungssystem für Trainingsdaten denkbar, dass wiederum durch die Nutzer von Detexify selbst verwaltet wird. Gleichzeitig müsste es ein Anreizsystem geben, dass dazu motiviert schlecht trainierte Symbole aufzutrainieren. Auf diese Weise könnten die schlechten Daten vom Kollektiv aussortiert werden und auf lange Sicht eine solide Datenbasis geschaffen werden.
 
-\begin{itemize}
-  \item Vergleich weiterer innerer Maße
-  \item Kombination von Klassifizierern
-  \item Version, die ohne Web auskommt
-  \item Parallelisierung durch mehrere Backends und LoadBalancing
-  \item social training - Anreizsystem für gutes Training und Löschen schlechter Trainingsdaten?
-  \item \dots
-\end{itemize}
+Die Optimierungen des Erkennungsalgorithmus selbst sind natürlich auch noch nicht ausgereizt. Es sind einerseits noch weitere innere Abstandsmaße neben der euklidischen und Manhattan-Metrik für GDTW denkbar (siehe \ref{sub:parameter} und \ref{sub:variant}) und es wurde auch noch nicht das komplette Repertoire an in der Literatur vorgestellten Vorverarbeitungsmethoden angewandt. Ebenso interessant ist die Möglichkeit der Kombination von verschiedenen Klassifizierern. Insgesamt ist die aktuelle Implementierung aber ein guter Anfang.
+
+Eine interessante Perspektive für Detexify wäre es, eine öffentliches \ac{API} für die Symbolerkennung zur Verfügung zu stellen, so dass andere Anwendungen Detexify als Service nutzen könnten. Es wäre zum Beispiel denkbar, dass eine Anwendung Formelerkennung ermöglicht und für die Erkennung einzelner mathematischer Symbole auf Detexify zurückgreift. %One Trick Pony
+
+Die verwendte Atchitektur bietet es auch an, durch mehrere Serverinstanzen und ein Loadbalancing mehrere parallele Erkennungsanfrangen gleichzeitig abarbeiten zu können, was definitiv für eine Verwendung als Service notwendig wäre, aber auch jetzt ist die Erkennung zu Stoßzeiten manchmal schon recht langsam.
+
+Als eine völlig andere Richtung wäre es auch denkbar, die Erkennungsalgorithmen auf die Client-seite zu verschieben und trotzdem eine gemeinsame Haltung der Trainingsdaten fortzuführen. Mit Hilfe von gecachten Trainingsdaten könnte die Anwendung dann auch offline arbeiten und bei verfügbarer Verbindung, würden die Trainingsdaten mit dem Stand des Online-Servers synchronisiert.
+
+Es gibt auf jeden Fall viele interessante Möglichkeiten auf der aktuellen Arbeit aufzubauen. Jetzt brauche ich aber erst mal Urlaub\dots

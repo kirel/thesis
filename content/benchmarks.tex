@@ -119,7 +119,7 @@ $\infty$
 Davon sind manche, wie $\odot$ (\verb!\odot!) und $\bigodot$ (\verb!\bigodot!) oder $\sum$(\verb!\sum!) und $\Sigma$~(\verb!\Sigma!) eigentlich dieselben Symbole. Es wurden aber keine Maßnahmen ergriffen, um solche Zweideutigkeiten aufzuheben, da durch die Interaktivität der Anwendung ohnehin in erste Linie eine hohe Top 5-Erkennungsrate wichtig ist.
 
 \subsection{DTW-Variante}
-\label{sub:gierig_oder_nicht}
+\label{sub:variant}
 
 Der erste Benchmark testet DTW in seiner klassischen Form gegen die Greedy-Approximation GDTW. Dabei wurde erst einmal $C=50$, $n=25$ (optimal nach \citet{Golubitsky:2009p1842}) und das Abstandsmaß $\delta$ als die euklidische Metrik festgelegt. Abbildung \ref{chart:dtw-vs-gdtw} illustriert die Ergebnisse. Es zeigt sich, dass GDTW kaum schlechter abschneidet, als DTW und dabei, wie aus Abbildung \ref{chart:dtw-vs-gdtw-ms} ersichtlich ist, wesentlich schneller ist. Dies bestätigt die Ergebnisse von \citet{MacLean:2010p9970}, die ebenfalls eine Greedy-Variante von DTW verwenden.
 
@@ -248,3 +248,4 @@ Es ist so, dass die Symbole aus der Top 10-Liste ($\cong$, $\not\equiv$, \&, $\s
 \section{Ergebnis}
 
 \TODO Ich erkläre die Daten hiermit für Okay...
+\TODO Nutze GDTW mit $\delta=d$, $C=50$, $n=10$ und $\alpha=15\degree$

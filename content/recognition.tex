@@ -338,7 +338,8 @@ Die Intuition dahinter ist die folgende. Die Folgen $U$ und $L$ bilden eine Hül
   \label{fig:lb_keogh}
 \end{figure}
 
-\subsubsection{\(\mathbb{R}^2\)-analog zu LB\_Keogh}\label{subs:lb_keogh_analog}
+\subsubsection{\(\mathbb{R}^2\)-analog zu LB\_Keogh}
+\label{subs:lb_keogh_analog}
 
 Seinen nun zwei Folgen
 \begin{align}
@@ -370,7 +371,7 @@ Das Problem besteht nun aber darin, dass diese untere Schranke nur dann effizien
 % subsubsection lower_bounding (end)
 
 \subsection{Greedy Matching} % (fold)
-\label{sec:greedy}
+\label{sub:greedy}
 
 Es ist möglich DTW mit einem Greedy-Algorithmus \cite[S.370ff.]{algorithms} zu approximieren.
 
@@ -418,9 +419,10 @@ Wie man sieht hat der Algorithmus einen konstanten Speicherplatzaufwand und eine
 
 \citet{MacLean:2010p9970} stellen eine Variante dieses Algorithmus vor. Sie verwenden ihn zur Erkennung mathematischer Symbole in Mathbrush, das in dieser Arbeit bereits erwähnt wurde (siehe auch \ref{sub:mathbrush} und \cite{Labahn:2008p10301}). Sie gehen bei der Zuordnung von Punkten aber simultan von beiden Seiten vor.
 Welche Vorteile das gegenüber einer einseitigen Strategie bringt, erklären sie nicht. Sie vergleichen ihren Greedy-Algorithmus jedoch mit dem Standard-DTW-Algorithmus und kommen zum Ergebnis, dass der Greedy-Algorithmus zur Unterscheidung von mathematischen Symbolen ebenso geeignet ist. Insbesondere bei einer kleinen Anzahl von Punkten pro Strich (<30) ist der Greedy-Algorithmus sogar gleich gut geeignet und durch seine lineare Laufzeit natürlich wesentlich schneller. Bei ihren Tests verwenden sie 15796 handgeschriebene Symbole aus 70 Symbolklassen geschrieben von 20 unterschiedlichen Personen.
+Ich werden diese Variante von nun an \ac{GDTW} nennen.
 
 \subsection{Elimination}
-\label{sec:elimnimation}
+\label{sub:elimnimation}
 
 Eine weitere Optimierungsmöglichkeit besteht darin irrelevante Trainingsmuster im Suchraum zu eliminieren um für diese einen teuren DTW-Vergleich gar nicht mehr durchführen zu müssen. \citet{Watt:2005p1816} schlagen Elimination durch klassische Merkmale vor, d.h. es wird ein Merkmalsvektor gebildet und es wird nur noch für die besten $N$ Trainingsmuster, die auf Basis eines günstigen Abstandsmaßes gefunden werden, die DTW-Entfernung ausgerechnet. \citet{Watt:2005p1816} verlieren durch ein solches Verfahren 3\% an Erkennungsgenauigkeit aber vermeiden für fast 90\% des Suchraumes das teurere Abstandsmaß.
 Ist das verwendete Abstandsmaß eine Metrik, so gibt es sogar exakte Eliminationsverfahren für die Nächste-Nachbarn-Klassifikation, die ohne Genauigkeitsverlust auskommen z.B. im $\mathcal{R}^2$ mithilfe von Voronoi-Diagrammen. DTW ist leider keine Metrik, darum bleiben mir solche Mittel verschlossen.
@@ -428,7 +430,7 @@ Aus diesem Grund werden Eliminationsverfahren in Detexify nicht zur Anwendung ge
 %TODO Vielleicht trotzdem mal Greedy-Algorithmus nach Hart (siehe Jiang-Script) testen?
 
 \subsection{Parameter}
-\label{sec:parameter}
+\label{sub:parameter}
 
 Bei der Verwendung von template matching mit DTW als Abstandsmaß müssen einige Parameter festgelegt werden. Diese beeinflussen die Leistungsfähigkeit und Geschwindigkeit des Klassifikators und müssen sorgfältig ausgewählt werden. Die Parameter sind die folgenden:
 
