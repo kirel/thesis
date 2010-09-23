@@ -2,9 +2,7 @@
 \chapter[Detexify]{Detexify - \LaTeX-Symbolsuche als Webanwendung} % (fold)
 \label{cha:detexify}
 
-Bevor ich auf die technischen Details von Detexify eingehe sollten Sie, lieber Leser, sich kurz mit dem Programm vertraut gemacht haben. Die Beschreibungen sind dann viel verständlicher. Die Benutzung von Detexify sollte selbsterklärend sein. Sollten Sie doch Schwierigkeiten haben finden Sie in \ref{man:benutzerhandbuch} ein kurzes Benutzerhandbuch. Sie können auf Detexify mit einem modernen Browser\footnote{Aktuelle Versionen von Firefox, Chrome, Safari und Opera} unter der Adresse \url{http://detexify.kirelabs.org} zugreifen.
-
-Die folgenden Abschnitte enthalten neben der Beschreibung der Funktionalität von Detexify außerdem Hinweise zur Implementierung.
+In diesem Kapitel beschreibe ich die Architektur, Funktionalität und Implementierung von Detexify, der Anwendung zur \LaTeX-Symbolsuche, die ich im Rahmen dieser Arbeit entwickelt habe. Detexify kann mit einem modernen Browser\footnote{Aktuelle Versionen von Firefox, Chrome, Safari und Opera} unter der Adresse \url{http://detexify.kirelabs.org} aufgerufen werden. In Anhang \ref{man:benutzerhandbuch} findet sich ein kurzes Benutzerhandbuch. 
 
 \section{Architektur} % (fold)
 \label{sec:architektur}
@@ -14,12 +12,12 @@ Bei jeder Anwendung muss man sich, bevor sie geschrieben wird, entscheiden, wie 
 Detexify wurde als Webanwendung implementiert. Dies hat die folgenden Vorteile:
 
 \begin{itemize}
-  \item \textbf{Plattformunabhängigkeit:} Heutzutage ist ein Webbrowser auf jedem Computer verfügbar. Um Detexify verwenden zu können wird nur ein moderner\footnotemark[1] Webbrowser benötigt.
-  \item \textbf{Zentrale Wartung:} Fehlerbehebungen und Verbesserungen sind zentral anwendbar und stehen jedem Benutzer beim nächsten Besuch der Anwendung sofort zur Verfügung.
-  \item \textbf{Zentrale Trainingsdaten:} Die Trainingsdaten sind zentral in einer Datenbank gespeichert. Das Training der Klassifizierers wird von den Nutzern selbst durchgeführt (siehe auch \ref{sec:crowdsourcing}).
+  \item \textbf{Plattformunabhängigkeit:} Heutzutage ist ein Webbrowser auf jedem Computer verfügbar. Um Detexify verwenden zu können wird nur ein moderner Webbrowser benötigt.
+  \item \textbf{Zentrale Wartung:} Fehlerbehebungen und Verbesserungen sind zentral anwendbar und stehen jedem Benutzer beim nächsten Gebrauch der Anwendung sofort zur Verfügung.
+  \item \textbf{Zentrale Trainingsdaten:} Die Trainingsdaten sind zentral in einer Datenbank gespeichert. Das Training des Klassifizierers wird von den Nutzern selbst durchgeführt (siehe auch \ref{sec:crowdsourcing}).
 \end{itemize}
 
-Dabei besteht Detexify aus zwei lose gekoppelten Komponenten und zwar der Webanwendung und dem Klassifizierungsserver (Server). Lose Kopplung heisst dabei, dass lediglich ein Interface definiert ist, wie die Webanwendung mit dem Server zu kommunizieren hat \cite{Tilkov:2005p11813}. Das Interface ist als \ac{REST}-Interface spezifiziert. Die beiden Komponenten kommunizieren also über \ac{HTTP}. Abbildung~\ref{fig:architecture} zeigt die Architektur schematisch.
+Dabei besteht Detexify aus zwei lose gekoppelten Komponenten und zwar der Webanwendung und dem Klassifizierungsserver (Server). Lose Kopplung heißt dabei, dass lediglich ein Interface definiert ist, wie die Webanwendung mit dem Server zu kommunizieren hat \cite{Tilkov:2005p11813}. Das Interface ist als \ac{REST}-Interface spezifiziert. Die beiden Komponenten kommunizieren also über \ac{HTTP}. Abbildung~\ref{fig:architecture} zeigt die Architektur schematisch.
 
 \begin{figure}[htbp]
   \centering \includegraphics{figures/architecture.pdf}
@@ -32,14 +30,14 @@ Dabei besteht Detexify aus zwei lose gekoppelten Komponenten und zwar der Webanw
 
 % section webapp (end)
 
-Die Webanwendung stellt das Benutzerinterface von Detexify dar. Sie wird über einen Browser bedient. Es gibt zwei Sichten (jeweils durch statische \ac{HTML}-Seiten und Javascript realisiert.) Die erste Sicht ermöglicht die Symbolsuche und die zweite Sicht bietet eine Symboltabelle aller in Detexify registrierten \LaTeX-Symbole. In dieser können die Symbole auch trainiert werden.
+Die Webanwendung stellt das Benutzerinterface von Detexify dar. Sie wird über einen Browser bedient. Es gibt zwei Ansichten (jeweils durch statische \ac{HTML}-Seiten und Javascript realisiert.) Die erste ermöglicht die Symbolsuche und die zweite bietet eine Symboltabelle aller in Detexify registrierten \LaTeX-Symbole. In dieser können die Symbole auch trainiert werden.
 
 \subsection{Symbolsuche} % (fold)
 \label{sub:symbolsuche}
 
-Die Symbolsuche ist das Zentrum der Anwendung. Sie ist das Werkzeug, das dem \LaTeX-Author das Leben vereinfachen soll. Abbildung~\ref{fig:symbolsuche} zeigt einen Screenshot eines Browsers mit geöffneter Symbolsuche.
+Die Symbolsuche ist das Zentrum der Anwendung. Sie ist das Werkzeug, das dem \LaTeX-Autor das Leben vereinfachen soll. Abbildung~\ref{fig:symbolsuche} zeigt einen Screenshot eines Browsers mit geöffneter Symbolsuche.
 
-Auf der Seite der Webanwendung ist dafür eine Zeichenfläche implementiert. Auf dieser können mit der Maus (oder einem Grafiktablett) Striche gemalt werden, und nach jedem beendeten Strich wird per AJAX \cite{AJAX} eine Erkennungsanfrage an den Server gesendet. Die Symbole werden dann anhand der vom Server ermittelten Rangfolge aufgelistet wie in Abbildung~\ref{fig:symbolsuche} zu sehen. Die Kommunikation erfolgt wie in \ref{sec:server} beschrieben über das Datenformat \ac{JSON}. Die Interaktionen im Benutzerinterface (Zeichnen usw.) sind mithilfe von Javascript gelöst. Die Zeichenfläche basiert auf der \ac{SVG}-Technologie.
+Auf der Seite der Webanwendung ist dafür eine Zeichenfläche implementiert. Auf dieser können mit der Maus (oder einem Grafiktablett) Striche gemalt werden und nach jedem beendeten Strich wird per AJAX \cite{AJAX} eine Erkennungsanfrage an den Server gesendet. Die Symbole werden dann anhand der vom Server ermittelten Rangfolge aufgelistet wie in Abbildung~\ref{fig:symbolsuche} zu sehen. Die Kommunikation erfolgt wie in \ref{sec:server} beschrieben über das Datenformat \ac{JSON} \cite{json}. Die Interaktionen im Benutzerinterface (Zeichnen usw.) sind mithilfe von Javascript gelöst. Die Zeichenfläche basiert auf der \ac{SVG}-Technologie \cite{svg}.
 
 \begin{figure}[htbp]
   \centering \includegraphics[width=\textwidth]{figures/interface-classify.png}
@@ -52,7 +50,7 @@ Auf der Seite der Webanwendung ist dafür eine Zeichenfläche implementiert. Auf
 \subsection{Symboltabelle} % (fold)
 \label{sub:symboltabelle}
 
-Einerseits bietet die Symboltabelle einen Überblick über die in Detexify registrierten und damit über die Symbolsuche auffindbaren Symbole. Andererseits bietet sie durch ihre Sortierungs- und Filtermöglichkeiten von sich aus gute Möglichkeiten zur Symbolsuche, sollte die eigentliche Symbolsuche aus irgendwelchen Gründen versagen. Außerdem können in der Symboltabelle geziehlt einzelne Symbole trainiert werden. Die Funktionalität der Symboltabelle ist im Detail in \ref{man:symboltabelle} beschrieben. Die verwendeten Technologien sind sind identisch mit den bei der Symbolsuche verwendeten.
+Einerseits bietet die Symboltabelle einen Überblick über die in Detexify registrierten und damit über die Symbolsuche auffindbaren Symbole. Andererseits bietet sie durch ihre Sortierungs- und Filtermöglichkeiten von sich aus gute Möglichkeiten zur Symbolsuche, sollte die eigentliche Symbolsuche aus irgendwelchen Gründen versagen. Außerdem können in der Symboltabelle gezielt einzelne Symbole trainiert werden. Die Funktionalität der Symboltabelle ist im Detail in Anhang \ref{man:symboltabelle} beschrieben. Die verwendeten Technologien sind sind identisch mit den bei der Symbolsuche verwendeten.
  Abbildung~\ref{fig:symboltabelle} zeigt einen Screenshot eines Browsers mit geöffneter Symboltabelle.
 
 \begin{figure}[htbp]
@@ -69,14 +67,14 @@ Einerseits bietet die Symboltabelle einen Überblick über die in Detexify regis
 
 Der Server übernimmt die Aufgabe der Mustererkennung. An ihn können im wesentlichen zwei verschiedene Anfragen gestellt werden. Die erste davon ist das Training einer Symbolklasse. Die zweite ist die Klassifizierung von unbekannten Daten. Es gibt noch eine dritte Anfrage, die aber lediglich zur Identifizierung und Statusermittlung der Serverimplementierung dient.
 
-Da der Server die eigentliche Arbeit verrichtet läuft er auf einem leistungsstarken Rechner. Wie die eigentliche Symbolerkennung aussieht ist in Kapitel~\ref{cha:erkennung} beschrieben. Hier spezifiziere ich nur das \ac{REST}-Interface \cite{rest}. Es sieht folgendermaßen aus:
+Da der Server die eigentliche Arbeit verrichtet läuft er auf einem leistungsstarken Rechner. Wie die eigentliche Symbolerkennung aussieht, ist in Kapitel~\ref{cha:erkennung} beschrieben. Hier spezifiziere ich nur das \ac{REST}-Interface \cite{rest}. Es sieht folgendermaßen aus:
 
 \subsection{REST-Interface} % (fold)
 \label{sub:rest_interface}
 
 \subsubsection{Training}
 
-Um eine Symbolklasse zu trainieren müssen dem Server der Bezeichner der Klasse und die Trainingsdaten übergeben werden. Der Bezeichner ist dabei Teil des \ac{URL} und die Trainingsdaten werden als \ac{JSON}-String \cite{json} im \ac{HTTP}-Request-Body übertragen.
+Um eine Symbolklasse zu trainieren müssen dem Server zwei Informationen übergeben werden und zwar den Bezeichner der Klasse und die Trainingsdaten. Der Bezeichner ist dabei Teil des \ac{URL} und die Trainingsdaten werden als \ac{JSON}-String \cite{json} im \ac{HTTP}-Request-Body übertragen. Wie die Daten genau kodiert sind, ist in \ref{sec:input} beschrieben.
 
 \begin{lstlisting}[caption={Anfrage}]
   POST /train/{id}
@@ -115,7 +113,7 @@ Zur Erkennung werden die unbekannten Daten als \ac{JSON}-String an den Server ü
 
 \subsubsection{Serverstatus}
 
-Durch die lose Kopplung durch das hier definierte Interface lässt sich der Server leicht austauschen\footnote{Tatsächlich existieren Serverimplementierungen in drei verschiedenen Programmiersprachen.} und um die verwendete Serverimplementierung identifizieren zu können gibt es noch eine dritte Anfrage, die aber zur Funktionalität des Servers sonst nichts beiträgt.
+Durch die lose Kopplung durch das hier definierte Interface lässt sich der Server leicht austauschen\footnote{Tatsächlich existieren Serverimplementierungen in drei verschiedenen Programmiersprachen.}. Um die verwendete Serverimplementierung identifizieren zu können gibt es noch eine dritte Anfrage.
 
 \begin{lstlisting}[caption={Anfrage}]
 GET /
@@ -137,14 +135,12 @@ application/json
 \section{Crowdsourcing des Trainings} % (fold)
 \label{sec:crowdsourcing}
 
-Wie in \ref{sub:symboltabelle} erwähnt bietet Detexify den Nutzern ein Interface um das Training durchzuführen. Tatsächlich habe ich nie ein initiales Training vorgenommen. Der Plan war von Anfang an, das Training vollständig den Nutzern zu überlassen. So eine Vorgehensweise nennt man Schwarmauslagerung (Crowdsourcing) \cite{Howe:2006p11814}. Die Überlegung war dabei die Folgende: Wenn die Nutzer von guten Trainingsdaten durch bessere Erkennungsraten profitieren, sind sie auch bereit ein wenig Arbeit zu investieren, damit einige von ihnen ausgewählte Symbole leicht gefunden werden. Durch die Streuung der Auswahl der Nutzer wird eine große Menge an Symbolen in kurzer Zeit auf einen guten Trainingsstand gebracht. Ein Unternehmen, das sicherlich heutzutage jedem bekannt ist, und genau eine solche Strategie verfolgt ist das Online-Lexikon Wikipedia. Wikipedia wird vollständig von seinen Nutzern gepflegt und ist trotzdem, oder eher genau deshalb ,,heute wahrscheinlich die beste Enzyklopädie der Welt: Größer, aktueller und in vielen Fällen umfangreicher als die \emph{Encyclop\ae dia Britannica}'' \citep[S.77-86]{andersen2006long}
+Wie in \ref{sub:symboltabelle} erwähnt bietet, Detexify den Nutzern ein Interface um das Training durchzuführen. Tatsächlich habe ich nie ein initiales Training vorgenommen. Der Plan war von Anfang an, das Training vollständig den Nutzern zu überlassen. So eine Vorgehensweise nennt man Schwarmauslagerung (Crowdsourcing) \cite{Howe:2006p11814}. Die Überlegung war dabei die Folgende: Wenn die Nutzer von guten Trainingsdaten durch bessere Erkennungsraten profitieren, sind sie auch bereit ein wenig Arbeit zu investieren, damit einige von ihnen ausgewählte Symbole leicht gefunden werden. Durch die Streuung der Auswahl der Nutzer wird eine große Menge an Symbolen in kurzer Zeit auf einen guten Trainingsstand gebracht. Ein Unternehmen, das sicherlich heutzutage jedem bekannt ist, und genau eine solche Strategie verfolgt ist das Online-Lexikon Wikipedia. Wikipedia wird vollständig von seinen Nutzern gepflegt und ist trotzdem, oder eher genau deshalb ,,heute wahrscheinlich die beste Enzyklopädie der Welt: Größer, aktueller und in vielen Fällen umfangreicher als die \emph{Encyclop\ae dia Britannica}'' \citep[S.77-86]{andersen2006long}
 
-Diese Tatik ist voll aufgegangen. Als Detexify am 11. Juli 2009 online ging, war die Idee völlig neu. Eine \LaTeX-Symbolsuche in dieser Form hatte zu diesem Zeitpunkt noch niemand gesehen, daher verbreiteten sich Links zu Detexify in Windeseile über soziale Netze wie \href{http://twitter.com}{Twitter}, \href{http://facebook.com}{Facebook} und \href{http://delicious.com}{Delicious} aber auch über Newsportale wie \href{http://reddit.com}{Reddit} und \href{http://news.ycombinator.com}{Hacker News} und am 14. Juli 2009 erreichte Detexify seinen Spitzenwert von über 10.000 Besuchern an einem Tag. Erst gegen Ende Juli 2009 normalisierten sich die Besucherzahlen. Bis zu diesem Zeitpunkt hatten die Nutzer bereits mehrere Tausend Trainingsbeispiele gespendet. Zur Zeit liegt die Anzahl an gespendeten Trainingsbeispielen bei fast 150.000 für 977 Symbole.
+Der Plan Crowdsourcing für das Training zu verwenden war sehr erfolgreich. Als Detexify am 11. Juli 2009 online ging, war die Idee völlig neu. Eine \LaTeX-Symbolsuche in dieser Form hatte zu diesem Zeitpunkt noch niemand gesehen, daher verbreiteten sich Links zu Detexify in Windeseile über soziale Netze wie \href{http://twitter.com}{Twitter}, \href{http://facebook.com}{Facebook} und \href{http://delicious.com}{Delicious} aber auch über Newsportale wie \href{http://reddit.com}{Reddit} und \href{http://news.ycombinator.com}{Hacker News} und am 14. Juli 2009 erreichte Detexify seinen Spitzenwert von über 10.000 Besuchern an einem Tag. Erst gegen Ende Juli 2009 normalisierten sich die Besucherzahlen. Bis zu diesem Zeitpunkt hatten die Nutzer bereits mehrere tausend Trainingsbeispiele gespendet. Zur Zeit liegt die Anzahl der Trainingsbeispiele bei fast 150.000 für 977 Symbole.
 
-Crowdsourcing hat natürlich auch seine Nachteile. Für die Benchmarks in Kapitel \ref{cha:benchmarks} habe ich einen Spiegel der Datenbank erstellt, der zu diesem Zeitpunkt 147881 Trainingsbeispiele enthielt. Bei der manuellen Inspektion der Daten stellte sich schnell heraus, dass sie für manche Symbole eine katastrophale Qualität hatten. Es besonders krasses Beispiel ist das Symbol \verb!\male! (\Male), % benutze marvosym \Male aber eigentlich ist es wasysym \male
-bei dem ca. 200 der 533 Trainingsbeispiele nicht eben Zeichnungen dieses Symbols sondern von \emph{männlichen Geschlechtsteilen} waren. Insgesamt habe ich bei der manuellen Inspektion aller 147881 Trainingsbeispiele 14419 Zeichnungen, die völlig aus dem Rahmen fielen, aussortiert. Die Benchmarks in Kapitel \ref{cha:benchmarks} basieren auf diesen grob bereinigten Daten.
-
-Die Trainingsbeispiele enthielten aber auch einige künstlerische Perlen, die auch wenn sie zu den Argumenten dieser Arbeit in keiner Weise beitragen, trotzdem in Anhang \ref{cha:kunst} verewigt sind.
+Crowdsourcing hat natürlich auch seine Nachteile. Für die Benchmarks in Kapitel \ref{cha:benchmarks} habe ich einen Spiegel der Datenbank erstellt, der zu diesem Zeitpunkt 147881 Trainingsbeispiele enthielt. Bei der manuellen Inspektion der Daten stellte sich schnell heraus, dass sie für manche Symbole eine katastrophale Qualität hatten. Ein besonders krasses Beispiel ist das Symbol \verb!\male! (\Male), % benutze marvosym \Male aber eigentlich ist es wasysym \male
+bei dem ca. 200 der 533 Trainingsbeispiele nicht Zeichnungen dieses Symbols sondern von \emph{männlichen Geschlechtsteilen} waren. Insgesamt habe ich bei der manuellen Inspektion aller 147881 Trainingsbeispiele 14419 Zeichnungen, die völlig aus dem Rahmen fielen\footnote{Die Trainingsbeispiele enthielten aber auch einige künstlerische Perlen in Anhang \ref{cha:kunst} verewigt sind.}, aussortiert. Die Benchmarks in Kapitel \ref{cha:benchmarks} basieren auf diesen grob bereinigten Daten.
 
 % section crowd_sourcing (end)
 

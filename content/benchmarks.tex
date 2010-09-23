@@ -2,12 +2,14 @@
 \chapter{Benchmarks} % (fold)
 \label{cha:benchmarks}
 
-In diesem Kapitel stelle ich Benchmarks vor auf Basis der durch die Nutzer zur Verfügung gestellten Daten vor (siehe \ref{sec:crowdsourcing}). Ich habe Benchmarks mit einem kleinen Datensatz und einem großen Datensatz durchgeführt. Der kleine Datensatz wurde verwendet, um die Parameter zu optimieren. Durch die relativ geringe Anzahl der Tests konnte so in schnellen Iterationen eine große Menge an Benchmarks durchgeführt werden. Der große Benchmark dient dazu einen Blick auf die Performance des im Einsatz befindlichen Systems unter realen Bedingungen zu liefern und vor allem um festzustellen ob die in \ref{sec:klassifizierung} geforderte \emph{Skalierbarkeit} und ein ausreichend gutes \emph{Laufzeitverhalten} realisiert sind.
+In diesem Kapitel stelle ich Benchmarks auf Basis der durch die Nutzer zur Verfügung gestellten Daten vor (siehe \ref{sec:crowdsourcing}). Ich habe Benchmarks mit einem kleinen Datensatz und einem großen Datensatz durchgeführt. Der kleine Datensatz wurde verwendet, um die Parameter zu optimieren. Durch die relativ geringe Anzahl der Tests konnte so in schnellen Iterationen eine große Menge an Benchmarks durchgeführt werden. Der große Benchmark dient dazu einen Blick auf die Performance des im Einsatz befindlichen Systems unter realen Bedingungen zu liefern und vor allem um festzustellen ob die in \ref{sec:klassifizierung} geforderte \emph{Skalierbarkeit} und ein ausreichend gutes \emph{Laufzeitverhalten} realisiert sind.
+
+Dabei wird aufgrund der \emph{Interaktivität} der Anwendung, immer ein besonderes Augenmerk auf die Top 5-Erkennungsrate gelegt.
 
 \section{Kleiner Datensatz}
 \label{sec:kleiner_datensatz}
 
-In diesem Abschnitt werden mithilfe eines Teils der verfügbaren Trainingsdaten die DTW-Varianten auf ihre Güte überprüft und die Parameter optimiert. Dabei wird auf die folgende Weise verfahren. Zuerst werden mit fest gewählten Parametern $C$, $\delta$ und $n$ \ac{DTW} und \ac{GDTW} gegeneinander getestet. Dann werden nach und nach die unterschiedlichen Parameter einzeln unter Fixierung der restlichen Parameter variiert und so ein optimaler Wert erhalten.
+In diesem Abschnitt werden mithilfe eines Teils der verfügbaren Trainingsdaten die DTW-Varianten auf ihre Güte überprüft und die Parameter optimiert. Dabei wird auf die folgende Weise verfahren. Zuerst werden mit fest gewählten Parametern $C$, $\delta$ und $n$ die Varianten \ac{DTW} und \ac{GDTW} gegeneinander getestet. Dann werden nach und nach die unterschiedlichen Parameter einzeln unter Fixierung der restlichen Parameter variiert und so ein optimaler Wert erhalten.
 
 Der kleine Datensatz besteht aus 100 zufällig aus der Datenbank ausgewählten Symbolen. Aus den vorhandenen Trainingsmustern wurden pro Symbolklasse 75 zufällig ausgewählt und davon wurden 50 für das Training des Servers und 25 als Testmuster verwendet. Dies ergibt 2500 Tests.
 
@@ -116,7 +118,7 @@ $\aleph$,
 $\infty$
 \end{quote}
 
-Davon sind manche, wie $\odot$ (\verb!\odot!) und $\bigodot$ (\verb!\bigodot!) oder $\sum$(\verb!\sum!) und $\Sigma$~(\verb!\Sigma!) eigentlich dieselben Symbole. Es wurden aber keine Maßnahmen ergriffen, um solche Zweideutigkeiten aufzuheben, da durch die Interaktivität der Anwendung ohnehin in erste Linie eine hohe Top 5-Erkennungsrate wichtig ist.
+Davon sind manche, wie $\odot$ (\verb!\odot!) und $\bigodot$ (\verb!\bigodot!) oder $\sum$(\verb!\sum!) und $\Sigma$~(\verb!\Sigma!) eigentlich dieselben Symbole. Es wurden aber keine Maßnahmen ergriffen, um solche Zweideutigkeiten aufzuheben.
 
 \subsection{DTW-Variante}
 \label{sub:variant}
@@ -150,7 +152,7 @@ Abbildung \ref{chart:dtw-vs-gdtw} zeigt neben den Erkennungsraten von DTW und GD
 
 \[ d(x,y) = \sum_i a_i - b_i \]
 
-definiert ist (mit $C=50$, $n=25$). Dieses Abstandsmaß ist nicht nur günstiger in der Berechnung, sondern liefert auch noch eine leichte Verbesserung der Top 5-Erkennungsrate um 0,6\%. Die folgenden Benchmarks wurden daher alle mit der Manhattan-Metrik $d$ als innerem Abstandsmaß $\delta$ durchgeführt.
+definiert ist. Dieser Benchmark wurde wieder mit den Parametern $C=50$ und $n=25$ durchgeführt. Die Manhattan-Metrik ist nicht nur günstiger in der Berechnung, sondern liefert auch noch eine leichte Verbesserung der Top 5-Erkennungsrate um 0,6\%. Die folgenden Benchmarks wurden daher alle mit der Manhattan-Metrik $d$ als innerem Abstandsmaß $\delta$ durchgeführt.
 
 \subsection{Anzahl Trainingsmuster} % (fold)
 \label{sub:anzahl_trainingsmuster}
@@ -165,7 +167,7 @@ Die Anzahl der verwendeten Trainingsmuster $C$ hat natürlich einen Einfluss auf
   \label{chart:samples}
 \end{figure}
 
-Abbildung \ref{chart:samples} zeigt, dass, anders als \citet{Golubitsky:2009p1842} für ihre Tests beschreiben, die Erkennungsraten (insb. Top 1) für $C > 25$ noch deutlich steigen (weiterhin $n=25$). Dies liegt vermutlich an einer höheren Variation in meinen Trainingsdaten, so dass sich eine größere Datenbasis auszahlt. Die Wahl von $C=50$ wurde jedoch beibehalten und nicht noch weiter erhöht, denn $C$ wirkt sich linear auf die Laufzeit des Erkennungsvorgangs aus.
+Abbildung \ref{chart:samples} zeigt, dass, anders als \citet{Golubitsky:2009p1842} für ihre Tests beschreiben, die Erkennungsraten (insbesondere Top 1) für $C > 25$ noch deutlich steigen (weiterhin $n=25$). Dies liegt vermutlich an einer höheren Variation in meinen Trainingsdaten, so dass sich eine größere Datenbasis auszahlt. Die Wahl von $C=50$ wurde jedoch beibehalten und nicht noch weiter erhöht, denn $C$ wirkt sich linear auf die Laufzeit des Erkennungsvorgangs aus.
 % subsection anzahl_klassen (end)
 
 \subsection{Anzahl Punkte pro Strich} % (fold)
@@ -186,7 +188,7 @@ Die Anzahl der Punkte pro Strich $n$ hat ebenso sowohl einen Einfluss auf die Er
 \subsection{Dominante Punkte} % (fold)
 \label{sub:dominante_punkte}
 
-Alle bisherigen Tests wurden ohne die Filterung von Punkten mit geringer Krümmung vorgenommen. In diesem Benchmark wurde diese Filterung mit unterschiedlichen Grenzwinkeln $\alpha$ nach der äquidistanten Verteilung der Punkte durchgeführt. Die Parameter $C=50$, $n=10$ und $\delta=d$ bleiben dabei fix. Abbildung \ref{chart:degree} zeigt, dass beim optimalen Grenzwinkel $\alpha=15\degree$ die Erkennungsraten von dieser Maßnahme richtig profitieren. Die Top 1-Erkennungsrate steigt um 1,48\% und die Top 5-Erkennungsrate sogar um 1.6\%.
+Alle bisherigen Tests wurden ohne die Filterung von Punkten mit geringer Krümmung vorgenommen. In diesem Benchmark wurde diese Filterung mit unterschiedlichen Grenzwinkeln $\alpha$ nach der äquidistanten Verteilung der Punkte durchgeführt. Die Parameter $C=50$, $n=10$ und $\delta=d$ bleiben dabei fix. Abbildung \ref{chart:degree} zeigt, dass beim optimalen Grenzwinkel $\alpha=15\degree$ die Erkennungsraten von dieser Maßnahme stark profitieren. Die Top 1-Erkennungsrate steigt um 1,48\% und die Top 5-Erkennungsrate sogar um 1.6\%.
 
 \begin{figure}[htbp]
   \begin{center}
@@ -209,11 +211,11 @@ Alle bisherigen Tests wurden ohne die Filterung von Punkten mit geringer Krümmu
   \label{chart:large}
 \end{figure}
 
-Der Bechmark mit dem großen Datensatz wurde mit den im vorherigen Abschnitt experimentell gefundenen optimalen Parametern $C=50$, $n=10$, $\delta=d$ und $\alpha=15\degree$ durchgeführt. Dafür wurden die Symbolen aus der Datenbank ausgewählt, die mindestes 15 Trainingsmuster hatten. Von diesen wurden bis zu 100 Trainingsmuster ausgewählt und mit zwei Dritteln davon wurde jeweils der Server trainiert und der Rest als Testmuster verwendet.
+Der Benchmark mit dem großen Datensatz wurde mit den im vorherigen Abschnitt experimentell gefundenen optimalen Parametern $C=50$, $n=10$, $\delta=d$ und $\alpha=15\degree$ durchgeführt. Dafür wurden die Symbolen aus der Datenbank ausgewählt, die mindestens 15 Trainingsmuster hatten. Von diesen wurden bis zu 100 Trainingsmuster ausgewählt und mit zwei Dritteln davon wurde jeweils der Server trainiert und der Rest als Testmuster verwendet.
 
-Der Benchmark umfasst damit 627 Symbole. 27460 Trainingsmuster stehen 13411 Testmustern gegenüber.
+Der Benchmark umfasst damit 627 Symbole. Dies ist eine weit höhere Symbolklassenanzahl, als in allen mir bekannten Veröffentlichungen über Symbolerkennung. 27460 Trainingsmuster stehen 13411 Testmustern gegenüber.
 
-Abbildung \ref{chart:large} zeigt die Ergebnisse. Mit einer Top 5-Erkennungsrate von 84,52\% ist das System zwar weit von Zahlen entfernt, die in der Literatur auftauchen, aber die Erklärung ist recht einfach, wenn man sich die folgende Statistik aus dem Testprotokoll ansieht, die die Symbole mit den besten und schlechtesten Testergebnissen auflistet:
+Abbildung \ref{chart:large} zeigt die Ergebnisse. Ein einzelnder Test dauerte mit diesem Datensatz 869 ms. Mit einer Top 5-Erkennungsrate von 84,52\% ist das System zwar weit von Zahlen entfernt, die in der Literatur auftauchen, aber die Erklärung ist recht einfach, wenn man sich die folgende Statistik aus dem Testprotokoll ansieht, die die Symbole mit den besten und schlechtesten Testergebnissen auflistet:
 
 \begin{verbatim}
   Top 10 Symbols:

@@ -2,9 +2,8 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {algorithm}{\numberline {1}{\ignorespaces Beschleunigung der Suche nach dem nächsten Nachbarn eines Elementes \(c\) durch eine untere Schranke}}{28}{algorithm.1}
-\contentsline {algorithm}{\numberline {2}{\ignorespaces Greedy Matching}}{31}{algorithm.2}
-\addvspace {10\p@ }
+\contentsline {algorithm}{\numberline {1}{\ignorespaces Beschleunigung der Suche nach dem nächsten Nachbarn eines Elementes \(c\) durch eine untere Schranke}}{33}{algorithm.1}
+\contentsline {algorithm}{\numberline {2}{\ignorespaces Greedy Matching}}{37}{algorithm.2}
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
