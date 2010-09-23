@@ -17,7 +17,7 @@ Detexify wurde als Webanwendung implementiert. Dies hat die folgenden Vorteile:
   \item \textbf{Zentrale Trainingsdaten:} Die Trainingsdaten sind zentral in einer Datenbank gespeichert. Das Training des Klassifizierers wird von den Nutzern selbst durchgeführt (siehe auch \ref{sec:crowdsourcing}).
 \end{itemize}
 
-Dabei besteht Detexify aus zwei lose gekoppelten Komponenten und zwar der Webanwendung und dem Klassifizierungsserver (Server). Lose Kopplung heißt dabei, dass lediglich ein Interface definiert ist, wie die Webanwendung mit dem Server zu kommunizieren hat \cite{Tilkov:2005p11813}. Das Interface ist als \ac{REST}-Interface spezifiziert. Die beiden Komponenten kommunizieren also über \ac{HTTP}. Abbildung~\ref{fig:architecture} zeigt die Architektur schematisch.
+Dabei besteht Detexify aus zwei lose gekoppelten Komponenten und zwar der Webanwendung und dem Klassifizierungsserver (Server). Lose Kopplung heißt dabei, dass lediglich ein Interface definiert ist, wie die Webanwendung mit dem Server zu kommunizieren hat \cite{Tilkov:2005p11813}. Das Interface ist als \ac{REST}-Interface \cite{rest} spezifiziert. Die beiden Komponenten kommunizieren also über \ac{HTTP} \cite{http}. Abbildung~\ref{fig:architecture} zeigt die Architektur schematisch.
 
 \begin{figure}[htbp]
   \centering \includegraphics{figures/architecture.pdf}
@@ -40,7 +40,7 @@ Die Symbolsuche ist das Zentrum der Anwendung. Sie ist das Werkzeug, das dem \La
 Auf der Seite der Webanwendung ist dafür eine Zeichenfläche implementiert. Auf dieser können mit der Maus (oder einem Grafiktablett) Striche gemalt werden und nach jedem beendeten Strich wird per AJAX \cite{AJAX} eine Erkennungsanfrage an den Server gesendet. Die Symbole werden dann anhand der vom Server ermittelten Rangfolge aufgelistet wie in Abbildung~\ref{fig:symbolsuche} zu sehen. Die Kommunikation erfolgt wie in \ref{sec:server} beschrieben über das Datenformat \ac{JSON} \cite{json}. Die Interaktionen im Benutzerinterface (Zeichnen usw.) sind mithilfe von Javascript gelöst. Die Zeichenfläche basiert auf der \ac{SVG}-Technologie \cite{svg}.
 
 \begin{figure}[htbp]
-  \centering \includegraphics[width=\textwidth]{figures/interface-classify.png}
+  \centering \includegraphics[width=0.8\textwidth]{figures/interface-classify.png}
   \caption{Symbolsuche}
   \label{fig:symbolsuche}
 \end{figure}
@@ -54,7 +54,7 @@ Einerseits bietet die Symboltabelle einen Überblick über die in Detexify regis
  Abbildung~\ref{fig:symboltabelle} zeigt einen Screenshot eines Browsers mit geöffneter Symboltabelle.
 
 \begin{figure}[htbp]
-  \centering \includegraphics[width=\textwidth]{figures/interface-symbol-table.png}
+  \centering \includegraphics[width=0.8\textwidth]{figures/interface-symbol-table.png}
   \caption{Symboltabelle}
   \label{fig:symboltabelle}
 \end{figure}
@@ -67,7 +67,7 @@ Einerseits bietet die Symboltabelle einen Überblick über die in Detexify regis
 
 Der Server übernimmt die Aufgabe der Mustererkennung. An ihn können im wesentlichen zwei verschiedene Anfragen gestellt werden. Die erste davon ist das Training einer Symbolklasse. Die zweite ist die Klassifizierung von unbekannten Daten. Es gibt noch eine dritte Anfrage, die aber lediglich zur Identifizierung und Statusermittlung der Serverimplementierung dient.
 
-Da der Server die eigentliche Arbeit verrichtet läuft er auf einem leistungsstarken Rechner. Wie die eigentliche Symbolerkennung aussieht, ist in Kapitel~\ref{cha:erkennung} beschrieben. Hier spezifiziere ich nur das \ac{REST}-Interface \cite{rest}. Es sieht folgendermaßen aus:
+Da der Server die eigentliche Arbeit verrichtet läuft er auf einem leistungsstarken Rechner. Wie die eigentliche Symbolerkennung aussieht, ist in Kapitel~\ref{cha:erkennung} beschrieben. Hier spezifiziere ich nur das \ac{REST}-Interface. Es sieht folgendermaßen aus:
 
 \subsection{REST-Interface} % (fold)
 \label{sub:rest_interface}
@@ -140,7 +140,7 @@ Wie in \ref{sub:symboltabelle} erwähnt bietet, Detexify den Nutzern ein Interfa
 Der Plan Crowdsourcing für das Training zu verwenden war sehr erfolgreich. Als Detexify am 11. Juli 2009 online ging, war die Idee völlig neu. Eine \LaTeX-Symbolsuche in dieser Form hatte zu diesem Zeitpunkt noch niemand gesehen, daher verbreiteten sich Links zu Detexify in Windeseile über soziale Netze wie \href{http://twitter.com}{Twitter}, \href{http://facebook.com}{Facebook} und \href{http://delicious.com}{Delicious} aber auch über Newsportale wie \href{http://reddit.com}{Reddit} und \href{http://news.ycombinator.com}{Hacker News} und am 14. Juli 2009 erreichte Detexify seinen Spitzenwert von über 10.000 Besuchern an einem Tag. Erst gegen Ende Juli 2009 normalisierten sich die Besucherzahlen. Bis zu diesem Zeitpunkt hatten die Nutzer bereits mehrere tausend Trainingsbeispiele gespendet. Zur Zeit liegt die Anzahl der Trainingsbeispiele bei fast 150.000 für 977 Symbole.
 
 Crowdsourcing hat natürlich auch seine Nachteile. Für die Benchmarks in Kapitel \ref{cha:benchmarks} habe ich einen Spiegel der Datenbank erstellt, der zu diesem Zeitpunkt 147881 Trainingsbeispiele enthielt. Bei der manuellen Inspektion der Daten stellte sich schnell heraus, dass sie für manche Symbole eine katastrophale Qualität hatten. Ein besonders krasses Beispiel ist das Symbol \verb!\male! (\Male), % benutze marvosym \Male aber eigentlich ist es wasysym \male
-bei dem ca. 200 der 533 Trainingsbeispiele nicht Zeichnungen dieses Symbols sondern von \emph{männlichen Geschlechtsteilen} waren. Insgesamt habe ich bei der manuellen Inspektion aller 147881 Trainingsbeispiele 14419 Zeichnungen, die völlig aus dem Rahmen fielen\footnote{Die Trainingsbeispiele enthielten aber auch einige künstlerische Perlen in Anhang \ref{cha:kunst} verewigt sind.}, aussortiert. Die Benchmarks in Kapitel \ref{cha:benchmarks} basieren auf diesen grob bereinigten Daten.
+bei dem ca. 200 der 533 Trainingsbeispiele nicht Zeichnungen dieses Symbols sondern von \emph{männlichen Geschlechtsteilen} waren. Insgesamt habe ich bei der manuellen Inspektion aller 147881 Trainingsbeispiele 14419 Zeichnungen, die völlig aus dem Rahmen fielen\footnote{Die Trainingsbeispiele enthielten aber auch einige künstlerische Perlen, die in Anhang \ref{cha:kunst} verewigt sind.}, aussortiert. Die Benchmarks in Kapitel \ref{cha:benchmarks} basieren auf diesen grob bereinigten Daten.
 
 % section crowd_sourcing (end)
 

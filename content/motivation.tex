@@ -3,7 +3,7 @@
 
 \section{\LaTeX}
 
-Wenn es um das Verfassen wissenschaftlicher Texte geht, ist für viele \LaTeX\ die erste Wahl. Anders als bei einem \ac{WYSIWYG}-Editor kümmert man sich nicht um das Layout, um Abstände und Schriftgrößen sondern um die Semantik des Geschriebenen. Man zeichnet die Kapitel, Abschnitte, Formeln usw. aus, eher wie in \ac{HTML} als in MS-Word. Der Vorteil liegt auf der Hand. Inhalt und Präsentation sind klar getrennt, was zur Folge hat, dass man nicht vom Wesentlichen abgelenkt wird, wenn man an Texten und Formeln arbeitet, und dass das Aussehen des Dokuments zentral in der Präambel definiert wird.
+Wenn es um das Verfassen wissenschaftlicher Texte geht, ist für viele \LaTeX\ die erste Wahl. Anders als bei einem \ac{WYSIWYG}-Editor kümmert man sich nicht um das Layout, um Abstände und Schriftgrößen sondern um die Semantik des Geschriebenen. Man zeichnet die Kapitel, Abschnitte, Formeln usw. aus, eher wie in \ac{HTML} als in MS-Word. Der Vorteil liegt auf der Hand. Inhalt und Präsentation sind klar getrennt, was zur Folge hat, dass man nicht vom Wesentlichen abgelenkt wird, wenn man an Texten und Formeln arbeitet, und dass das Aussehen des Dokuments zentral in der Präambel definiert wird.\footnote{Es gibt noch sehr viele weitere Vorteile, aber alles aufzuzählen würden hier den Rahmen sprengen.}
 
 \LaTeX~hat jedoch auch seine Nachteile. Gerade Anfänger haben es aufgrund der flachen Lernkurve schwer. Da man \LaTeX~in der Regel im Quelltext bearbeitet, also jeden Befehl von Hand schreibt, muss man sich unheimlich viele Befehle merken. Das beginnt bei einfachen Befehlen wie \texttt{\textbackslash chapter}, deren Name sich geradezu aufdrängt, aber wenn es darum geht Mathematische Formeln wie $$\Gamma \left( x \right) = \int\limits_0^\infty  {s^{x - 1} e^{ - s} ds}$$ in das Dokument zu bringen, wird es schon schwieriger.
 
@@ -27,7 +27,7 @@ Im folgenden werden einige der verfügbaren Lösungen vorgestellt und bewertet.
 
 \begin{figure}[htbp]
   \begin{center}
-    \includegraphics[width=.5\textwidth]{figures/ffes.png}
+    \includegraphics[width=.4\textwidth]{figures/ffes.png}
   \end{center}
   \caption{Freehand Formula Entry System}
   \label{fig:ffes}
@@ -128,9 +128,9 @@ Für beide Projekte bleiben die Probleme der eigentlichen Eingabe natürlich die
 
 \section{Was ist so schwierig an Formelerkennung?}
 
-Das Problem teilt sich dabei in drei Teile auf. Das erste ist die Segmentierung der mathematischen Formel, bei der einzelne Symbole isoliert werden müssen. Als Zweites müssen die einzelnen Symbole richtig erkannt werden. Schließlich müssen die Symbole über ihre räumliche Position in eine logische Beziehung zueinander gebracht werden. Die in diesen Schritten gewonnenen Erkenntnisse können natürlich die Entscheidung in den jeweils anderen beeinflussen, indem man die Semantik einer Interpretation in der Erkennung mit einfließen lässt.
+Die vorgenannten Werkzeuge schneiden deswegen nicht gut ab, weil die Erkennung mathematischer Formeln ein wirklich schwieriges Problem ist. Es teilt sich in drei Teile auf. Das erste ist die Segmentierung der mathematischen Formel, bei der einzelne Symbole isoliert werden müssen. Als Zweites müssen die einzelnen Symbole richtig erkannt werden. Schließlich müssen die Symbole über ihre räumliche Position in eine logische Beziehung zueinander gebracht werden. Die in diesen Schritten gewonnenen Erkenntnisse können natürlich die Entscheidung in den jeweils anderen beeinflussen, indem man die Semantik einer Interpretation in der Erkennung mit einfließen lässt.
 
-Das Problem ist also komplex. Entsprechend treten ständig Erkennungsfehler auf und diese zu korrigieren ist mit allen Programmen, die ich testen konnte, nicht ideal gelöst. Im Gegenteil ist der Korrekturvorgang eher langwierig und frustrierend. \cite{Tapia:2007p9160} ist ein aktueller Übersichtsartikel, der die Problematik genauer beleuchtet.
+Das Problem ist also komplex. Entsprechend treten häufig Erkennungsfehler auf und diese zu korrigieren ist mit allen Programmen, die ich testen konnte, nicht ideal gelöst. Im Gegenteil ist der Korrekturvorgang eher langwierig und frustrierend. \cite{Tapia:2007p9160} ist ein aktueller Übersichtsartikel, der die Problematik genauer beleuchtet.
 
 \section{Suche nach Alternativen}
 \label{sec:alternativen}
@@ -139,7 +139,7 @@ Die optimale Eingabemethode ist also (noch) nicht perfekt umgesetzt. Um ganze Fo
 
 \begin{figure}[htbp]
   \begin{center}
-    \includegraphics[width=.8\textwidth]{figures/jequation.png}
+    \includegraphics[width=.5\textwidth]{figures/jequation.png}
   \end{center}
   \caption{JEquation}
   \label{fig:jequation}

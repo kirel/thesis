@@ -6,7 +6,7 @@
 % (fold)
 \label{cha:erkennung}
 
-Die Erkennung handgeschriebener Symbole ist das Herzstück von Detexify. Hier wird einer unbekannten Eingabe von Daten eine Rangfolge von \LaTeX-Symbolen zugeordnet. Wie jeder Mustererkennungsaufgabe steht dabei auch hier der Erkennungsalgorithmus im Zentrum. In \ref{sec:klassifizierung} stelle ich die möglichen Algorithmen vor und analysiere sie auf ihre Tauglichkeit für Detexify.
+Die Erkennung handgeschriebener Symbole ist das Herzstück von Detexify. Hier wird einer unbekannten Eingabe von Daten eine Rangfolge von \LaTeX-Symbolen zugeordnet. Wie bei jeder Mustererkennungsaufgabe steht dabei auch hier der Erkennungsalgorithmus im Zentrum. In \ref{sec:klassifizierung} stelle ich die möglichen Algorithmen vor und analysiere sie auf ihre Tauglichkeit für Detexify.
 
 Je nach verwendetem Verfahren geht der Klassifizierung eine Vorverarbeitung (\ref{sec:vorverarbeitung} und \ref{sec:vorverarbeitung2}) und Merkmalsextraktion (\ref{sec:merkmale}) voraus.
 
@@ -19,15 +19,21 @@ Das Kapitel beginnt nun mit einer Einführung in die Terminologie der Handschrif
 
 Wie in jedem Forschungsgebiet hat sich auch bei der Handschrifterkennung eine Nomenklatur entwickelt, die die verschiedenen Aspekte des Themas beschreibt.
 
-Man unterscheidet zwischen \emph{Online}- und \emph{Offline}-Systemen \cite{Tappert:1990p10302}. Bei Online-Systemen wird die Erkennung durchgeführt während der Nutzer schreibt. Die Striche werden dabei vom Eingabegerät (Grafiktablett oder Computermaus) als Funktion \( t \mapsto \alpha_t \), wobei \( \alpha_t \) den Zustand der Stiftspitze zum Zeitpunkt $t$ kodiert, an das System übertragen. Es stehen also für die Erkennung alle dynamischen Eigenschaften des Geschriebenen zur Verfügung, wie die Anzahl, Reihenfolge und Richtung der einzelnen Pinselstriche. Im Gegensatz dazu verarbeiten Offline-Systeme Scans von Geschriebenem, arbeiten also zu einem Zeitpunkt, wenn der Schreibvorgang längst beendet ist. Sie können also außer Pixeln keine weiteren Informationen verwenden. Detexify ist ein Online-System.
+Man unterscheidet zwischen \emph{Online}- und \emph{Offline}-Systemen \cite{Tappert:1990p10302}. Bei Online-Systemen wird die Erkennung durchgeführt während der Nutzer schreibt. Die Striche werden dabei vom Eingabegerät (Grafiktablett oder Computermaus) als Funktion \( t \mapsto \alpha_t \) an das System übertragen, wobei \( \alpha_t \) den Zustand der Stiftspitze zum Zeitpunkt $t$ kodiert. Es stehen also für die Erkennung alle dynamischen Eigenschaften des Geschriebenen zur Verfügung, wie die Anzahl, Reihenfolge und Richtung der einzelnen Pinselstriche. Im Gegensatz dazu verarbeiten Offline-Systeme Scans von Geschriebenem, arbeiten also zu einem Zeitpunkt, wenn der Schreibvorgang längst beendet ist. Sie können also außer Pixeln keine weiteren Informationen verwenden. Detexify ist ein Online-System.
 
 Der Zustand der Stiftspitze besteht in Online-Systemen in der Regel aus den Koordinaten $(x,y)$, der Information, ob die Spitze das Tablett berührt, oft bezeichnet mit \emph{pen-up} bzw. \emph{pen-down} und in manchen Fällen auch aus der Neigung und dem Azimut.
 
 Aus den Daten werden dann häufig Merkmale abgeleitet, sog. \emph{Features}. Man unterscheidet zwischen \emph{globalen} und \emph{lokalen} Features \cite{Tapia:2007p9160}. Lokale Features sind solche, die von einzelnen Punkten auf einem Strich und dessen benachbarten Punkten abgeleitet werden. Globale Features werden hingegen von der Menge der Striche als Ganzes abgeleitet.
 
-\section[Herausforderungen]{Herausforderungen der Erkennung von \LaTeX-Symbolen}\label{sec:herausforderungen} Die Erkennung von handgemalten \LaTeX-Symbolen ist allein durch die enorme Anzahl der Symbole eine große Herausforderung \cite{Koerich:2003p1562}. Die Symbole können aus sehr unterschiedlichen Alphabeten kommen. Es kommen lateinische, griechische, mathematische und weitere Symbole vor. Im Gegensatz zu asiatischen Sprachen, die ebenfalls sehr große Alphabete aufweisen\footnote{In Japan werden heute 6000-7000 Buchstaben verwendet. In China ist die Anzahl der im täglichen Leben verwendeten Buchstaben bei etwa 5000 \cite{Jaeger:2003p1097}}, ist jedoch die Anzahl und Reihenfolge der Striche nicht vorgegeben, was die Erkennung zusätzlich erschwert \cite{Watt:2005p1816}. Außerdem gibt es sehr viele sehr ähnliche Symbole wie $\rightarrow,\mapsto,\leadsto,\rightharpoonup,\hookrightarrow,\rightarrowtail$. Dazu kommen noch die Probleme vor der jede Handschrifterkennung steht, wie unterschiedliche Schreibstile sowohl von unterschiedlichen Schreibern als auch natürliche Variationen in der Schreibweise eines Einzelnen.
+\section[Herausforderungen]{Herausforderungen der Erkennung von \LaTeX-Symbolen}\label{sec:herausforderungen} Die Erkennung von handgemalten \LaTeX-Symbolen ist allein durch die enorme Anzahl der Symbole eine große Herausforderung \cite{Koerich:2003p1562}. Die Symbole können aus sehr unterschiedlichen Alphabeten kommen. Es kommen lateinische, griechische, mathematische und weitere Symbole vor. Im Gegensatz zu asiatischen Sprachen, die ebenfalls sehr große Alphabete aufweisen\footnote{In Japan werden heute 6000-7000 Buchstaben verwendet. In China ist die Anzahl der im täglichen Leben verwendeten Buchstaben bei etwa 5000 \cite{Jaeger:2003p1097}}, ist jedoch die Anzahl und Reihenfolge der Striche nicht vorgegeben, was die Erkennung zusätzlich erschwert \cite{Watt:2005p1816}. Abbildung \ref{fig:pi} zeigt als Beispiel drei Trainingsbeispiele des Symbols $\pi$. Außerdem gibt es sehr viele sehr ähnliche Symbole wie $\rightarrow,\mapsto,\leadsto,\rightharpoonup,\hookrightarrow,\rightarrowtail$. Dazu kommen noch die Probleme vor der jede Handschrifterkennung steht, wie unterschiedliche Schreibstile sowohl von unterschiedlichen Schreibern als auch natürliche Variationen in der Schreibweise eines Einzelnen.
 
-In den Trainingsbeispielen in Detexify ist mit einer noch höheren Variation zu rechnen, da in den meisten Fällen eine herkömmliche Computermaus zum zeichnen der Symbole Verwendung findet, statt ein Grafiktablett, das eine gewohnte Stiftführung ermöglicht.
+In den Trainingsbeispielen in Detexify ist mit einer noch höheren Variation zu rechnen, da in den meisten Fällen eine herkömmliche Computermaus zum zeichnen der Symbole Verwendung findet statt ein Grafiktablett, das eine gewohnte Stiftführung ermöglicht.
+
+\begin{figure}[htbp]
+  \centering \includegraphics[width=\textwidth]{figures/pi.png}
+  \caption{Drei Trainingsbeispiele für das Symbol $\pi$}
+  \label{fig:pi}
+\end{figure}
 
 \section{Eingabe} \label{sec:input}
 
@@ -216,7 +222,7 @@ Dabei ist \( d_{w_i} \) das entsprechende Element der Matrix \ref{eqn:matrix}.
 Diese abstrakte Definition bedeutet anschaulich, dass die Punkte in den zwei Folgen einander elastisch zugeordnet werden können, wobei es einige Beschränkungen gibt. Der erste Punkt der ersten Folge wird immer dem ersten Punkt der zweiten Folge und der letzte Punkt der ersten Folge immer dem letzten Punkt der zweiten Folge zugeordnet werden. Dazwischen müssen die Punkte zwar in der richtigen Reihenfolge bleiben und es dürfen keine übersprungen werden, aber es sind Mehrfachzuordnungen erlaubt. Gesucht wird die Zuordnung, die den Abstand minimiert. Abbildung~\ref{fig:dtw} illustriert dies.
 
 \begin{figure}
-  \centering \includegraphics[width=4cm]{figures/dtw.png}
+  \centering \includegraphics[width=0.2\textwidth]{figures/dtw.png}
   \caption{Elastische Zuordnung bei DTW}
   \label{fig:dtw}
 \end{figure}

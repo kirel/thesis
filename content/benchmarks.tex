@@ -141,7 +141,7 @@ Der erste Benchmark testet DTW in seiner klassischen Form gegen die Greedy-Appro
   \label{chart:dtw-vs-gdtw-ms}
 \end{figure}
 
-Auf Basis dieser Daten fällt es leicht die Auswahl des Verfahrens für Detexify auf GDTW festzulegen und im Folgenden die Betrachtungen auf dieses zu beschränken.
+Auf Basis dieser Daten fällt es leicht die Auswahl des Verfahrens für Detexify auf GDTW festzulegen und im Folgenden die Betrachtungen auf dieses zu beschränken. DTW mit beschränkten Warping-Pfaden wird nicht mehr betrachtet, da es nicht die Laufzeiteigenschaften von GDTW bieten kann.
 
 % chapter benchmarks (end)
 
@@ -215,7 +215,22 @@ Der Benchmark mit dem großen Datensatz wurde mit den im vorherigen Abschnitt ex
 
 Der Benchmark umfasst damit 627 Symbole. Dies ist eine weit höhere Symbolklassenanzahl, als in allen mir bekannten Veröffentlichungen über Symbolerkennung. 27460 Trainingsmuster stehen 13411 Testmustern gegenüber.
 
-Abbildung \ref{chart:large} zeigt die Ergebnisse. Ein einzelnder Test dauerte mit diesem Datensatz 869 ms. Mit einer Top 5-Erkennungsrate von 84,52\% ist das System zwar weit von Zahlen entfernt, die in der Literatur auftauchen, aber die Erklärung ist recht einfach, wenn man sich die folgende Statistik aus dem Testprotokoll ansieht, die die Symbole mit den besten und schlechtesten Testergebnissen auflistet:
+Abbildung \ref{chart:large} zeigt die Ergebnisse. Ein einzelnder Test dauerte mit diesem Datensatz 869 ms.
+
+\section{Ergebnis}
+
+Auf Basis der in den vorigen Abschnitten durchgeführten Benchmarks, habe ich als optimales Verfahren \emph{GDTW} (\ref{sub:variant}) mit den Parametern
+\begin{itemize}
+  \item $\delta=d$ \hfill siehe \ref{sub:inneres_abstandsmaß}
+  \item $C=50$ \hfill siehe \ref{sub:anzahl_trainingsmuster}
+  \item $n=10$ \hfill siehe \ref{sub:anzahl_punkte_pro_strich}
+  \item $\alpha=15\degree$ \hfill siehe \ref{sub:dominante_punkte}
+\end{itemize}
+festgestellt. Dieses liefert, wie der Benchmark mit dem großen Datensatz in \ref{sec:grosser_datensatz} zeigt, ausreichend gute \emph{Laufzeigeigenschaften}.
+
+Die \emph{Skalierbarkeit} könnte besser sein. Immerhin ist der Genauigkeitsverlust beim Schritt von 100 Symbolklassen auf 627 Symbolklassen bei der Top 5-Erkennungsrate mit 11,43\% nicht gerade gering. Es ist aber zu bedenken, dass die Qualität der Daten im kleinen Datensatz eine wesentlich bessere ist, und dass sich die Anzahl der mehrdeutigen Symbole wie \verb!\Updelta! ($\Updelta$) und \verb!\Delta! ($\Delta$) im großen Datensatz noch mal vervielfacht. 
+
+Eine weitere Erklärung der Top5-Erkennungsrate von 84,52\% kann sich die folgende Statistik aus dem Testprotokoll geben, die die Symbole mit den besten und schlechtesten Testergebnissen auflistet:
 
 \begin{verbatim}
   Top 10 Symbols:
@@ -247,7 +262,4 @@ Abbildung \ref{chart:large} zeigt die Ergebnisse. Ein einzelnder Test dauerte mi
 
 Es ist so, dass die Symbole aus der Top 10-Liste ($\cong$, $\not\equiv$, \&, $\supset$, etc.) erstens relativ eindeutige Symbole sind und andererseits über eine große Trainingsdatenmenge verfügen. Die Symbole aus der Flop 10-Liste hingegen haben allesamt eine sehr kleine Trainingsmenge (<20) und sind häufig sehr ähnlich zu mindestens einem anderen Symbol, das eine wesentlich bessere Trainingsbasis hat (teilweise >1000), wie z.B. \verb!\Updelta! ($\Updelta$) und \verb!\Delta! ($\Delta$) oder \verb!\Rbag! ($\Rbag$) und \verb!\int! ($\int$). Zwar werden maximal $C=50$ Trainingsmuster je Klasse verwendet, aber es ist eine bekannte (und offensichtliche) Schwäche der Nächste-Nachbarn-Klassifikation, dass Klassen mit einer höheren Anzahl an Trainingsmustern bevorzugt ausgewählt werden, da die Wahrscheinlichkeit, dass der nächste Nachbar aus einer dieser Klassen kommt, alleine schon aufgrund der Häufigkeit höher sein muss.
 
-\section{Ergebnis}
-
-\TODO Ich erkläre die Daten hiermit für Okay...
-\TODO Nutze GDTW mit $\delta=d$, $C=50$, $n=10$ und $\alpha=15\degree$
+Ich stelle also fest, dass die in \ref{sec:klassifizierung} gestellten Anforderungen erfüllt sind. Dies belegt auch der subjektive Eindruck bei der Benutzung des Systems.

@@ -1,12 +1,13 @@
 %!TEX TS-program = xelatex
 %!TEX encoding = UTF-8 Unicode
-\documentclass[a5paper]{scrbook}
+\documentclass[a5paper, headsepline, bibtotoc]{scrbook}
 
 % \usepackage{fancyhdr}
 % \usepackage{caption}[2008/08/24] % fuer captions in Figures
 % \usepackage{scrpage2} % fuer Kopf- und Fusszeilenlayout
 % \usepackage{titlesec} % um das Layout von Ueberschriften zu aendern
 
+% \documentclass[a4paper, twoside, headsepline, 11pt, BCOR10mm, DIV10, footinclude, headinclude]{scrbook}
 % \documentclass[a4paper, twoside, headsepline, 11pt, BCOR10mm, DIV10, footinclude, headinclude]{scrbook}
 % BCOR: ``binding correction'' am besten an einem Probedruck ausmessen
 % DIV:  beinflusst, wie ``gross'' der Satzspiegel wird -- s. Koma-Dokumentation
@@ -104,19 +105,18 @@ pdfauthor={Daniel Kirsch}
 
 \begin{document}
 
-\frontmatter
-
+\titlehead{{\Large Westfälische Wilhelms-Universität Münster \hfill Institut für Informatik}}
 \title{Detexify: Erkennung handgemalter \LaTeX-Symbole \\
 \vspace{5mm} \includegraphics[height=7.5cm]{figures/icon.png} }
 
+\subject{Diplomarbeit}
 \author{Daniel Kirsch}
-
-\date{\vspace{10mm} Diplomarbeit\\ \vspace{3mm} \today \\
-\vspace{20mm}
-% Thema gestellt von\\ \vspace{3mm} Prof. Dr. W.-M. Lippe\\
-\vspace{3mm} Westfälische Wilhelms-Universität Münster\\Institut für Informatik}
+\date{\today}
+\publishers{Betreut durch Prof. Dr. Xiaoyi Jiang}
 
 \maketitle
+
+\frontmatter
 
 % \newpage\mbox{}\vfill
 % \begin{center}
@@ -159,17 +159,17 @@ pdfauthor={Daniel Kirsch}
 \backmatter
 \input{acknowledgement}
 \input{bibliography}
-\cleardoublepage
-\phantomsection
-\addcontentsline{toc}{chapter}{Abbildungsverzeichnis}
+% \cleardoublepage
+% \phantomsection
+% \addcontentsline{toc}{chapter}{Abbildungsverzeichnis}
 \listoffigures    % Abbildungsverzeichnis
 % \cleardoublepage
 % \phantomsection
 % \addcontentsline{toc}{chapter}{Tabellenverzeichnis}
 % \listoftables     % Tabellenverzeichnis
-\cleardoublepage
-\phantomsection
-\addcontentsline{toc}{chapter}{Algorithmenverzeichnis}
+% \cleardoublepage
+% \phantomsection
+% \addcontentsline{toc}{chapter}{Algorithmenverzeichnis}
 \listofalgorithms
 
 \end{document}
