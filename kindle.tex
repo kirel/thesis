@@ -1,0 +1,176 @@
+%!TEX TS-program = xelatex
+%!TEX encoding = UTF-8 Unicode
+\documentclass[a5paper]{scrbook}
+
+% \usepackage{fancyhdr}
+% \usepackage{caption}[2008/08/24] % fuer captions in Figures
+% \usepackage{scrpage2} % fuer Kopf- und Fusszeilenlayout
+% \usepackage{titlesec} % um das Layout von Ueberschriften zu aendern
+
+% \documentclass[a4paper, twoside, headsepline, 11pt, BCOR10mm, DIV10, footinclude, headinclude]{scrbook}
+% BCOR: ``binding correction'' am besten an einem Probedruck ausmessen
+% DIV:  beinflusst, wie ``gross'' der Satzspiegel wird -- s. Koma-Dokumentation
+% footinclude, headinclude: dadurch werden die Fuss- und Kopfzeilen
+%       in den Satzspiegel eingebunden (empfiehlt sich bei lebendenden
+
+\synctex=1
+\usepackage{marvosym}
+\usepackage{upgreek}
+\usepackage{gensymb}
+\usepackage{stmaryrd}
+\usepackage{amssymb} % Mathe
+\usepackage{amsmath} % Mathe
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\floatname{algorithm}{Algorithmus}
+\renewcommand{\listalgorithmname}{Algorithmenverzeichnis}
+\usepackage{listings}
+\lstdefinelanguage{Javascript} {
+morekeywords     = {
+break,const,continue,delete,do,while,export,for,in,function,
+if,else,import,in,instanceOf,label,let,new,return,switch,this,
+throw,try,catch,typeof,var,void,with,yield
+},
+sensitive        = false,
+morecomment      = [l]{//},
+morecomment      = [s]{/*}{*/},
+morestring       = [b]",
+morestring       = [d]'
+}
+\lstset{
+language         = Javascript,
+frame            = tb,
+framesep         = 5pt,
+basicstyle       = \footnotesize\ttfamily,
+showstringspaces = false,
+keywordstyle     = \ttfamily\bfseries\color{CadetBlue},
+identifierstyle  = \ttfamily,
+stringstyle      = \ttfamily\color{OliveGreen},
+commentstyle     = \color{MidnightBlue},
+rulecolor        = \color{Gray},
+xleftmargin      = 5pt,
+xrightmargin     = 5pt,
+aboveskip        = \bigskipamount,
+belowskip        = \bigskipamount
+}
+
+% Math Fonts
+%\usepackage[mathcal]{eulervm}
+\usepackage{eulervm}
+\usepackage[cm-default]{fontspec}
+% FONTS
+\usepackage{xunicode}
+\usepackage{xltxtra}
+\defaultfontfeatures{Mapping=tex-text} % converts LaTeX specials (``quotes'' --- dashes etc.) to unicode
+\setromanfont [Ligatures={Common}, Numbers={OldStyle}]{Adobe Caslon Pro}
+\setmonofont[Scale=0.8]{Monaco}
+% \setsansfont[Scale=0.9]{Optima Regular}
+\setsansfont[Scale=0.9]{Myriad Pro}
+% ---- CUSTOM AMPERSAND
+\newcommand{\amper}{{\fontspec[Scale=.95]{Adobe Caslon Pro}\selectfont\itshape\&}}
+
+\newcommand{\TODO}{\textsc{\textbf{\textcolor{red}{Todo\ }}}}
+\newcommand{\FIXME}{\textsc{\textbf{\textcolor{red}{Fixme\ }}}}
+
+% HEADINGS
+% \usepackage{sectsty}
+% \usepackage[normalem]{ulem}
+% \sectionfont{\sffamily\mdseries\large}
+% \subsectionfont{\rmfamily\mdseries\scshape\normalsize}
+% \subsubsectionfont{\rmfamily\bfseries\upshape\normalsize}
+
+% PDF SETUP
+% ---- FILL IN HERE THE DOC TITLE AND AUTHOR
+\usepackage[
+xetex,bookmarks,colorlinks,breaklinks,
+pdftitle={Detexify: Erkennung handgemalter LaTeX-Symbole},
+pdfsubject={LaTeX-Symbolerkennung},
+pdfauthor={Daniel Kirsch}
+]{hyperref}
+\hypersetup{linkcolor=blue,citecolor=blue,filecolor=black,urlcolor=blue}
+
+% Stuff
+\usepackage[ngerman]{babel}
+\usepackage{indentfirst}
+\usepackage[printonlyused]{acronym}
+\usepackage{url}
+\usepackage[numbers,square]{natbib}
+
+% \pagestyle{headings}
+%
+
+\hyphenation{Mannig-faltig-keit}
+
+\begin{document}
+
+\frontmatter
+
+\title{Detexify: Erkennung handgemalter \LaTeX-Symbole \\
+\vspace{5mm} \includegraphics[height=7.5cm]{figures/icon.png} }
+
+\author{Daniel Kirsch}
+
+\date{\vspace{10mm} Diplomarbeit\\ \vspace{3mm} \today \\
+\vspace{20mm}
+% Thema gestellt von\\ \vspace{3mm} Prof. Dr. W.-M. Lippe\\
+\vspace{3mm} Westfälische Wilhelms-Universität Münster\\Institut für Informatik}
+
+\maketitle
+
+% \newpage\mbox{}\vfill
+% \begin{center}
+% \large
+% \includegraphics{figures/icon.png}
+% \normalsize
+% \end{center}
+% \vfill\mbox{}\newpage
+
+%\rule{0mm}{1mm}
+%\newpage
+\pagestyle{empty}
+\cleardoublepage
+\input{statement}
+% \rule{0mm}{1mm}
+% \newpage
+\pagestyle{empty}
+\cleardoublepage
+
+
+% Fürs Prüfungsamt ein paar Seiten frei.
+\pagestyle{headings}
+
+\tableofcontents  % Inhaltsverzeichnis
+
+\input{content/preface}
+\mainmatter
+\input{content/motivation}
+\input{content/detexify}
+\input{content/recognition}
+\input{content/benchmarks}
+\input{content/outlook}
+
+\appendix
+\input{content/usage}
+\input{content/acronyms}
+\input{content/manual}
+\input{art}
+
+\backmatter
+\input{acknowledgement}
+\input{bibliography}
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{Abbildungsverzeichnis}
+\listoffigures    % Abbildungsverzeichnis
+% \cleardoublepage
+% \phantomsection
+% \addcontentsline{toc}{chapter}{Tabellenverzeichnis}
+% \listoftables     % Tabellenverzeichnis
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{Algorithmenverzeichnis}
+\listofalgorithms
+
+\end{document}
+
